@@ -1,0 +1,24 @@
+keysym Alt_R    = Multi_key
+remove Lock	= Caps_Lock
+remove Control	= Control_L
+
+keysym Control_L = Caps_Lock
+keysym Caps_Lock = Control_L
+
+add Lock	= Caps_Lock
+add Control	= Control_L
+
+! Thanks, Olin; thanks, Kragen:
+! <http://canonical.org/~kragen/setting-up-keyboard.html>,
+! <http://lists.canonical.org/pipermail/kragen-hacks/2002-January/000306.html>.
+keysym bracketleft = parenleft braceleft
+keysym bracketright = parenright braceright
+keysym parenleft = 9 bracketleft
+keysym parenright = 0 bracketright
+
+! Thanks, Thomas Parslow:
+! <http://almostobsolete.net/switch-brackets-with-xmodmap.html>
+keysym braceleft = parenleft bracketleft
+keysym braceright = parenright bracketright
+keysym 9 = 9 braceleft
+keysym 0 = 0 braceright

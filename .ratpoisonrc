@@ -1,0 +1,15 @@
+# xterm
+bind C-c exec xterm -e screen -R
+bind c exec xterm -e screen -R
+
+# Opera
+bind C-f exec opera
+bind f exec opera
+
+# Copy to screen
+bind C-w exec xsel > /tmp/screen-exchange
+bind w exec xsel > /tmp/screen-exchange
+
+# Copy to clipboard
+bind C-x exec xsel | xsel -b
+bind x exec xsel | xsel -b
