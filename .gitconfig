@@ -1,0 +1,29 @@
+[user]
+  name = Peter Danenberg
+  email = pcd@roxygen.org
+  
+[github]
+  user = klutometis
+
+# http://jblevins.org/notes/git-colors
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+
+[alias]
+  ci = commit
+  co = checkout
+  st = status
+  sub = submodule
+  up = update
+  ls = ls-files
+  # http://coderwall.com/p/euwpig?i=3&p=1&t=git
+  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[status]
+  relativePaths = false
+  showUntrackedFiles = no
+
+[core]
+  pager = less -i -R
