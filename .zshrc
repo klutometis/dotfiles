@@ -36,7 +36,7 @@ plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-hi
 
 source $ZSH/oh-my-zsh.sh
 
-export PROMPT="λ %~/ $(whoami)@$(hostname) $(git_prompt_info)%{$reset_color%}"
+export PROMPT="λ %~/ $(whoami)@$(hostname -s) $(git_prompt_info)%{$reset_color%}"
 
 # Customize to your needs...
 # Thanks, Marshall: <http://yountlabs.com/automation/disable-autocorrect-in-zsh/>.
