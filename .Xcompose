@@ -1,0 +1,5 @@
+# This doesn't work: so I have to copy-and-paste into the following:
+include "/usr/share/X11/locale/en_US.UTF-8/Compose"
+
+<Multi_key> <asterisk> <l>      : "λ"  U03BB       # GREEK SMALL LETTER LAMBDA
+<Multi_key> <l> <l>      : "λ"  U03BB       # GREEK SMALL LETTER LAMBDA

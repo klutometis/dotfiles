@@ -1,0 +1,9 @@
+application/pdf; /usr/bin/evince %s
+# text/*; /usr/bin/opera %s
+text/html; /usr/bin/links -dump 1 %s ; copiousoutput
+text/calendar; ~/bin/format-ics %s ; copiousoutput
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; /usr/bin/oowriter %s
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; /usr/bin/oocalc %s
+application/vnd.openxmlformats-officedocument.presentationml.presentation; /usr/bin/ooimpress %s
+application/vnd.ms-excel; /usr/bin/oocalc %s
+application/x-msexcel; /usr/bin/oocalc %s
