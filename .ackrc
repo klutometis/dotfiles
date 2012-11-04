@@ -1,0 +1,10 @@
+--smart-case
+--pager
+less -r
+# --color
+--type-set
+R=.R
+--type-set
+org=.org
+--type-set
+dot=.dot

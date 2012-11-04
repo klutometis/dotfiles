@@ -1,0 +1,5 @@
+gtk-key-theme-name = "Emacs"
+style "myfont" {
+        font_name = "Courier 15"
+}
+widget "*.MyWidget.*" style "myfont"

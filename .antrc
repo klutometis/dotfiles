@@ -1,0 +1,2 @@
+ANT_ARGS="$ANT_ARGS -emacs"
+ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
