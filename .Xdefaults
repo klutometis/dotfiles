@@ -46,6 +46,6 @@ edwin*background: black
 
 ! Interesting? does not seem to work
 XTerm.perl-ext-common: default,matcher
-XTerm.urlLauncher: firefox
+XTerm.urlLauncher: opera
 XTerm.matcher.button: 2
 XTerm.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
