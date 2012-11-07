@@ -16,6 +16,7 @@
                       apache-mode
                       clojure-mode
                       dired+
+                      dsvn
                       ess
                       full-ack
                       gnuplot
