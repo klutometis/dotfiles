@@ -16,6 +16,7 @@
                       apache-mode
                       clojure-mode
                       dired+
+                      dsvn
                       ess
                       full-ack
                       gnuplot
@@ -110,6 +111,7 @@
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
