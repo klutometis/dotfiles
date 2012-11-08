@@ -121,6 +121,7 @@
 ;;;;; Auto-modes
 
 (add-to-list 'auto-mode-alist '("\\.bsh\\'" . java-mode))
+(add-to-list 'auto-mode-alist '("\\.bats\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("\\.egg-locations\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.meta\\'" . scheme-mode))
