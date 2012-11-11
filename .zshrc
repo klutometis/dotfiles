@@ -38,6 +38,16 @@ source $ZSH/oh-my-zsh.sh
 
 export PROMPT='λ %~/ %n@%m $(git_prompt_info)%{$reset_color%}'
 
+if [[ "$TERM" == "dumb" ]]
+then
+  unsetopt zle
+  unsetopt prompt_cr
+  unsetopt prompt_subst
+  unfunction precmd
+  unfunction preexec
+  PS1='$ '
+fi
+
 # Customize to your needs...
 # Thanks, Marshall: <http://yountlabs.com/automation/disable-autocorrect-in-zsh/>.
 unsetopt correct_all
