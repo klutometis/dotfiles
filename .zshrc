@@ -52,7 +52,7 @@ fi
 # Thanks, Marshall: <http://yountlabs.com/automation/disable-autocorrect-in-zsh/>.
 unsetopt correct_all
 
-export PATH=/home/peter/bin:/usr/local/ec2/bin:/usr/local/neo4j/bin:/usr/local/ssl/bin:/usr/local/java/bin:/usr/local/maven/bin:/usr/local/apache2/bin:/usr/local/mysql/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
+export PATH=/home/peter/bin:/usr/local/ec2/bin:/usr/local/apr/bin:/usr/local/neo4j/bin:/usr/local/ssl/bin:/usr/local/java/bin:/usr/local/maven/bin:/usr/local/apache2/bin:/usr/local/mysql/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
 
 export RUNE_DATA_PATH=/usr/local/games/rune/System
 export SISC_HOME=/usr/local/sisc
