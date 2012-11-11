@@ -267,16 +267,16 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;;;; Scheme
 
-(defun scheme-send-buffer ()
-  "Just send the goddamn thing."
-  (interactive)
-  (scheme-send-region (point-min) (point-max)))
-
 ;;; Evaluate whole Scheme buffer.
 (defun scheme-send-buffer ()
   "Just send the goddamn thing."
   (interactive)
   (scheme-send-region (point-min) (point-max)))
+
+(defun sh-execute-buffer ()
+  "Just send the goddamn thing."
+  (interactive)
+  (sh-execute-region (point-min) (point-max)))
 
 (defun scheme-send-buffer-and-go ()
   "Send and go."
@@ -444,6 +444,10 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook 'slime-mode-hook 'setup-slime)
 (add-hook 'slime-repl-mode-hook 'paredit-plus-one)
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+
+(add-hook 'sh-mode-hook
+          (lambda ()
+            (define-key sh-mode-map (kbd "C-c b") 'sh-execute-buffer)))
 
 ;;;;; Latex
 
