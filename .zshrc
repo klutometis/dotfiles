@@ -97,9 +97,9 @@ alias pwgen='pwgen -s -y 14'
 alias ..='cd ..'            # Go up one directory
 alias ...='cd ../..'        # Go up two directories
 alias ....='cd ../../..'    # And for good measure
-alias l='ls -lah'           # Long view, show hidden
-alias la='ls -AF'           # Compact view, show hidden
-alias ll='ls -lFh'          # Long view, no hidden
+# alias l='ls -lah'           # Long view, show hidden
+# alias la='ls -AF'           # Compact view, show hidden
+# alias ll='ls -lFh'          # Long view, no hidden
 
 alias dh='dirs -v'
 
@@ -114,11 +114,11 @@ alias ftp='ftp -iv'
 # alias google-chrome-proxy='google-chrome --proxy-server=localhost:8118'
 alias dc='dc -e "10 k" -'
 
-alias ls='ls -hF --color=auto'
-alias ll='ls -lFh  --color=auto'
-alias la='ls -AF --color=auto'
-alias l='ls -CF --color=auto'
-alias l.='ls -d .* --color=auto'
+alias l='ls -hF --color=auto'
+alias ll='l -l'
+alias la='ll -Atrc'
+alias l.='l -d .*'
+
 alias pwgen='pwgen -s -y 14'
 alias cp='cp -v'
 alias mv='mv -v'
@@ -127,11 +127,11 @@ alias rm='rm -v'
 alias grep='grep --color=always'
 
 alias tree='tree -CF'
-alias t='tree'
-alias tt='t -t'
-alias td='t -d'
-alias t.='t -a'
-alias tf='t -f'
+# alias t='tree'
+alias tt='tree -t'
+alias td='tree -d'
+alias t.='tree -a'
+alias tf='tree -f'
 
 # Some suggestions from huffshell:
 alias s='sudo'
@@ -143,8 +143,12 @@ alias k='klutometis'
 alias e='emacs-no-wait'
 alias gcam='git ci -a -m'
 alias gcom='gco master'
+# alias 'g&g'='gcom && gl'
 alias cs='chicken-install -s'
 alias le='less'
+alias f='find'
+alias t='tar'
+alias pg='pass get'
 
 # Copy/kill region to X. Thanks, Gilles! See
 # <http://unix.stackexchange.com/a/18704>.
