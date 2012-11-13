@@ -151,6 +151,7 @@ alias le='less'
 alias f='find'
 alias t='tar'
 alias pg='pass get'
+alias sac0='sudo alsamixer -c 0'
 
 # Copy/kill region to X. Thanks, Gilles! See
 # <http://unix.stackexchange.com/a/18704>.
