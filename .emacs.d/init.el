@@ -23,6 +23,7 @@
                       go-mode
                       graphviz-dot-mode
                       haskell-mode
+                      htmlize
                       lua-mode
                       magit
                       markdown-mode
