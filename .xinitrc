@@ -6,4 +6,4 @@ xsetroot -solid black
 setxkbmap dvorak
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 xterm -e screen -R &
-exec ratpoison
+exec stumpwm
