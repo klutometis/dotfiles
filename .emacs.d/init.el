@@ -132,6 +132,7 @@
 (add-to-list 'auto-mode-alist '("\\.setup\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.shtml\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.stex\\'" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.stumpwmrc\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.sxml\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . auto-fill-mode))
 ;;; Regex from <http://www.emacswiki.org/emacs/MuttInEmacs>.
