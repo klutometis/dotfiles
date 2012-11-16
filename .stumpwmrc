@@ -1,10 +1,24 @@
 (in-package :stumpwm)
+
 (load "/home/peter/src/stumpwm/contrib/surfraw.lisp")
-(define-key *root-map* (kbd "C-1") "eval (sr-bookmark \"p\")")
-(define-key *root-map* (kbd "C-2") "eval (sr-bookmark \"r\")")
-(define-key *root-map* (kbd "C-3") "eval (sr-bookmark \"h\")")
-(define-key *root-map* (kbd "C-4") "eval (sr-bookmark \"t\")")
-(define-key *root-map* (kbd "C-5") "eval (sr-bookmark \"v\")")
-(define-key *root-map* (kbd "C-6") "eval (sr-bookmark \"e\")")
-(define-key *root-map* (kbd "C-7") "eval (sr-bookmark \"r5rs\")")
-(define-key *root-map* (kbd "C-8") "eval (sr-bookmark \"c\")")
+
+(define-key *root-map* (kbd "C-1") "sr-bookmark p")
+(define-key *root-map* (kbd "C-2") "sr-bookmark r")
+(define-key *root-map* (kbd "C-3") "sr-bookmark h")
+(define-key *root-map* (kbd "C-4") "sr-bookmark t")
+(define-key *root-map* (kbd "C-5") "sr-bookmark v")
+(define-key *root-map* (kbd "C-6") "sr-bookmark e")
+(define-key *root-map* (kbd "C-7") "sr-bookmark r5rs")
+(define-key *root-map* (kbd "C-8") "sr-bookmark c")
+
+(define-key *root-map* (kbd "g") "sr-google")
+(define-key *root-map* (kbd "G") "sr-sel-google")
+
+(define-key *root-map* (kbd "c") "sr-chicken")
+(define-key *root-map* (kbd "C") "sr-sel-chicken")
+
+(define-key *root-map* (kbd "C-c") "sr-chicken-regexp")
+(define-key *root-map* (kbd "C-C") "sr-sel-chicken-regexp")
+
+(define-key *root-map* (kbd "e") "sr-oed")
+(define-key *root-map* (kbd "E") "sr-sel-oed")
