@@ -141,6 +141,8 @@
                                   (auto-fill-mode)
                                   (turn-on-orgtbl))))
 
+(setq vc-follow-symlinks t)
+
 ;;;; Language-specific things
 
 ;;;;; org-mode
