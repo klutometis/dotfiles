@@ -22,3 +22,12 @@
 
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
+
+(define-key *root-map* (kbd "f") "exec opera")
+(define-key *root-map* (kbd "C-f") "exec opera")
+
+(define-key *root-map* (kbd "x") "exec xsel | xsel -b")
+(define-key *root-map* (kbd "C-x") "exec xsel | xsel -b")
+
+(define-key *root-map* (kbd "w") "exec xsel > /tmp/screen-exchange")
+(define-key *root-map* (kbd "C-w") "exec xsel > /tmp/screen-exchange")
