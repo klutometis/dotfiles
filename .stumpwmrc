@@ -31,3 +31,9 @@
 
 (define-key *root-map* (kbd "w") "exec xsel > /tmp/screen-exchange")
 (define-key *root-map* (kbd "C-w") "exec xsel > /tmp/screen-exchange")
+
+;;; Turn on mode-line; thanks, Prael:
+;;; <http://prael.wordpress.com/stumpwmrc/>.
+(if (not (head-mode-line (current-head)))
+    (toggle-mode-line (current-screen) (current-head)))
+
