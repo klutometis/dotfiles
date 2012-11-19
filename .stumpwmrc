@@ -17,8 +17,8 @@
 (define-key *root-map* (kbd "c") "sr-chicken")
 (define-key *root-map* (kbd "C") "sr-sel-chicken")
 
-(define-key *root-map* (kbd "C-c") "sr-chicken-regexp")
-(define-key *root-map* (kbd "C-C") "sr-sel-chicken-regexp")
+(define-key *root-map* (kbd "C-c") "sr-chicken-regex")
+(define-key *root-map* (kbd "C-C") "sr-sel-chicken-regex")
 
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
