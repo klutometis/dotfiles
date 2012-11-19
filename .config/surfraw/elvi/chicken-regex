@@ -1,6 +1,6 @@
 #!/bin/sh
 # $Id$
-# elvis: chicken	-- Search chickadee using regex (api.call-cc.org/doc)
+# elvis: chicken-regex	-- Search chickadee using regex (api.call-cc.org/doc)
 . surfraw || exit 1
 
 w3_usage_hook () {
