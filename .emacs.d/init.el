@@ -89,10 +89,10 @@
 ;;; Answer y-or-ns with enter.
 (define-key query-replace-map (kbd "C-m") 'act)
 
-;;; Prevent "Active processes exist" on exit.
-(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-  (flet ((process-list ())) ad-do-it))
+;;; Prevent "Active processes exist" on exit; thanks, Jürgen Hötzel:
+;;; <http://stackoverflow.com/a/2708042>.
+(add-hook 'comint-exec-hook
+          (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
 
 ;;; Hack to disable flyspell, which was freezing up when writing e.g.
 ;;; git commit-comments.
