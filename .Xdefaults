@@ -21,3 +21,13 @@ XTerm.perl-ext-common: default,matcher
 XTerm.urlLauncher: opera
 XTerm.matcher.button: 2
 XTerm.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
+
+! Thanks, Rowan Rodrik:
+! <http://blog.bigsmoke.us/2010/01/31/xterm-clipboard-selection>.
+XTerm*VT100.Translations: #override \
+    Shift<Key>Insert: insert-selection(CLIPBOARD) \n\
+    <Key>Insert: insert-selection(PRIMARY) \n\
+    Shift<Btn2Up>: insert-selection(CLIPBOARD) \n\
+    Shift<Btn1Down>: select-start() \n\
+    Shift<Btn1Motion>: select-extend() \n\
+    Shift<Btn1Up>: select-end(CLIPBOARD)
