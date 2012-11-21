@@ -1,3 +1,8 @@
+;; Fix for Emacs 24.3.50.1; see
+;; <https://github.com/eschulte/emacs24-starter-kit/issues/30> and
+;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
+(require 'hippie-exp)
+
 ;;;; ESK
 
 (require 'package)
