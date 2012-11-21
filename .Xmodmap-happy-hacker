@@ -1,18 +1,17 @@
 keycode 108 = Multi_key
-! Can't seem to get M-<return> to work, even with these:
-! keycode 64 = Meta_L Alt_L
-! keycode 108 = Meta_R Alt_R
-! add mod1 = Meta_L Meta_R
+
+! Thanks: <http://www.emacswiki.org/emacs/XModMap>; the perennial
+! <http://www.emacswiki.org/emacs/MetaKeyProblems>.
+clear mod1
+keycode 64 = Meta_L
+keycode 108 = Meta_R
+add mod1 = Meta_L
 
 ! Thanks, Olin; thanks, Kragen:
 ! <http://canonical.org/~kragen/setting-up-keyboard.html>,
 ! <http://lists.canonical.org/pipermail/kragen-hacks/2002-January/000306.html>.
-! keysym bracketleft = parenleft braceleft
-! keysym bracketright = parenright braceright
-! keysym parenleft = 9 bracketleft
-! keysym parenright = 0 bracketright
 keycode 18 = 9 braceleft
 keycode 19 = 0 braceright
 keycode 20 = parenleft bracketleft
 keycode 21 = parenright bracketright
-keysym Alt_R    = Multi_key
+keycode 134 = Multi_key
