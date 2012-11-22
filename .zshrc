@@ -153,23 +153,6 @@ alias t='tar'
 alias pg='pass get'
 alias sac0='sudo alsamixer -c 0'
 
-# Copy/kill region to X. Thanks, Gilles! See
-# <http://unix.stackexchange.com/a/18704>.
-if [[ -n $DISPLAY ]]; then
-  x-copy-region-as-kill () {
-    zle copy-region-as-kill
-    print -rn -- "$CUTBUFFER" | xsel -ib
-  }
-  x-kill-region () {
-    zle kill-region
-    print -rn -- "$CUTBUFFER" | xsel -ib
-  }
-  zle -N x-copy-region-as-kill
-  zle -N x-kill-region
-  bindkey '\C-w' x-kill-region
-  bindkey '\ew' x-copy-region-as-kill
-fi
-
 # Thanks, zshwiki: <http://zshwiki.org/home/zle/bindkeys>; HH key
 # layout: <http://www.fentek-ind.com/sphappyhacking.htm>.
 autoload zkbd
