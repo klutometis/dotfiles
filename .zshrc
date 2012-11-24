@@ -124,6 +124,7 @@ alias cp='cp -v'
 alias mv='mv -v'
 alias ln='ln -v'
 alias rm='rm -v'
+alias mkdir='mkdir -v'
 alias grep='grep --color=always'
 
 alias tree='tree -CF'
