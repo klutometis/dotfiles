@@ -61,6 +61,10 @@
 
 ;;;; Miscellaneous
 
+;;; Fix <C-left> and <C-right> when invoking emacs from screen.
+(define-key input-decode-map "\M-[1;5C" [(control right)])
+(define-key input-decode-map "\M-[1;5D" [(control left)])
+
 ;;; We need this, after all?
 (require 'ess-site)
 
