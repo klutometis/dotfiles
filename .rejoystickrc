@@ -1,0 +1,14 @@
+jbutton type: 10 which: 0 button: 0 state: 1 key: 0
+jbutton type: 10 which: 0 button: 1 state: 0 key: 29
+jbutton type: 10 which: 0 button: 2 state: 0 key: 43
+jbutton type: 10 which: 0 button: 3 state: 1 key: 0
+jbutton type: 10 which: 0 button: 4 state: 1 key: 0
+jbutton type: 10 which: 0 button: 5 state: 1 key: 0
+jbutton type: 10 which: 0 button: 6 state: 1 key: 0
+jbutton type: 10 which: 0 button: 7 state: 1 key: 0
+jbutton type: 10 which: 0 button: 8 state: 0 key: 47
+jbutton type: 10 which: 0 button: 9 state: 0 key: 36
+jaxis type: 7 which: 0 axis: 0 value: 1 limit: 10000 key: 114
+jaxis type: 7 which: 0 axis: 0 value: -1 limit: 10000 key: 113
+jaxis type: 7 which: 0 axis: 1 value: 1 limit: 10000 key: 116
+jaxis type: 7 which: 0 axis: 1 value: -1 limit: 10000 key: 111
