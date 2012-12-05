@@ -36,5 +36,7 @@ XTerm*VT100.Translations: #override \
 ! the selections of URLs.
 XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
 
-! On second thought, let's treat all printable characters as letters:
-XTerm*charClass: 33-126:48
+! On second thought, let's treat all printable characters as letters;
+! and, for good measure, add line-feeds so we can click past the end
+! of the line:
+XTerm*charClass: 33-126:48,10:48
