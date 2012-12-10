@@ -324,6 +324,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'type-case 'scheme-indent-function 1)
 (put 'type-case* 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
+(put 'until 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
