@@ -6,5 +6,6 @@ xsetroot -solid black
 setxkbmap dvorak
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
+redshift-altadena &
 xterm -e screen -R &
 exec stumpwm
