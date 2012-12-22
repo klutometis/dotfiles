@@ -308,6 +308,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'dotimes 'scheme-indent-function 1)
 (put 'for-each 'scheme-indent-function 1)
 (put 'handle-exceptions 'scheme-indent-function 1)
+(put 'hash-table-walk 'scheme-indent-function 1)
 (put 'match 'scheme-indent-function 1)
 (put 'match-lambda 'scheme-indent-function 1)
 (put 'match-lambda* 'scheme-indent-function 1)
