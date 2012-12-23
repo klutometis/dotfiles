@@ -52,7 +52,27 @@ fi
 # Thanks, Marshall: <http://yountlabs.com/automation/disable-autocorrect-in-zsh/>.
 unsetopt correct_all
 
-export PATH=/home/peter/bin:/home/peter/src/stumpwm/contrib:/home/peter/.config/surfraw/elvi/:/usr/libexec/surfraw:/usr/local/ec2/bin:/usr/local/apr/bin:/usr/local/neo4j/bin:/usr/local/ssl/bin:/usr/local/java/bin:/usr/local/maven/bin:/usr/local/apache2/bin:/usr/local/mysql/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
+# Pathdirs: <http://stackoverflow.com/a/9352979>; and another:
+# <http://unix.stackexchange.com/a/31235>.
+path+=/sbin
+path+=/usr/sbin
+path+=/usr/local/sbin
+path+=/bin
+path+=/usr/bin
+path+=/usr/local/bin
+path+=/usr/local/mysql/bin
+path+=/usr/local/apache2/bin
+path+=/usr/local/maven/bin
+path+=/usr/local/java/bin
+path+=/usr/local/ssl/bin
+path+=/usr/local/neo4j/bin
+path+=/usr/local/apr/bin
+path+=/usr/local/ec2/bin
+path+=/usr/local/pgsql/bin
+path+=/usr/libexec/surfraw
+path+=/home/peter/.config/surfraw/elvi
+path+=/home/peter/src/stumpwm/contrib
+path+=/home/peter/bin
 
 export RUNE_DATA_PATH=/usr/local/games/rune/System
 export SISC_HOME=/usr/local/sisc
