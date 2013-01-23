@@ -54,12 +54,7 @@ unsetopt correct_all
 
 # Pathdirs: <http://stackoverflow.com/a/9352979>; and another:
 # <http://unix.stackexchange.com/a/31235>.
-path+=/sbin
-path+=/usr/sbin
-path+=/usr/local/sbin
-path+=/bin
-path+=/usr/bin
-path+=/usr/local/bin
+path+=/home/peter/bin
 path+=/usr/local/mysql/bin
 path+=/usr/local/apache2/bin
 path+=/usr/local/maven/bin
@@ -72,7 +67,12 @@ path+=/usr/local/pgsql/bin
 path+=/usr/libexec/surfraw
 path+=/home/peter/.config/surfraw/elvi
 path+=/home/peter/src/stumpwm/contrib
-path+=/home/peter/bin
+path+=/sbin
+path+=/usr/sbin
+path+=/usr/local/sbin
+path+=/bin
+path+=/usr/bin
+path+=/usr/local/bin
 
 export RUNE_DATA_PATH=/usr/local/games/rune/System
 export SISC_HOME=/usr/local/sisc
