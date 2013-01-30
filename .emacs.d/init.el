@@ -158,6 +158,9 @@
 
 ;;;;; org-mode
 
+;;; Stuff to publish the daybook.
+(load "~/prg/org/daybook/daybook.el")
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((ditaa . t)
