@@ -310,7 +310,34 @@ This function is called by `org-babel-execute-src-block'."
            (skeleton-insert (list nil omark '_ qmark) -1)))
         ((looking-at (regexp-opt (list (string omark) (string qmark))))
          (forward-char 1))
-        (t ad-do-it))))))
+        (t ad-do-it))))
+
+   (defun org-export-html-format-image (src par-open)
+     "Create image tag with source and attributes."
+     (save-match-data
+       (if (string-match (regexp-quote "ltxpng/") src)
+           (format "<img src=\"%s\" alt=\"%s\"/>"
+                   src (org-find-text-property-in-string 'org-latex-src src))
+         (let* ((caption (org-find-text-property-in-string 'org-caption src))
+                (attr (org-find-text-property-in-string 'org-attributes src))
+                (label (org-find-text-property-in-string 'org-label src)))
+           ;; (setq caption (and caption (org-html-do-expand caption)))
+           (concat
+            (if caption
+                (format "%s<div %sclass=\"figure\">
+<p>"
+                        (if org-par-open "</p>\n" "")
+                        (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
+            (format "<img src=\"%s\"%s />"
+                    src
+                    (if (string-match "\\<alt=" (or attr ""))
+                        (concat " " attr )
+                      (concat " " attr " alt=\"" src "\"")))
+            (if caption
+                (format "</p>%s
+</div>%s"
+                        (concat "\n<p>" caption "</p>")
+                        (if org-par-open "\n<p>" ""))))))))))
 
 (add-hook
  'org-src-mode-hook
