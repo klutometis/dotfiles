@@ -10,6 +10,8 @@
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
              '("ELPA" . "http://tromey.com/elpa/") t)
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -33,7 +35,7 @@
                       magit
                       markdown-mode
                       mediawiki
-                      org
+                      org-plus-contrib
                       paredit
                       php-mode
                       prolog
