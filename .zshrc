@@ -174,3 +174,4 @@ alias f='find'
 alias t='tar'
 alias pg='pass get'
 alias sac0='sudo alsamixer -c 0'
+alias a=ack
