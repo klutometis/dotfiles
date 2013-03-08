@@ -55,6 +55,7 @@ unsetopt correct_all
 # Pathdirs: <http://stackoverflow.com/a/9352979>; and another:
 # <http://unix.stackexchange.com/a/31235>.
 path+=/home/peter/bin
+path+=/usr/local/mongo/bin
 path+=/usr/local/mysql/bin
 path+=/usr/local/apache2/bin
 path+=/usr/local/maven/bin
