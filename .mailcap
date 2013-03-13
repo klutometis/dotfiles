@@ -1,4 +1,7 @@
-application/pdf; /usr/bin/evince %s
+application/octet-stream; fim %s
+application/pdf; fimgs %s
+# application/pdf;( [ "$DISPLAY" != "" ] && fuck %s ) || ( ( ( tty | grep tty ) && fimgs  %s ) )
+# application/pdf; /usr/bin/evince %s
 # text/*; /usr/bin/opera %s
 text/html; /usr/bin/links -dump 1 %s ; copiousoutput
 text/calendar; ~/bin/format-ics %s ; copiousoutput
