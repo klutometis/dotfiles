@@ -75,104 +75,94 @@ path+=/bin
 path+=/usr/bin
 path+=/usr/local/bin
 
-export RUNE_DATA_PATH=/usr/local/games/rune/System
-export SISC_HOME=/usr/local/sisc
-export CATALINA_HOME=/usr/local/tomcat
-export JAVA_HOME=/usr/local/java
-export ANT_HOME=/usr/local/ant
-# For compatibility with IPv4.
-export JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
-export GROFF_NO_SGR=1
-export CVS_RSH=ssh
-export SGML_CATALOG_FILES=/etc/sgml/sgml-docbook.cat
-export EDITOR='emacs-no-wait'
-# For Java apps under Ratpoison
-# export AWT_TOOLKIT=MToolkit
-export LANG=en_US.UTF-8
-export LESS='-i'
-export MBOX=~/mail/received
-export ANT_ARGS="$ANT_ARGS -emacs"
-export ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
-export M4PATH="/usr/local/share/aclocal"
+export ANT_ARGS="$ANT_ARGS -emacs"
+export ANT_HOME=/usr/local/ant
+export ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
+export CATALINA_HOME=/usr/local/tomcat
+export CLASSPATH="/home/pcdanenb/lib/java/*"
+export CLOJURE_HOME=/usr/local/clojure
+export CVS_RSH=ssh
+export EC2_HOME=/usr/local/ec2
+export EDITOR='emacs-no-wait'
+# Use the hard-coded framebuffer font.
+export FBFONT=fim://
 export GOROOT=~/lib/go
 export GOOS=linux
 export GOARCH=amd64
 export GOBIN=~/bin
+# export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
+export GROFF_NO_SGR=1
+# export HADOOP_HOME=/usr/local/hadoop
+export JAVA_HOME=/usr/local/java
+# For compatibility with IPv4.
+export JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
+# For Java apps under Ratpoison
+# export AWT_TOOLKIT=MToolkit
+export LANG=en_US.UTF-8
+export LESS='-i'
+export M4PATH="/usr/local/share/aclocal"
+export MBOX=~/mail/received
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
 export R_HOME=/usr/local/lib64/R
 export R_LIBS=~/lib/R
-export EC2_HOME=/usr/local/ec2
-export AWS_ACCESS_KEY=AKIAJ6GTV2NEDUI3MY6Q
-export AWS_SECRET_KEY=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
-export CLOJURE_HOME=/usr/local/clojure
-export CLASSPATH="/home/pcdanenb/lib/java/*"
-# export HADOOP_HOME=/usr/local/hadoop
-# export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
+export RUNE_DATA_PATH=/usr/local/games/rune/System
+export SGML_CATALOG_FILES=/etc/sgml/sgml-docbook.cat
+export SISC_HOME=/usr/local/sisc
 # export TERM=xterm-256color
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:$PKG_CONFIG_PATH
 export TMPDIR=/tmp
 export XCOMPOSEFILE=~/.Xcompose
 
-alias fetchmail='fetchmail --nodetach'
-alias pwgen='pwgen -s -y 14'
 alias ..='cd ..'            # Go up one directory
 alias ...='cd ../..'        # Go up two directories
 alias ....='cd ../../..'    # And for good measure
+alias a=ack
+alias c='cd'
+alias cp='cp -v'
+alias cs='chicken-install -s'
+alias dc='dc -e "10 k" -'
+alias dh='dirs -v'
+alias e='emacs-no-wait'
+alias f='find'
+alias fetchmail='fetchmail --nodetach'
+alias ftp='ftp -iv'
+# `g&g' (as suggested by huffshell) doesn't work as an alias.
+# alias 'g&g'='gcom && gl'
+alias gcam='git ci -a -m'
+alias gcom='gco master'
+alias gg='gcom && gl'
+# alias google-chrome='google-chrome --enable-plugins'
+# alias google-chrome-proxy='google-chrome --proxy-server=localhost:8118'
+alias grep='grep --color=always'
+alias k='klutometis'
 # alias l='ls -lah'           # Long view, show hidden
 # alias la='ls -AF'           # Compact view, show hidden
 # alias ll='ls -lFh'          # Long view, no hidden
-
-alias dh='dirs -v'
-
-unsetopt CASE_GLOB
-setopt NO_NOMATCH
-
-# User specific aliases and functions
-alias less='less -i -R'
-#alias mutt='ssh -t wikitex.org ". .bashrc; mutt"'
-alias ftp='ftp -iv'
-# alias google-chrome='google-chrome --enable-plugins'
-# alias google-chrome-proxy='google-chrome --proxy-server=localhost:8118'
-alias dc='dc -e "10 k" -'
-
 alias l='ls -hF --color=auto'
-alias ll='l -l'
-alias la='ll -Atrc'
 alias l.='l -d .*'
-
-alias pwgen='pwgen -s -y 14'
-alias cp='cp -v'
-alias mv='mv -v'
+alias la='ll -Atrc'
+alias ll='l -l'
 alias ln='ln -v'
-alias rm='rm -v'
+alias le='less'
+alias less='less -i -R'
+alias m='mutt'
 alias mkdir='mkdir -v'
-alias grep='grep --color=always'
-
-alias tree='tree -CF'
-# alias t='tree'
-alias tt='tree -t'
-alias td='tree -d'
-alias t.='tree -a'
-alias tf='tree -f'
-
-# Some suggestions from huffshell:
+alias mv='mv -v'
+alias pg='pass get'
+alias pwgen='pwgen -s -y 14'
+alias rm='rm -v'
 alias s='sudo'
+alias sac0='sudo alsamixer -c 0'
 alias sy='sudo yum'
 alias syi='sudo yum install'
 alias sys='sudo yum search'
-alias m='mutt'
-alias c='cd'
-alias k='klutometis'
-alias e='emacs-no-wait'
-alias gcam='git ci -a -m'
-alias gcom='gco master'
-# `g&g' (as suggested by huffshell) doesn't work as an alias.
-# alias 'g&g'='gcom && gl'
-alias gg='gcom && gl'
-alias cs='chicken-install -s'
-alias le='less'
-alias f='find'
 alias t='tar'
-alias pg='pass get'
-alias sac0='sudo alsamixer -c 0'
-alias a=ack
+# alias t='tree'
+alias t.='tree -a'
+alias td='tree -d'
+alias tf='tree -f'
+alias tree='tree -CF'
+alias tt='tree -t'
+
+unsetopt CASE_GLOB
+setopt NO_NOMATCH
