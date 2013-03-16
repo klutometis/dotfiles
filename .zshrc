@@ -134,6 +134,7 @@ alias gg='gcom && gl'
 # alias google-chrome='google-chrome --enable-plugins'
 # alias google-chrome-proxy='google-chrome --proxy-server=localhost:8118'
 alias grep='grep --color=always'
+alias i='elinks'
 alias k='klutometis'
 # alias l='ls -lah'           # Long view, show hidden
 # alias la='ls -AF'           # Compact view, show hidden
