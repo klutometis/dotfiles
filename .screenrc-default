@@ -60,8 +60,12 @@ bindkey -m -k kN stuff V
 bindkey -m ^e stuff "$^f"
 
 # C-g and other keys just quit copy mode. Esc does nothing.
-markkeys \033=\015=^G=^D=h=j=k=l=H=M=L=G=g=y=c=v=a=x=b=e=B=E=w
-markkeys @=\033
+#
+# No, we actually want things like: join, columns, append; scratch
+# this.
+# markkeys \033=\015=^G=^D=h=j=k=l=H=M=L=G=g=y=c=v=a=x=b=e=B=E=w
+# markkeys @=\033
+
 
 # control arrows move by words. (set B, e, and w to F keys so that i can
 # use them to move by words, but they themselves still quit copy mode.)
