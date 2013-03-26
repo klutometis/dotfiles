@@ -124,7 +124,7 @@ alias dc='dc -e "10 k" -'
 alias dh='dirs -v'
 alias e='emacs-no-wait'
 alias f='find'
-alias fetchmail='fetchmail --nodetach'
+# alias fetchmail='fetchmail --nodetach'
 alias ftp='ftp -iv'
 # `g&g' (as suggested by huffshell) doesn't work as an alias.
 # alias 'g&g'='gcom && gl'
