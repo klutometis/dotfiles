@@ -234,7 +234,16 @@ This function is called by `org-babel-execute-src-block'."
                  "-newtab"
                  url))
 
-(setq browse-url-browser-function 'browse-url-opera)
+(defun browse-url-elinks (url &optional new-window)
+  (setq url (browse-url-encode-url url))
+  (start-process "elinks"
+                 nil
+                 "elinks"
+                 "\"openurl("
+                 url
+                 "\", new-tab)"))
+
+(setq browse-url-browser-function 'browse-url-elinks)
 
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
