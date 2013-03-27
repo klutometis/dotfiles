@@ -17,6 +17,8 @@ nethack on
 # Dynamic window-titles based on PS1.
 shelltitle '% |zsh'
 
+shell "/bin/zsh"
+
 # Status line
 hardstatus off
 hardstatus alwayslastline
