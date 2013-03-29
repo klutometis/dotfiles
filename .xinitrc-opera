@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+source ~/.xinitrc-default
+exec opera
