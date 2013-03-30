@@ -3,4 +3,3 @@
 (gnu-history-install-file-manager
  (string-append (or (get-environment-variable "HOME") ".")
                 "/.csi.history"))
-(use scsh-process)
