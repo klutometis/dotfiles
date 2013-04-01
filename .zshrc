@@ -82,7 +82,7 @@ export ANT_ARGS="$ANT_ARGS -emacs"
 export ANT_HOME=/usr/local/ant
 export ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
 export CATALINA_HOME=/usr/local/tomcat
-export CLASSPATH="/home/peter/lib/java/*"
+export CLASSPATH="${HOME}/lib/java/*"
 export CLOJURE_HOME=/usr/local/clojure
 export CVS_RSH=ssh
 export EC2_HOME=/usr/local/ec2
