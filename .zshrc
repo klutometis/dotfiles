@@ -54,6 +54,7 @@ unsetopt correct_all
 
 # Pathdirs: <http://stackoverflow.com/a/9352979>; and another:
 # <http://unix.stackexchange.com/a/31235>.
+path=
 path+=/home/peter/bin
 path+=/usr/lib64/qt4/bin/
 path+=/usr/local/mongo/bin
