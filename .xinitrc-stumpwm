@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 source ~/.xinitrc-default
-xterm -e screen -R &
+xterm -ls &
 exec stumpwm
