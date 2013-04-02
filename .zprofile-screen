@@ -8,6 +8,6 @@ if [ -z "$SSH_CLIENT" ]; then
     else
         # Otherwise, create a new screen; and, in fact, create one
         # from within screen (useful if X is invoked with `vt xinit').
-        exec screen
+        exec screen -m
     fi
 fi
