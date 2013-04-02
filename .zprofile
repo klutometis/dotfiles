@@ -5,5 +5,8 @@ if [ -z "$SSH_CLIENT" ]; then
     # attach!
     if [ $? -eq 11 ] || [ $? -eq 8 ]; then
         exec screen -R
+    else
+        # Otherwise, create a new screen.
+        exec screen
     fi
 fi
