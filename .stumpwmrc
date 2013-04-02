@@ -11,8 +11,8 @@
 (define-key *root-map* (kbd "C-7") "sr-bookmark r5rs")
 (define-key *root-map* (kbd "C-8") "sr-bookmark c")
 
-(define-key *root-map* (kbd "c") "exec xterm -e screen -R")
-(define-key *root-map* (kbd "C-c") "exec xterm -e screen -R")
+(define-key *root-map* (kbd "c") "exec xterm -ls")
+(define-key *root-map* (kbd "C-c") "exec xterm -ls")
 
 (define-key *root-map* (kbd "d") "sr-chicken")
 (define-key *root-map* (kbd "D") "sr-sel-chicken")
