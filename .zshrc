@@ -70,12 +70,12 @@ path+=/usr/local/pgsql/bin
 path+=/usr/libexec/surfraw
 path+=/home/peter/.config/surfraw/elvi
 path+=/home/peter/src/stumpwm/contrib
-path+=/sbin
-path+=/usr/sbin
 path+=/usr/local/sbin
-path+=/bin
-path+=/usr/bin
+path+=/usr/sbin
+path+=/sbin
 path+=/usr/local/bin
+path+=/usr/bin
+path+=/bin
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
 export ANT_ARGS="$ANT_ARGS -emacs"
