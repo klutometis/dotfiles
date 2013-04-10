@@ -82,6 +82,8 @@ export ACLOCAL="aclocal -I /usr/local/share/aclocal"
 export ANT_ARGS="$ANT_ARGS -emacs"
 export ANT_HOME=/usr/local/ant
 export ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
+# For Java apps under Ratpoison
+# export AWT_TOOLKIT=MToolkit
 export CATALINA_HOME=/usr/local/tomcat
 export CLASSPATH="${HOME}/lib/java/*"
 export CLOJURE_HOME=/usr/local/clojure
@@ -96,12 +98,11 @@ export GOARCH=amd64
 export GOBIN=~/bin
 # export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
 export GROFF_NO_SGR=1
-# export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_PREFIX=/usr/local/hadoop
 export JAVA_HOME=/usr/local/java
 # For compatibility with IPv4.
 export JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
-# For Java apps under Ratpoison
-# export AWT_TOOLKIT=MToolkit
+# export HADOOP_HOME=/usr/local/hadoop
 export LANG=en_US.UTF-8
 export LESS='-i'
 export M4PATH="/usr/local/share/aclocal"
