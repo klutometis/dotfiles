@@ -60,6 +60,7 @@ path+=/usr/lib64/qt4/bin/
 path+=/usr/local/apache2/bin
 path+=/usr/local/apr/bin
 path+=/usr/local/ec2/bin
+path+=/usr/local/hadoop/bin
 path+=/usr/local/java/bin
 path+=/usr/local/maven/bin
 path+=/usr/local/mongo/bin
