@@ -243,7 +243,7 @@ This function is called by `org-babel-execute-src-block'."
                  url
                  "\", new-tab)"))
 
-(setq browse-url-browser-function 'browse-url-elinks)
+(setq browse-url-browser-function 'browse-url-opera)
 
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
