@@ -10,6 +10,7 @@ XTerm*eightBitInput: false
 
 ! Appears to fix the default 80x24 behaviour
 XTerm*waitForMap: true
+XTerm*maximized: true
 
 ! Set utf8 regardless of locale?
 XTerm*utf8: 2
