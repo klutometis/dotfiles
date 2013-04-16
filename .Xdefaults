@@ -12,6 +12,9 @@ XTerm*eightBitInput: false
 XTerm*waitForMap: true
 XTerm*maximized: true
 
+! Not sure if we need this to fix the resizing behaviour with stumpwm.
+XTerm*ptySttySize: true
+
 ! Set utf8 regardless of locale?
 XTerm*utf8: 2
 
