@@ -544,8 +544,8 @@ This function is called by `org-babel-execute-src-block'."
 ;;;;; Latex
 
 ;;; Don't we need more scaffolding for xelatex?
-(setq tex-dvi-view-command "xdvi")
-;; (setq tex-dvi-view-command "evince")
+;; (setq tex-dvi-view-command "xdvi")
+(setq tex-dvi-view-command "evince")
 ;; (setq latex-run-command "xelatex -shell-escape")
 (setq org-latex-to-pdf-process
       '("xelatex -interaction nonstopmode -output-directory %o %f"
