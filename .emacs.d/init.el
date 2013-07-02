@@ -62,6 +62,9 @@
 (delete-selection-mode t)
 (setq column-number-mode t)
 
+;;; For ``Delete excess backup versions of /home/peter/.recentf?''
+(setq delete-old-versions t)
+
 ;;;; Miscellaneous
 
 ;;; Fix <C-left> and <C-right> when invoking emacs from screen.
