@@ -37,6 +37,7 @@
                       magit
                       markdown-mode
                       mediawiki
+                      nrepl
                       org-plus-contrib
                       paredit
                       php-mode
@@ -163,6 +164,11 @@
 (setq vc-follow-symlinks t)
 
 ;;;; Language-specific things
+
+;;;;; Clojure
+
+(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+(add-hook 'nrepl-mode-hook 'paredit-mode)
 
 ;;;;; org-mode
 
