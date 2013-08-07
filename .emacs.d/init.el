@@ -69,6 +69,10 @@
 
 ;;; Dired should grep case insensitively.
 (setq find-grep-options "-q -i")
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
+            (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
