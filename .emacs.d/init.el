@@ -69,8 +69,10 @@
 
 ;;; Dired should grep case insensitively.
 (setq find-grep-options "-q -i")
-(define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
-(define-key dired-mode-map (kbd "C-x g") 'find-name-dired)
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
+            (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
 
 ;;; Fix <C-left> and <C-right> when invoking emacs from screen.
 ;;; Thanks, Thomas! <http://superuser.com/a/309052>
