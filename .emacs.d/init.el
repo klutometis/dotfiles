@@ -67,6 +67,11 @@
 
 ;;;; Miscellaneous
 
+;;; Dired should grep case insensitively.
+(setq find-grep-options "-q -i")
+(define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
+(define-key dired-mode-map (kbd "C-x g") 'find-name-dired)
+
 ;;; Fix <C-left> and <C-right> when invoking emacs from screen.
 ;;; Thanks, Thomas! <http://superuser.com/a/309052>
 (define-key input-decode-map "\M-[1;5C" [(control right)])
@@ -124,10 +129,12 @@
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
+(global-set-key (kbd "C-c R") 'recompile)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
