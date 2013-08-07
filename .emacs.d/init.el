@@ -71,6 +71,7 @@
 (setq find-grep-options "-q -i")
 (add-hook 'dired-mode-hook
           (lambda ()
+            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)
             (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
             (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
 
