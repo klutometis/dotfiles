@@ -43,6 +43,7 @@
                       slime
                       slime-repl
                       smart-tab
+                      sql-indent
                       starter-kit
                       starter-kit-bindings
                       starter-kit-js
