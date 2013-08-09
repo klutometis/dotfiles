@@ -68,6 +68,20 @@
 
 ;;;; Miscellaneous
 
+;;; Python
+(defun python-send-buffer-and-go ()
+  "Send the buffer to the inferior Python process.
+Then switch to the process buffer."
+  (interactive)
+  (python-send-buffer)
+  (python-switch-to-python t))
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+            (define-key python-mode-map (kbd "C-c z")
+              (lambda () (interactive) (python-switch-to-python t)))))
+
 ;;; Dired should grep case insensitively.
 (setq find-grep-options "-q -i")
 (add-hook 'dired-mode-hook
