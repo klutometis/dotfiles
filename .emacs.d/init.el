@@ -222,11 +222,37 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
-(global-set-key (kbd "<up>") 'windmove-up)
-(global-set-key (kbd "<down>") 'windmove-down)
-(global-set-key (kbd "<right>") 'windmove-right)
-(global-set-key (kbd "<left>") 'windmove-left)
+;; (global-set-key (kbd "<up>") 'windmove-up)
+;; (global-set-key (kbd "<down>") 'windmove-down)
+;; (global-set-key (kbd "<right>") 'windmove-right)
+;; (global-set-key (kbd "<left>") 'windmove-left)
+
+;;; Compensate for screen.
+(define-key input-decode-map "\e[1;2D" [S-left])
+(define-key input-decode-map "\e[1;2C" [S-right])
+(define-key input-decode-map "\e[1;2B" [S-down])
+(define-key input-decode-map "\e[1;2A" [S-up])
+(define-key input-decode-map "\e[1;2F" [S-end])
+(define-key input-decode-map "\e[1;2H" [S-home])
+
+(define-key input-decode-map "\e[1;5D" [C-left])
+(define-key input-decode-map "\e[1;5C" [C-right])
+(define-key input-decode-map "\e[1;5B" [C-down])
+(define-key input-decode-map "\e[1;5A" [C-up])
+
+(define-key input-decode-map "\e[1;6D" [C-S-left])
+(define-key input-decode-map "\e[1;6C" [C-S-right])
+(define-key input-decode-map "\e[1;6B" [C-S-down])
+(define-key input-decode-map "\e[1;6A" [C-S-up])
+
+;;; Dvorak (see <http://www.emacswiki.org/emacs/DvorakKeyboard>).
+(global-set-key (kbd "C-,") ctl-x-map)
+(global-set-key (kbd "C-x C-h") help-map)
+(global-set-key (kbd "C-h") 'previous-line)
+(global-set-key (kbd "C-.") 'execute-extended-command)
+(global-set-key (kbd "C-'") 'hippie-expand)
 
 ;;;;; Auto-modes
 
