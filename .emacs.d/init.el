@@ -46,6 +46,7 @@
                       slime
                       slime-repl
                       smart-tab
+                      sql-indent
                       starter-kit
                       starter-kit-bindings
                       starter-kit-js
@@ -69,6 +70,63 @@
 (setq delete-old-versions t)
 
 ;;;; Miscellaneous
+
+;;; Python
+(defun python-send-buffer-and-go ()
+  "Send the buffer to the inferior Python process.
+Then switch to the process buffer."
+  (interactive)
+  (python-send-buffer)
+  (python-switch-to-python t))
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+            (define-key python-mode-map (kbd "C-c z")
+              (lambda () (interactive) (python-switch-to-python t)))))
+
+;;; SQL
+(defun my-sql-save-history-hook ()
+  (let ((lval 'sql-input-ring-file-name)
+        (rval 'sql-product))
+    (if (symbol-value rval)
+        (let ((filename
+               (concat "~/.emacs.d/sql/"
+                       (symbol-name (symbol-value rval))
+                       "-history.sql")))
+          (set (make-local-variable lval) filename))
+      (error
+       (format "SQL history will not be saved because %s is nil"
+               (symbol-name rval))))))
+
+(add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+(add-hook 'sql-mode-hook
+          (lambda ()
+            (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+;;; The executable is osql, but osql doesn't seem to pass things to
+;;; isql correctly.
+(setq sql-ms-options '("--" "-w" "300" "-n"))
+
+;;; Dired should grep case insensitively.
+(setq find-grep-options "-q -i")
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)
+            (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
+            (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
+
+;;; Insert the buffer-name when working with the minibuffer; thanks,
+;;; polyglot: <http://stackoverflow.com/q/455345>.
+(defun current-buffer-not-mini ()
+  "Return current-buffer if current buffer is not the *mini-buffer*
+  else return buffer before minibuf is activated."
+  (if (not (window-minibuffer-p)) (current-buffer)
+    (if (eq (get-lru-window) (next-window))
+          (window-buffer (previous-window)) (window-buffer (next-window)))))
+
+(define-key minibuffer-local-map
+  (kbd "C-c TAB") (lambda () (interactive)
+         (insert (buffer-name (current-buffer-not-mini)))))
 
 ;;; Fix <C-left> and <C-right> when invoking emacs from screen.
 ;;; Thanks, Thomas! <http://superuser.com/a/309052>
@@ -127,10 +185,12 @@
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
+(global-set-key (kbd "C-c R") 'recompile)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
