@@ -95,6 +95,10 @@ the mode-line."
 ;;; Winner mode
 (winner-mode 1)
 
+;;; Windmove
+(windmove-default-keybindings)
+(setq windmove-wrap-around t)
+
 ;;; Python
 (defun python-send-buffer-and-go ()
   "Send the buffer to the inferior Python process.
