@@ -88,6 +88,10 @@ the mode-line."
 (window-number-mode 1)
 (window-number-meta-mode 1)
 
+;;; Keyfreq, for collecting keystroke statistics
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+
 ;;; Python
 (defun python-send-buffer-and-go ()
   "Send the buffer to the inferior Python process.
