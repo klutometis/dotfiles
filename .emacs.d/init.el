@@ -33,6 +33,7 @@
                       graphviz-dot-mode
                       haskell-mode
                       htmlize
+                      keyfreq
                       lua-mode
                       magit
                       markdown-mode
