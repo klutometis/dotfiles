@@ -92,6 +92,9 @@ the mode-line."
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
 
+;;; Winner mode
+(winner-mode 1)
+
 ;;; Python
 (defun python-send-buffer-and-go ()
   "Send the buffer to the inferior Python process.
