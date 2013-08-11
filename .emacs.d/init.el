@@ -230,10 +230,10 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
-;; (global-set-key (kbd "<up>") 'windmove-up)
-;; (global-set-key (kbd "<down>") 'windmove-down)
-;; (global-set-key (kbd "<right>") 'windmove-right)
-;; (global-set-key (kbd "<left>") 'windmove-left)
+(global-set-key (kbd "<up>") 'windmove-up)
+(global-set-key (kbd "<down>") 'windmove-down)
+(global-set-key (kbd "<right>") 'windmove-right)
+(global-set-key (kbd "<left>") 'windmove-left)
 
 ;;; Compensate for screen.
 (define-key input-decode-map "\e[1;2D" [S-left])
