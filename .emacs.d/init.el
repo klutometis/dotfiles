@@ -55,6 +55,7 @@
                       typopunct
                       unbound
                       undo-tree
+                      window-number
                       yaml-mode
                       )
   "A list of packages to ensure are installed at launch.")
@@ -90,6 +91,7 @@ the mode-line."
 (window-number-meta-mode 1)
 
 ;;; Keyfreq, for collecting keystroke statistics
+(require 'keyfreq)
 (keyfreq-mode 1)
 (keyfreq-autosave-mode 1)
 
@@ -135,8 +137,8 @@ Then switch to the process buffer."
 (add-hook 'sql-mode-hook
           (lambda ()
             (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
-;;; The executable is osql, but osql doesn't seem to pass things to
-;;; isql correctly.
+;; The executable is osql, but osql doesn't seem to pass things to
+;; isql correctly.
 (setq sql-ms-options '("--" "-w" "300" "-n"))
 
 ;;; Dired should grep case insensitively.
