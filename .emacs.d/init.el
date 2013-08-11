@@ -128,6 +128,9 @@ Then switch to the process buffer."
        (format "SQL history will not be saved because %s is nil"
                (symbol-name rval))))))
 
+(eval-after-load "sql"
+  '(load-library "sql-indent"))
+
 (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
 (add-hook 'sql-mode-hook
           (lambda ()
