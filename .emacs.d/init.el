@@ -235,6 +235,7 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
+(global-set-key (kbd "C-c u") 'kill-line-backward)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
