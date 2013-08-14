@@ -100,6 +100,9 @@
    (get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 
+;;; Enable isearch-occur with C-o.
+(define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
+
 ;;; Killing a line backwards; see
 ;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
 (defun kill-line-backward (arg)
