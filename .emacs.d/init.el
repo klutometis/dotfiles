@@ -107,7 +107,7 @@
   (interactive "p")
   (kill-line (- 1 arg)))
 
-;;; Subword moed
+;;; Subword mode
 (global-subword-mode 1)
 
 ;;; Window-number
