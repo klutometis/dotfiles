@@ -232,6 +232,7 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
