@@ -103,6 +103,20 @@
 ;;; Enable isearch-occur with C-o.
 (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
 
+;;; Convert an occur search into a multi-occur search from within
+;;; occur.
+(defun occur-multi-occur ()
+  "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode
+    (with-current-buffer (car (nth 2 occur-revert-arguments))
+      major-mode))
+   (car occur-revert-arguments)))
+
+;;; Bind occur-multi-occur to m.
+(define-key occur-mode-map "m" 'occur-multi-occur)
+
 ;;; Killing a line backwards; see
 ;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
 (defun kill-line-backward (arg)
