@@ -261,6 +261,8 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c n") 'find-name-dired)
+(global-set-key (kbd "C-c o") 'occur)
+(global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
 (global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c u") 'kill-line-backward)
