@@ -73,6 +73,13 @@
 
 ;;;; Miscellaneous
 
+;;; Killing a line backwards; see
+;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
+(defun kill-line-backward (arg)
+  "Kill ARG lines backward."
+  (interactive "p")
+  (kill-line (- 1 arg)))
+
 ;;; Window-number
 (autoload 'window-number-mode "window-number"
   "A global minor mode that enables selection of windows according
