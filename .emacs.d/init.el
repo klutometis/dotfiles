@@ -155,9 +155,7 @@ Then switch to the process buffer."
 (setq find-grep-options "-q -i")
 (add-hook 'dired-mode-hook
           (lambda ()
-            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)
-            (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
-            (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
+            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
