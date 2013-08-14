@@ -73,6 +73,33 @@
 
 ;;;; Miscellaneous
 
+;;;;; Occur
+
+;;; Rename the occur buffer.
+(add-hook 'occur-hook
+          (lambda ()
+            ;; Follows automatically in the buffer.
+            (next-error-follow-minor-mode)
+            (occur-rename-buffer)))
+
+;;; Thanks,
+;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (if (eq mode major-mode)
+            (add-to-list 'buffer-mode-matches buf))))
+    buffer-mode-matches))
+
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
+
 ;;; Killing a line backwards; see
 ;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
 (defun kill-line-backward (arg)
