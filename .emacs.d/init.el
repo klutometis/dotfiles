@@ -80,6 +80,9 @@
   (interactive "p")
   (kill-line (- 1 arg)))
 
+;;; Subword moed
+(global-subword-mode 1)
+
 ;;; Window-number
 (autoload 'window-number-mode "window-number"
   "A global minor mode that enables selection of windows according
