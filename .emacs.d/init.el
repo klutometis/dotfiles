@@ -255,6 +255,7 @@ Then switch to the process buffer."
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
 (global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
