@@ -25,6 +25,7 @@
                       apache-mode
                       clojure-mode
                       dired+
+                      discord
                       dsvn
                       ess
                       full-ack
