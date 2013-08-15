@@ -74,6 +74,54 @@
 
 ;;;; Miscellaneous
 
+;;; Add Discordian date to other-dates
+(eval-after-load "calendar"
+  '(defun calendar-other-dates (date)
+     "Return a list of strings giving Gregorian DATE in other calendars.
+DATE is (month day year).  Calendars that do not apply are omitted."
+     (require 'discord)
+     (let (odate)
+       (delq nil
+             (list
+              (calendar-day-of-year-string date)
+              (format "ISO date: %s" (calendar-iso-date-string date))
+              (format "Julian date: %s"
+                      (calendar-julian-date-string date))
+              (format "Astronomical (Julian) day number (at noon UTC): %s.0"
+                      (calendar-astro-date-string date))
+              (format "Fixed (RD) date: %s"
+                      (calendar-absolute-from-gregorian date))
+              (format "Hebrew date (before sunset): %s"
+                      (calendar-hebrew-date-string date))
+              (format "Persian date: %s"
+                      (calendar-persian-date-string date))
+              (unless (string-equal
+                       (setq odate (calendar-islamic-date-string date))
+                       "")
+                (format "Islamic date (before sunset): %s" odate))
+              (unless (string-equal
+                       (setq odate (calendar-bahai-date-string date))
+                       "")
+                (format "Bahá'í date: %s" odate))
+              (format "Chinese date: %s"
+                      (calendar-chinese-date-string date))
+              (unless (string-equal
+                       (setq odate (calendar-coptic-date-string date))
+                       "")
+                (format "Coptic date: %s" odate))
+              (unless (string-equal
+                       (setq odate (calendar-ethiopic-date-string date))
+                       "")
+                (format "Ethiopic date: %s" odate))
+              (unless (string-equal
+                       (setq odate (calendar-french-date-string date))
+                       "")
+                (format "French Revolutionary date: %s" odate))
+              (format "Mayan date: %s"
+                      (calendar-mayan-date-string date))
+              (format "Discordian date: %s"
+                      (calendar-discordian-date-string date)))))))
+
 ;;; Calendar, for sunrise and sunset
 (setq calendar-latitude 34.1)
 (setq calendar-longitude -118.2)
