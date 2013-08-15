@@ -73,6 +73,11 @@
 
 ;;;; Miscellaneous
 
+;;; Calendar, for sunrise and sunset
+(setq calendar-latitude 34.1)
+(setq calendar-longitude -118.2)
+(setq calendar-location-name "Los Angeles, CA")
+
 ;;;;; Occur
 
 ;;; Rename the occur buffer.
