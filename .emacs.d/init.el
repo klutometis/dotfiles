@@ -203,6 +203,7 @@ Then switch to the process buffer."
 (add-to-list 'auto-mode-alist '("\\.bats\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("\\.egg-locations\\'" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.hy\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.meta\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.release-info\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.setup\\'" . scheme-mode))
@@ -445,6 +446,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
 (put 'call-with-values 'scheme-indent-function 1)
 (put 'dotimes 'scheme-indent-function 1)
+(put 'for 'scheme-indent-function 1)
 (put 'for-each 'scheme-indent-function 1)
 (put 'handle-exceptions 'scheme-indent-function 1)
 (put 'hash-table-walk 'scheme-indent-function 1)
@@ -467,6 +469,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'until 'scheme-indent-function 1)
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
+(put 'with 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
