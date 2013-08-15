@@ -12,6 +12,8 @@
              '("ELPA" . "http://tromey.com/elpa/") t)
 (add-to-list 'package-archives
              '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -31,10 +33,12 @@
                       graphviz-dot-mode
                       haskell-mode
                       htmlize
+                      keyfreq
                       lua-mode
                       magit
                       markdown-mode
                       mediawiki
+                      nrepl
                       org-plus-contrib
                       paredit
                       php-mode
@@ -51,6 +55,7 @@
                       typopunct
                       unbound
                       undo-tree
+                      window-number
                       yaml-mode
                       )
   "A list of packages to ensure are installed at launch.")
@@ -67,6 +72,89 @@
 (setq delete-old-versions t)
 
 ;;;; Miscellaneous
+
+;;;;; Occur
+
+;;; Rename the occur buffer.
+(add-hook 'occur-hook
+          (lambda ()
+            ;; Follows automatically in the buffer.
+            (next-error-follow-minor-mode)
+            (occur-rename-buffer)))
+
+;;; Thanks,
+;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (if (eq mode major-mode)
+            (add-to-list 'buffer-mode-matches buf))))
+    buffer-mode-matches))
+
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
+
+;;; Enable isearch-occur with C-o.
+(define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
+
+;;; Convert an occur search into a multi-occur search from within
+;;; occur.
+(defun occur-multi-occur ()
+  "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode
+    (with-current-buffer (car (nth 2 occur-revert-arguments))
+      major-mode))
+   (car occur-revert-arguments)))
+
+;;; Bind occur-multi-occur to m.
+(define-key occur-mode-map "m" 'occur-multi-occur)
+
+;;; Killing a line backwards; see
+;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
+(defun kill-line-backward (arg)
+  "Kill ARG lines backward."
+  (interactive "p")
+  (kill-line (- 1 arg)))
+
+;;; Subword mode
+(global-subword-mode 1)
+
+;;; Window-number
+(autoload 'window-number-mode "window-number"
+  "A global minor mode that enables selection of windows according
+to
+numbers with the C-x C-j prefix.  Another mode,
+`window-number-meta-mode' enables the use of the M- prefix."
+  t)
+
+(autoload 'window-number-meta-mode "window-number"
+  "A global minor mode that enables use of the M- prefix to select
+windows, use `window-number-mode' to display the window numbers in
+the mode-line."
+  t)
+
+(window-number-mode 1)
+(window-number-meta-mode 1)
+
+;;; Keyfreq, for collecting keystroke statistics
+(require 'keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+
+;;; Winner mode
+(winner-mode 1)
+
+;;; Windmove
+(windmove-default-keybindings)
+(setq windmove-wrap-around t)
 
 ;;; Python
 (defun python-send-buffer-and-go ()
@@ -96,21 +184,22 @@ Then switch to the process buffer."
        (format "SQL history will not be saved because %s is nil"
                (symbol-name rval))))))
 
+(eval-after-load "sql"
+  '(load-library "sql-indent"))
+
 (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
 (add-hook 'sql-mode-hook
           (lambda ()
             (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
-;;; The executable is osql, but osql doesn't seem to pass things to
-;;; isql correctly.
+;; The executable is osql, but osql doesn't seem to pass things to
+;; isql correctly.
 (setq sql-ms-options '("--" "-w" "300" "-n"))
 
 ;;; Dired should grep case insensitively.
 (setq find-grep-options "-q -i")
 (add-hook 'dired-mode-hook
           (lambda ()
-            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)
-            (define-key dired-mode-map (kbd "C-x f") 'find-grep-dired)
-            (define-key dired-mode-map (kbd "C-x g") 'find-name-dired)))
+            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
@@ -183,19 +272,50 @@ Then switch to the process buffer."
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
 (global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c n") 'find-name-dired)
+(global-set-key (kbd "C-c o") 'occur)
+(global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
 (global-set-key (kbd "C-c r") 'rgrep)
 (global-set-key (kbd "C-c s") 'svn-status)
+(global-set-key (kbd "C-c u") 'kill-line-backward)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
 (global-set-key (kbd "<up>") 'windmove-up)
 (global-set-key (kbd "<down>") 'windmove-down)
 (global-set-key (kbd "<right>") 'windmove-right)
 (global-set-key (kbd "<left>") 'windmove-left)
+
+;;; Compensate for screen.
+(define-key input-decode-map "\e[1;2D" [S-left])
+(define-key input-decode-map "\e[1;2C" [S-right])
+(define-key input-decode-map "\e[1;2B" [S-down])
+(define-key input-decode-map "\e[1;2A" [S-up])
+(define-key input-decode-map "\e[1;2F" [S-end])
+(define-key input-decode-map "\e[1;2H" [S-home])
+
+(define-key input-decode-map "\e[1;5D" [C-left])
+(define-key input-decode-map "\e[1;5C" [C-right])
+(define-key input-decode-map "\e[1;5B" [C-down])
+(define-key input-decode-map "\e[1;5A" [C-up])
+
+(define-key input-decode-map "\e[1;6D" [C-S-left])
+(define-key input-decode-map "\e[1;6C" [C-S-right])
+(define-key input-decode-map "\e[1;6B" [C-S-down])
+(define-key input-decode-map "\e[1;6A" [C-S-up])
+
+;;; Dvorak (see <http://www.emacswiki.org/emacs/DvorakKeyboard>).
+;; (global-set-key (kbd "C-,") ctl-x-map)
+;; (global-set-key (kbd "C-x C-h") help-map)
+;; (global-set-key (kbd "C-h") 'previous-line)
+;; (global-set-key (kbd "C-.") 'execute-extended-command)
+;; (global-set-key (kbd "C-'") 'hippie-expand)
 
 ;;;;; Auto-modes
 
@@ -222,6 +342,11 @@ Then switch to the process buffer."
 (setq vc-follow-symlinks t)
 
 ;;;; Language-specific things
+
+;;;;; Clojure
+
+(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+(add-hook 'nrepl-mode-hook 'paredit-mode)
 
 ;;;;; org-mode
 

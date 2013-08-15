@@ -78,3 +78,10 @@ bindkey -m ^[Oc stuff ]  #"}]^f"
 # M-< and M-> for start/end of buffer (don't seem to work).
 bindkey -m "^[<" stuff "g"
 bindkey -m "^[>" stuff "G"
+
+# Fix some things between normal and application mode; see e.g.
+# <http://stackoverflow.com/a/4557027>.
+# bindkey -k ku stuff ^[OA
+# bindkey -k kd stuff ^[OB
+# bindkey -k kr stuff ^[OC
+# bindkey -k kl stuff ^[OD
