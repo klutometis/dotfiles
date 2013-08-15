@@ -102,10 +102,10 @@
 
 ;;; Rename the occur buffer.
 (add-hook 'occur-hook
-          (lambda ()
-            ;; Follows automatically in the buffer.
-            (next-error-follow-minor-mode)
-            (occur-rename-buffer)))
+  (lambda ()
+    ;; Follows automatically in the buffer.
+    (next-error-follow-minor-mode)
+    (occur-rename-buffer)))
 
 ;;; Thanks,
 ;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
@@ -190,10 +190,10 @@ Then switch to the process buffer."
   (python-switch-to-python t))
 
 (add-hook 'python-mode-hook
-          (lambda ()
-            (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
-            (define-key python-mode-map (kbd "C-c z")
-              (lambda () (interactive) (python-switch-to-python t)))))
+  (lambda ()
+    (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+    (define-key python-mode-map (kbd "C-c z")
+      (lambda () (interactive) (python-switch-to-python t)))))
 
 ;;; SQL
 (defun my-sql-save-history-hook ()
@@ -214,8 +214,8 @@ Then switch to the process buffer."
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
 (add-hook 'sql-mode-hook
-          (lambda ()
-            (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+  (lambda ()
+    (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
 ;; The executable is osql, but osql doesn't seem to pass things to
 ;; isql correctly.
 (setq sql-ms-options '("--" "-w" "300" "-n"))
@@ -223,8 +223,8 @@ Then switch to the process buffer."
 ;;; Dired should grep case insensitively.
 (setq find-grep-options "-q -i")
 (add-hook 'dired-mode-hook
-          (lambda ()
-            (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
+  (lambda ()
+    (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
@@ -233,11 +233,11 @@ Then switch to the process buffer."
   else return buffer before minibuf is activated."
   (if (not (window-minibuffer-p)) (current-buffer)
     (if (eq (get-lru-window) (next-window))
-          (window-buffer (previous-window)) (window-buffer (next-window)))))
+        (window-buffer (previous-window)) (window-buffer (next-window)))))
 
 (define-key minibuffer-local-map
   (kbd "C-c TAB") (lambda () (interactive)
-         (insert (buffer-name (current-buffer-not-mini)))))
+                    (insert (buffer-name (current-buffer-not-mini)))))
 
 ;;; Fix <C-left> and <C-right> when invoking emacs from screen.
 ;;; Thanks, Thomas! <http://superuser.com/a/309052>
@@ -275,7 +275,7 @@ Then switch to the process buffer."
 ;;; Prevent "Active processes exist" on exit; thanks, Jürgen Hötzel:
 ;;; <http://stackoverflow.com/a/2708042>.
 (add-hook 'comint-exec-hook
-          (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
+  (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
 
 ;;; Hack to disable flyspell, which was freezing up when writing e.g.
 ;;; git commit-comments.
@@ -397,17 +397,17 @@ Then switch to the process buffer."
   "Execute a block of Ditaa code with org-babel.
 This function is called by `org-babel-execute-src-block'."
   (let* ((result-params (split-string (or (cdr (assoc :results params)) "")))
-	 (out-file ((lambda (el)
-		      (or el
-			  (error
-			   "ditaa code block requires :file header argument")))
-		    (cdr (assoc :file params))))
-	 (cmdline (cdr (assoc :cmdline params)))
-	 (in-file (org-babel-temp-file "ditaa-"))
-	 (cmd (concat "ditaa"
-		      " " cmdline
-		      " " (org-babel-process-file-name in-file)
-		      " " (org-babel-process-file-name out-file))))
+         (out-file ((lambda (el)
+                      (or el
+                          (error
+                           "ditaa code block requires :file header argument")))
+                    (cdr (assoc :file params))))
+         (cmdline (cdr (assoc :cmdline params)))
+         (in-file (org-babel-temp-file "ditaa-"))
+         (cmd (concat "ditaa"
+                      " " cmdline
+                      " " (org-babel-process-file-name in-file)
+                      " " (org-babel-process-file-name out-file))))
     (with-temp-file in-file (insert body))
     (message cmd) (shell-command cmd)
     nil))
@@ -493,81 +493,81 @@ This function is called by `org-babel-execute-src-block'."
   > \n)
 
 (add-hook
- 'org-mode-hook
- (lambda ()
-   (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel)
-   (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
-   (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
+    'org-mode-hook
+  (lambda ()
+    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel)
+    (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
+    (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
 
-   ;; For LaTeX output, use no indentation but paragraph-skips by
-   ;; default.
-   (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
+    ;; For LaTeX output, use no indentation but paragraph-skips by
+    ;; default.
+    (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
 
-   ;; Let's do auto-quotes, dashes, &c.; see:
-   ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
-   (require 'typopunct)
-   (typopunct-change-language 'english t)
-   (typopunct-mode 1)
+    ;; Let's do auto-quotes, dashes, &c.; see:
+    ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
+    (require 'typopunct)
+    (typopunct-change-language 'english t)
+    (typopunct-mode 1)
 
-   ;; Wrap selected text in smart quotes.
-   (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
-     (let* ((lang (or (get-text-property (point) 'typopunct-language)
-                      typopunct-buffer-language))
-            (omark (if single
-                       (typopunct-opening-single-quotation-mark lang)
-                     (typopunct-opening-quotation-mark lang)))
-            (qmark (if single
-                       (typopunct-closing-single-quotation-mark lang)
-                     (typopunct-closing-quotation-mark lang))))
-       (cond
-        (mark-active
-         (let ((skeleton-end-newline nil)
-               (singleo (typopunct-opening-single-quotation-mark lang))
-               (singleq (typopunct-closing-single-quotation-mark lang)))
-           (if (> (point) (mark))
-               (exchange-point-and-mark))
-           (save-excursion
-             (while (re-search-forward (regexp-quote (string omark)) (mark) t)
-               (replace-match (regexp-quote (string singleo)) nil nil)))
-           (save-excursion
-             (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
-               (replace-match (regexp-quote (string singleq)) nil nil)))
-           (skeleton-insert (list nil omark '_ qmark) -1)))
-        ((looking-at (regexp-opt (list (string omark) (string qmark))))
-         (forward-char 1))
-        (t ad-do-it))))
+    ;; Wrap selected text in smart quotes.
+    (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
+      (let* ((lang (or (get-text-property (point) 'typopunct-language)
+                       typopunct-buffer-language))
+             (omark (if single
+                        (typopunct-opening-single-quotation-mark lang)
+                      (typopunct-opening-quotation-mark lang)))
+             (qmark (if single
+                        (typopunct-closing-single-quotation-mark lang)
+                      (typopunct-closing-quotation-mark lang))))
+        (cond
+         (mark-active
+          (let ((skeleton-end-newline nil)
+                (singleo (typopunct-opening-single-quotation-mark lang))
+                (singleq (typopunct-closing-single-quotation-mark lang)))
+            (if (> (point) (mark))
+                (exchange-point-and-mark))
+            (save-excursion
+              (while (re-search-forward (regexp-quote (string omark)) (mark) t)
+                (replace-match (regexp-quote (string singleo)) nil nil)))
+            (save-excursion
+              (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
+                (replace-match (regexp-quote (string singleq)) nil nil)))
+            (skeleton-insert (list nil omark '_ qmark) -1)))
+         ((looking-at (regexp-opt (list (string omark) (string qmark))))
+          (forward-char 1))
+         (t ad-do-it))))
 
-   (defun org-export-html-format-image (src par-open)
-     "Create image tag with source and attributes."
-     (save-match-data
-       (if (string-match (regexp-quote "ltxpng/") src)
-           (format "<img src=\"%s\" alt=\"%s\"/>"
-                   src (org-find-text-property-in-string 'org-latex-src src))
-         (let* ((caption (org-find-text-property-in-string 'org-caption src))
-                (attr (org-find-text-property-in-string 'org-attributes src))
-                (label (org-find-text-property-in-string 'org-label src)))
-           ;; (setq caption (and caption (org-html-do-expand caption)))
-           (concat
-            (if caption
-                (format "%s<div %sclass=\"figure\">
+    (defun org-export-html-format-image (src par-open)
+      "Create image tag with source and attributes."
+      (save-match-data
+        (if (string-match (regexp-quote "ltxpng/") src)
+            (format "<img src=\"%s\" alt=\"%s\"/>"
+                    src (org-find-text-property-in-string 'org-latex-src src))
+          (let* ((caption (org-find-text-property-in-string 'org-caption src))
+                 (attr (org-find-text-property-in-string 'org-attributes src))
+                 (label (org-find-text-property-in-string 'org-label src)))
+            ;; (setq caption (and caption (org-html-do-expand caption)))
+            (concat
+             (if caption
+                 (format "%s<div %sclass=\"figure\">
 <p>"
-                        (if org-par-open "</p>\n" "")
-                        (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
-            (format "<img src=\"%s\"%s />"
-                    src
-                    (if (string-match "\\<alt=" (or attr ""))
-                        (concat " " attr )
-                      (concat " " attr " alt=\"" src "\"")))
-            (if caption
-                (format "</p>%s
+                         (if org-par-open "</p>\n" "")
+                         (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
+             (format "<img src=\"%s\"%s />"
+                     src
+                     (if (string-match "\\<alt=" (or attr ""))
+                         (concat " " attr )
+                       (concat " " attr " alt=\"" src "\"")))
+             (if caption
+                 (format "</p>%s
 </div>%s"
-                        (concat "\n<p>" caption "</p>")
-                        (if org-par-open "\n<p>" ""))))))))))
+                         (concat "\n<p>" caption "</p>")
+                         (if org-par-open "\n<p>" ""))))))))))
 
 (add-hook
- 'org-src-mode-hook
- (lambda ()
-   (define-key org-src-mode-map (kbd "C-x C-s") 'org-edit-src-save)))
+    'org-src-mode-hook
+  (lambda ()
+    (define-key org-src-mode-map (kbd "C-x C-s") 'org-edit-src-save)))
 
 ;;;;; Scheme
 
@@ -592,6 +592,7 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Indent-functions for match
 (put 'and-let* 'scheme-indent-function 1)
+(put 'add-hook 'lisp-indent-function 1)
 (put 'call-with-database 'scheme-indent-function 1)
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
 (put 'call-with-values 'scheme-indent-function 1)
@@ -741,9 +742,9 @@ This function is called by `org-babel-execute-src-block'."
 
 (add-hook 'scheme-mode-hook 'setup-scheme)
 (add-hook 'scheme-mode-hook
-          (lambda ()
-            (put 'and-let* 'scheme-indent-function 1)
-            (put 'receive 'scheme-indent-function 1)))
+  (lambda ()
+    (put 'and-let* 'scheme-indent-function 1)
+    (put 'receive 'scheme-indent-function 1)))
 (add-hook 'inferior-scheme-mode-hook 'paredit-plus-one)
 (add-hook 'clojure-mode-hook 'setup-clojure)
 (add-hook 'lisp-mode-hook 'setup-lisp)
@@ -754,8 +755,8 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
 (add-hook 'sh-mode-hook
-          (lambda ()
-            (define-key sh-mode-map (kbd "C-c b") 'sh-execute-buffer)))
+  (lambda ()
+    (define-key sh-mode-map (kbd "C-c b") 'sh-execute-buffer)))
 
 ;;;;; Latex
 
@@ -842,32 +843,32 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Face-support for λ; TODO: make a package for this?
 (add-hook
- 'clojure-mode-hook
- (lambda ()
-   (font-lock-add-keywords
-    nil
-    `((,(concat "(\\(?:lambda.core/\\)?\\(defλ\\)\\>"
-                ;; Any whitespace
-                "[ \r\n\t]*"
-                ;; Possibly type or metadata
-                "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                "\\(\\sw+\\)?")
-       (1 font-lock-keyword-face)
-       (2 font-lock-function-name-face nil t))
-      (,(concat "(\\(?:lambda.core/\\)?"
-                (regexp-opt '("defλ"
-                              "λ"
-                              "lambda") t)
-                "\\>"
-                )
-       1 font-lock-builtin-face)))))
+    'clojure-mode-hook
+  (lambda ()
+    (font-lock-add-keywords
+     nil
+     `((,(concat "(\\(?:lambda.core/\\)?\\(defλ\\)\\>"
+                 ;; Any whitespace
+                 "[ \r\n\t]*"
+                 ;; Possibly type or metadata
+                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
+                 "\\(\\sw+\\)?")
+        (1 font-lock-keyword-face)
+        (2 font-lock-function-name-face nil t))
+       (,(concat "(\\(?:lambda.core/\\)?"
+                 (regexp-opt '("defλ"
+                               "λ"
+                               "lambda") t)
+                 "\\>"
+                 )
+        1 font-lock-builtin-face)))))
 
 ;;;;; Slime
 
 (add-hook
- 'slime-mode-hook
- (lambda ()
-   (setq slime-protocol-version 'ignore)
-   (slime-setup '(slime-repl))
-   (add-to-list 'slime-lisp-implementations
-                '(sbcl ("/usr/local/bin/sbcl --noinform")))))
+    'slime-mode-hook
+  (lambda ()
+    (setq slime-protocol-version 'ignore)
+    (slime-setup '(slime-repl))
+    (add-to-list 'slime-lisp-implementations
+                 '(sbcl ("/usr/local/bin/sbcl --noinform")))))
