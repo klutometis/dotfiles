@@ -318,23 +318,35 @@ Then switch to the process buffer."
 (global-set-key (kbd "<left>") 'windmove-left)
 
 ;;; Compensate for screen.
+(define-key input-decode-map "\e[1;2A" [S-up])
+(define-key input-decode-map "\e[1;2B" [S-down])
 (define-key input-decode-map "\e[1;2D" [S-left])
 (define-key input-decode-map "\e[1;2C" [S-right])
-(define-key input-decode-map "\e[1;2B" [S-down])
-(define-key input-decode-map "\e[1;2A" [S-up])
-(define-key input-decode-map "\e[1;2F" [S-end])
-(define-key input-decode-map "\e[1;2H" [S-home])
 
+(define-key input-decode-map "\e[1;3A" [M-up])
+(define-key input-decode-map "\e[1;3B" [M-down])
+(define-key input-decode-map "\e[1;3D" [M-left])
+(define-key input-decode-map "\e[1;3C" [M-right])
+
+(define-key input-decode-map "\e[1;4A" [S-M-up])
+(define-key input-decode-map "\e[1;4B" [S-M-down])
+(define-key input-decode-map "\e[1;4D" [S-M-left])
+(define-key input-decode-map "\e[1;4C" [S-M-right])
+
+(define-key input-decode-map "\e[1;5A" [C-up])
+(define-key input-decode-map "\e[1;5B" [C-down])
 (define-key input-decode-map "\e[1;5D" [C-left])
 (define-key input-decode-map "\e[1;5C" [C-right])
-(define-key input-decode-map "\e[1;5B" [C-down])
-(define-key input-decode-map "\e[1;5A" [C-up])
 
+(define-key input-decode-map "\e[1;6A" [C-S-up])
+(define-key input-decode-map "\e[1;6B" [C-S-down])
 (define-key input-decode-map "\e[1;6D" [C-S-left])
 (define-key input-decode-map "\e[1;6C" [C-S-right])
-(define-key input-decode-map "\e[1;6B" [C-S-down])
-(define-key input-decode-map "\e[1;6A" [C-S-up])
 
+(define-key input-decode-map "\e[1;7A" [C-M-up])
+(define-key input-decode-map "\e[1;7B" [C-M-down])
+(define-key input-decode-map "\e[1;7D" [C-M-left])
+(define-key input-decode-map "\e[1;7C" [C-M-right])
 
 ;;;;; Auto-modes
 
