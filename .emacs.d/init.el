@@ -747,11 +747,6 @@ This function is called by `org-babel-execute-src-block'."
   (setup-lisp-like lisp-mode-map 'slime-eval-buffer))
 
 (add-hook 'scheme-mode-hook 'setup-scheme)
-;;; These appear to be superfluous.
-;; (add-hook 'scheme-mode-hook
-;;   (lambda ()
-;;     (put 'and-let* 'scheme-indent-function 1)
-;;     (put 'receive 'scheme-indent-function 1)))
 (add-hook 'inferior-scheme-mode-hook 'paredit-plus-one)
 (add-hook 'clojure-mode-hook 'setup-clojure)
 (add-hook 'lisp-mode-hook 'setup-lisp)
