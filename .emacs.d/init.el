@@ -335,12 +335,6 @@ Then switch to the process buffer."
 (define-key input-decode-map "\e[1;6B" [C-S-down])
 (define-key input-decode-map "\e[1;6A" [C-S-up])
 
-;;; Dvorak (see <http://www.emacswiki.org/emacs/DvorakKeyboard>).
-;; (global-set-key (kbd "C-,") ctl-x-map)
-;; (global-set-key (kbd "C-x C-h") help-map)
-;; (global-set-key (kbd "C-h") 'previous-line)
-;; (global-set-key (kbd "C-.") 'execute-extended-command)
-;; (global-set-key (kbd "C-'") 'hippie-expand)
 
 ;;;;; Auto-modes
 
