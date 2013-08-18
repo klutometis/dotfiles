@@ -608,8 +608,8 @@ This function is called by `org-babel-execute-src-block'."
 (put 'handle-exceptions 'scheme-indent-function 1)
 (put 'hash-table-walk 'scheme-indent-function 1)
 (put 'match 'scheme-indent-function 1)
-(put 'match-lambda 'scheme-indent-function 1)
-(put 'match-lambda* 'scheme-indent-function 1)
+(put 'match-lambda 'scheme-indent-function 0)
+(put 'match-lambda* 'scheme-indent-function 0)
 (put 'match-let 'scheme-indent-function 1)
 (put 'match-let* 'scheme-indent-function 1)
 (put 'match-letrec 'scheme-indent-function 1)
@@ -747,10 +747,11 @@ This function is called by `org-babel-execute-src-block'."
   (setup-lisp-like lisp-mode-map 'slime-eval-buffer))
 
 (add-hook 'scheme-mode-hook 'setup-scheme)
-(add-hook 'scheme-mode-hook
-  (lambda ()
-    (put 'and-let* 'scheme-indent-function 1)
-    (put 'receive 'scheme-indent-function 1)))
+;;; These appear to be superfluous.
+;; (add-hook 'scheme-mode-hook
+;;   (lambda ()
+;;     (put 'and-let* 'scheme-indent-function 1)
+;;     (put 'receive 'scheme-indent-function 1)))
 (add-hook 'inferior-scheme-mode-hook 'paredit-plus-one)
 (add-hook 'clojure-mode-hook 'setup-clojure)
 (add-hook 'lisp-mode-hook 'setup-lisp)
