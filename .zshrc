@@ -69,7 +69,6 @@ path+=/usr/local/neo4j/bin
 path+=/usr/local/pgsql/bin
 path+=/usr/local/ssl/bin
 path+=/usr/libexec/surfraw
-path+=/home/peter/.config/surfraw/elvi
 path+=/home/peter/src/stumpwm/contrib
 path+=/usr/local/sbin
 path+=/usr/sbin
@@ -77,6 +76,7 @@ path+=/sbin
 path+=/usr/local/bin
 path+=/usr/bin
 path+=/bin
+path+=/home/peter/.config/surfraw/elvi
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
 export ANT_ARGS="$ANT_ARGS -emacs"
