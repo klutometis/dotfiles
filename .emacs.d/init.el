@@ -216,6 +216,7 @@ Then switch to the process buffer."
 (add-hook 'sql-mode-hook
   (lambda ()
     (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+
 ;; The executable is osql, but osql doesn't seem to pass things to
 ;; isql correctly.
 (setq sql-ms-options '("--" "-w" "300" "-n"))
@@ -225,6 +226,9 @@ Then switch to the process buffer."
 (add-hook 'dired-mode-hook
   (lambda ()
     (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
+
+;;; find-name-dired should run case-insensitively.
+(setq read-file-name-completion-ignore-case t)
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
