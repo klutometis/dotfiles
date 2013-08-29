@@ -1,1 +1,103 @@
-hint_digits="oeuhtn"
+// -*- mode: js -*-
+// Open URLs in new buffer, not window.
+url_remoting_fn = load_url_in_new_buffer
+
+// Let's use hint-digits on the home row.
+hint_digits = "aoeuhtns";
+
+// Use history to complete URLs.
+url_completion_use_history = true;
+
+// No downloads page at all
+// remove_hook("download_added_hook", open_download_buffer_automatically);
+
+// Open a target in a new buffer, not a new window.
+download_buffer_automatic_open_target = OPEN_NEW_BUFFER;
+
+// View source in e.g. Emacs.
+view_source_use_external_editor = true;
+
+// Override $EDITOR.
+editor_shell_command = "emacsclient";
+
+// See downloads in the modeline.
+add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
+
+// Show tabs.
+// require("new-tabs.js");
+require("tab-bar.js");
+
+// Show favicons.
+require("favicon");
+add_hook("mode_line_hook", mode_line_adder(buffer_icon_widget), true);
+read_buffer_show_icons = true;
+
+// Add a webjump for bookmarks.
+define_webjump("bookmark",
+               function(term) {return term;},
+               $completer = history_completer($use_history = false,
+                                              $use_bookmarks = true,
+                                              $match_required = true),
+               $description = "Visit a conkeror bookmark");
+
+// Go to the OED.
+define_webjump("oed", "http://oed.com/search?searchType=dictionary&q=%s")
+
+// Pinboard this page (lots of flickering with tabs, though).
+define_webjump("pinboard", "javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('https://pinboard.in/add?showtags=yes&url='+encodeURIComponent(q)+'&description='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'Pinboard','toolbar=no,scrollbars=yes,width=750,height=700'));")
+
+define_webjump("readability", "javascript:((function(){window.baseUrl='https://www.readability.com';window.readabilityToken='';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src',baseUrl+'/bookmarklet/read.js');document.documentElement.appendChild(s);})())")
+
+// Selection searches: http://conkeror.org/Tips
+function create_selection_search(webjump, key) {
+    interactive(webjump+"-selection-search",
+                "Search " + webjump + " with selection contents",
+                "find-url-new-buffer",
+                $browser_object = function (I) {
+                    return webjump + " " + I.buffer.top_frame.getSelection();});
+    define_key(content_buffer_normal_keymap, key.toUpperCase(), webjump + "-selection-search");
+
+    interactive("prompted-"+webjump+"-search", null,
+                function (I) {
+                    var term = yield I.minibuffer.read_url($prompt = "Search "+webjump+":",
+                                                           $initial_value = webjump+" ");
+                    browser_object_follow(I.buffer, FOLLOW_DEFAULT, term);});
+    define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
+
+// examples
+// create_selection_search("g","l");
+// create_selection_search("wikipedia","w");
+// create_selection_search("dictionary","d");
+// create_selection_search("myspace","y");
+// create_selection_search("amazon","a");
+// create_selection_search("youtube","u");
+
+minibuffer_read_url_select_initial = false;
+
+// Switch to buffers with the number keys.
+function define_switch_buffer_key (key, buf_num) {
+    define_key(default_global_keymap, key,
+               function (I) {
+                   switch_to_buffer(I.window,
+                                    I.window.buffers.get_buffer(buf_num));});}
+
+for (let i = 0; i < 10; ++i) {
+    define_switch_buffer_key(String((i+1)%10), i);}
+
+// Switch to previously opened buffer; let's find a good key-binding
+// for this.
+interactive("switch-to-other-buffer",
+            "Switch to the previously open buffer",
+            function (I) {
+                var blist = I.window.buffers.buffer_list
+                if (blist.length > 1)
+                    switch_to_buffer(I.window, blist[1]);});
+
+// http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html
+can_kill_last_buffer = false;
+
+// Remember last save directory for downloads.
+function update_save_path (info) {
+    cwd = info.target_file.parent;}
+
+add_hook("download_added_hook", update_save_path);
