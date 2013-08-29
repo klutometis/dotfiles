@@ -24,8 +24,8 @@ editor_shell_command = "emacsclient";
 add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
 
 // Show tabs.
-// require("new-tabs.js");
-require("tab-bar.js");
+require("new-tabs.js");
+// require("tab-bar.js");
 
 // Show favicons.
 require("favicon");
