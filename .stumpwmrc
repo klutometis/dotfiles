@@ -23,8 +23,8 @@
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
 
-(define-key *root-map* (kbd "o") "exec opera")
-(define-key *root-map* (kbd "C-o") "exec opera")
+(define-key *root-map* (kbd "o") "exec conkeror")
+(define-key *root-map* (kbd "C-o") "exec conkeror")
 
 (define-key *root-map* (kbd "g") "sr-google")
 (define-key *root-map* (kbd "G") "sr-sel-google")
