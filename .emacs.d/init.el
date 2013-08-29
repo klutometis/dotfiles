@@ -467,7 +467,14 @@ This function is called by `org-babel-execute-src-block'."
                  url
                  "\", new-tab)"))
 
-(setq browse-url-browser-function 'browse-url-opera)
+(defun browse-url-conkeror (url &optional new-window)
+  (setq url (browse-url-encode-url url))
+  (start-process "conkeror"
+                 nil
+                 "conkeror"
+                 url))
+
+(setq browse-url-browser-function 'browse-url-conkeror)
 
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
