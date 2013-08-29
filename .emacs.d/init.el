@@ -114,6 +114,11 @@
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
 
+;;; I want normal comments in Javascript, despite the fact that we use
+;;; paredit.
+(eval-after-load 'javascript-mode
+  '(define-key javascript-mode-map (kbd "M-;") 'comment-dwim))
+
 ;;; Add Discordian date to other-dates
 (defadvice calendar-other-dates
   (after calendar-other-dates-with-discordian)
