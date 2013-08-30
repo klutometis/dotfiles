@@ -87,9 +87,9 @@ function create_selection_search(webjump, key) {
     define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
 
 // g was erstwhile find-url; G, find-alternate-url.
-create_selection_search("g","g");
-create_selection_search("oed","o");
-create_selection_search("chicken-regex","k");
+create_selection_search("g", "g");
+create_selection_search("oed", "o");
+create_selection_search("chicken-regex", "d");
 
 // Whether to select the URL initially; see
 // <http://www.mozdev.org/pipermail/conkeror/2008-November/001194.html>.
@@ -135,10 +135,14 @@ define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
 define_key(content_buffer_normal_keymap, "l", "browser-object-links");
 define_key(content_buffer_normal_keymap, "n", "buffer-next");
 define_key(content_buffer_normal_keymap, "h", "buffer-previous");
+define_key(content_buffer_normal_keymap, "j", "cmd_scrollLineDown");
+define_key(content_buffer_normal_keymap, "k", "cmd_scrollLineUp");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
 define_key(default_global_keymap, "/", "isearch-forward");
 define_key(default_global_keymap, "?", "isearch-backward");
+define_key(default_global_keymap, "j", "cmd_scrollLineDown");
+define_key(default_global_keymap, "k", "cmd_scrollLineUp");
 
 // Password management
 session_pref("signon.rememberSignons", true);
