@@ -89,7 +89,7 @@ function create_selection_search(webjump, key) {
 // g was erstwhile find-url; G, find-alternate-url.
 create_selection_search("g","g");
 create_selection_search("oed","o");
-create_selection_search("chicken-regex","h");
+create_selection_search("chicken-regex","k");
 
 // Whether to select the URL initially; see
 // <http://www.mozdev.org/pipermail/conkeror/2008-November/001194.html>.
