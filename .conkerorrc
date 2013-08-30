@@ -127,3 +127,7 @@ add_hook("download_added_hook", update_save_path);
 require("session.js");
 session_auto_save_auto_load = true
 session_auto_save_auto_load_fn = session_auto_save_load_window_current
+
+// One-key, follow-new-buffer; from
+// <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
+define_key(content_buffer_normal_keymap, "d", "follow-new-buffer");
