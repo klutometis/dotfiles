@@ -24,13 +24,19 @@ editor_shell_command = "emacsclient";
 add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
 
 // Show tabs.
-require("new-tabs.js");
+// 
+// Second thought, let's see what we can do without tabs: they're
+// slow.
+
+// require("new-tabs.js");
 // require("tab-bar.js");
 
 // Show favicons.
 require("favicon");
 add_hook("mode_line_hook", mode_line_adder(buffer_icon_widget), true);
 read_buffer_show_icons = true;
+
+/// Webjumps
 
 // Add a webjump for bookmarks.
 define_webjump("bookmark",
@@ -50,13 +56,17 @@ define_webjump("chicken-regex", "http://api.call-cc.org/cdoc?q=%s&query-regex=Re
 // Pinboard this page (lots of flickering with tabs, though).
 define_webjump("pinboard", "javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('https://pinboard.in/add?showtags=yes&url='+encodeURIComponent(q)+'&description='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'Pinboard','toolbar=no,scrollbars=yes,width=750,height=700'));")
 
+// Convert with readability
+define_webjump("readability", "javascript:((function(){window.baseUrl='https://www.readability.com';window.readabilityToken='';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src',baseUrl+'/bookmarklet/read.js');document.documentElement.appendChild(s);})())")
+
+// Webjump aliases
 webjumps.p = webjumps.pinboard
+webjumps.r = webjumps.readability
+
+// Bind webjumps to keys.
 interactive("open-pinboard", "pinboard", "follow", $browser_object = "pinboard");
 define_key(content_buffer_normal_keymap, "p", "open-pinboard");
 
-define_webjump("readability", "javascript:((function(){window.baseUrl='https://www.readability.com';window.readabilityToken='';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src',baseUrl+'/bookmarklet/read.js');document.documentElement.appendChild(s);})())")
-
-webjumps.r = webjumps.readability
 interactive("open-readability", "readability", "follow", $browser_object = "readability");
 define_key(content_buffer_normal_keymap, "b", "open-readability");
 
@@ -76,11 +86,12 @@ function create_selection_search(webjump, key) {
                     browser_object_follow(I.buffer, FOLLOW_DEFAULT, term);});
     define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
 
-// examples
 create_selection_search("g","l");
 create_selection_search("oed","o");
 create_selection_search("chicken-regex","h");
 
+// Whether to select the URL initially; see
+// <http://www.mozdev.org/pipermail/conkeror/2008-November/001194.html>.
 minibuffer_read_url_select_initial = false;
 
 // Switch to buffers with the number keys.
