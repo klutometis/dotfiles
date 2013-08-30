@@ -289,11 +289,6 @@ Then switch to the process buffer."
   (kbd "C-c TAB") (lambda () (interactive)
                     (insert (buffer-name (current-buffer-not-mini)))))
 
-;;; Fix <C-left> and <C-right> when invoking emacs from screen.
-;;; Thanks, Thomas! <http://superuser.com/a/309052>
-(define-key input-decode-map "\M-[1;5C" [(control right)])
-(define-key input-decode-map "\M-[1;5D" [(control left)])
-
 ;;; We need this, after all?
 (require 'ess-site)
 
