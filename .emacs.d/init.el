@@ -116,8 +116,30 @@
 
 ;;; I want normal comments in Javascript, despite the fact that we use
 ;;; paredit.
-(eval-after-load 'javascript-mode
-  '(define-key javascript-mode-map (kbd "M-;") 'comment-dwim))
+;; (eval-after-load 'js-mode
+;;   '(progn
+;;      (define-key paredit-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key javascript-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key js-mode-map (kbd "M-;") 'comment-dwim)))
+
+;; (eval-after-load 'javascript-mode
+;;   '(progn
+;;      (define-key paredit-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key javascript-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key js-mode-map (kbd "M-;") 'comment-dwim)))
+
+;; (eval-after-load 'paredit-mode
+;;   '(progn
+;;      (define-key paredit-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key javascript-mode-map (kbd "M-;") 'comment-dwim)
+;;      (define-key js-mode-map (kbd "M-;") 'comment-dwim)))
+
+;; (define-key paredit-mode-map (kbd "M-;") 'comment-dwim)
+;; (define-key js-mode-map (kbd "M-;") 'comment-dwim)
+
+(add-hook 'js-mode-hook
+  (lambda ()
+    (define-key js-mode-map (kbd "M-;") 'comment-dwim)))
 
 ;;; Add Discordian date to other-dates
 (defadvice calendar-other-dates
