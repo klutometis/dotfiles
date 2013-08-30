@@ -135,3 +135,5 @@ define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
 define_key(content_buffer_normal_keymap, "l", "browser-object-links");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
+define_key(default_global_keymap, "/", "isearch-forward");
+define_key(default_global_keymap, "?", "isearch-backward");
