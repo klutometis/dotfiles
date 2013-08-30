@@ -132,3 +132,5 @@ session_auto_save_auto_load_fn = session_auto_save_load_window_current
 // <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
 define_key(content_buffer_normal_keymap, "d", "follow-new-buffer");
 define_key(content_buffer_normal_keymap, "l", "browser-object-links");
+define_key(default_global_keymap, "n", "buffer-next");
+define_key(default_global_keymap, "h", "buffer-previous");
