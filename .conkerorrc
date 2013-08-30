@@ -162,3 +162,14 @@ function focusblock (buffer) {
         s);}
 add_hook('content_buffer_progress_change_hook', focusblock);
 
+// Block key-stealing by e.g. google, jira, github. It fucking works!
+// Fuck Google's reappriation of my alphanums; fuck github's
+// reappriation of slash; fuck jira's reappriation of slash.
+//
+// Thank god I've been manumitted from these tyrannical mother-fuckers
+// with their opinionated interfaces.
+require("key-kill");
+key_kill_mode.test.push(build_url_regexp($domain = "github"));
+key_kill_mode.test.push(build_url_regexp($domain = "google"));
+key_kill_mode.test.push(build_url_regexp($domain = "jira"));
+key_kill_mode.test.push(build_url_regexp($domain = "slashdot"));
