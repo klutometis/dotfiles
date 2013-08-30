@@ -133,6 +133,8 @@ session_auto_save_auto_load_fn = session_auto_save_load_window_current
 define_key(content_buffer_normal_keymap, "t", "follow-new-buffer");
 define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
 define_key(content_buffer_normal_keymap, "l", "browser-object-links");
+define_key(content_buffer_normal_keymap, "n", "buffer-next");
+define_key(content_buffer_normal_keymap, "h", "buffer-previous");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
 define_key(default_global_keymap, "/", "isearch-forward");
