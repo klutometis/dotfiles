@@ -607,8 +607,7 @@ This function is called by `org-babel-execute-src-block'."
             ;; (setq caption (and caption (org-html-do-expand caption)))
             (concat
              (if caption
-                 (format "%s<div %sclass=\"figure\">
-<p>"
+                 (format "%s<div %sclass=\"figure\"><p>"
                          (if org-par-open "</p>\n" "")
                          (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
              (format "<img src=\"%s\"%s />"
@@ -617,8 +616,7 @@ This function is called by `org-babel-execute-src-block'."
                          (concat " " attr )
                        (concat " " attr " alt=\"" src "\"")))
              (if caption
-                 (format "</p>%s
-</div>%s"
+                 (format "</p>%s</div>%s"
                          (concat "\n<p>" caption "</p>")
                          (if org-par-open "\n<p>" ""))))))))))
 
