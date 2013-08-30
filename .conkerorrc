@@ -63,12 +63,36 @@ define_webjump("readability", "javascript:((function(){window.baseUrl='https://w
 webjumps.p = webjumps.pinboard
 webjumps.r = webjumps.readability
 
-// Bind webjumps to keys.
+// Bind webjumps and web-pages to functions.
 interactive("open-pinboard", "pinboard", "follow", $browser_object = "pinboard");
-define_key(content_buffer_normal_keymap, "p", "open-pinboard");
-
+interactive("open-pinboard-home", "pinboard-home", "follow", $browser_object = "pinboard.in/u:klutometis");
+interactive("open-google-voice", "google-voice", "follow", $browser_object = "google.com/voice");
+interactive("open-twitter", "twitter", "follow", $browser_object = "twitter.com/klutometis");
+interactive("open-egg-index", "egg-index", "follow", $browser_object = "wiki.call-cc.org/chicken-projects/egg-index-4.html");
 interactive("open-readability", "readability", "follow", $browser_object = "readability");
+
+// One-key, follow-new-buffer; from
+// <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
+define_key(content_buffer_normal_keymap, "t", "follow-new-buffer");
+define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
+define_key(content_buffer_normal_keymap, "n", "buffer-next");
+define_key(content_buffer_normal_keymap, "h", "buffer-previous");
+define_key(content_buffer_normal_keymap, "j", "cmd_scrollLineDown");
+define_key(content_buffer_normal_keymap, "k", "cmd_scrollLineUp");
+define_key(content_buffer_normal_keymap, "l", "find-url");
+define_key(content_buffer_normal_keymap, "L", "find-alternate-url");
+define_key(content_buffer_normal_keymap, "p", "open-pinboard");
 define_key(content_buffer_normal_keymap, "b", "open-readability");
+define_key(content_buffer_normal_keymap, "C-1", "open-pinboard-home");
+define_key(content_buffer_normal_keymap, "C-2", "open-twitter");
+define_key(content_buffer_normal_keymap, "C-3", "open-google-voice");
+define_key(content_buffer_normal_keymap, "C-4", "open-egg-index");
+define_key(default_global_keymap, "n", "buffer-next");
+define_key(default_global_keymap, "h", "buffer-previous");
+define_key(default_global_keymap, "/", "isearch-forward");
+define_key(default_global_keymap, "?", "isearch-backward");
+define_key(default_global_keymap, "j", "cmd_scrollLineDown");
+define_key(default_global_keymap, "k", "cmd_scrollLineUp");
 
 // Selection searches: http://conkeror.org/Tips
 function create_selection_search(webjump, key) {
@@ -127,22 +151,6 @@ add_hook("download_added_hook", update_save_path);
 require("session.js");
 session_auto_save_auto_load = true
 session_auto_save_auto_load_fn = session_auto_save_load_window_current
-
-// One-key, follow-new-buffer; from
-// <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
-define_key(content_buffer_normal_keymap, "t", "follow-new-buffer");
-define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
-define_key(content_buffer_normal_keymap, "l", "browser-object-links");
-define_key(content_buffer_normal_keymap, "n", "buffer-next");
-define_key(content_buffer_normal_keymap, "h", "buffer-previous");
-define_key(content_buffer_normal_keymap, "j", "cmd_scrollLineDown");
-define_key(content_buffer_normal_keymap, "k", "cmd_scrollLineUp");
-define_key(default_global_keymap, "n", "buffer-next");
-define_key(default_global_keymap, "h", "buffer-previous");
-define_key(default_global_keymap, "/", "isearch-forward");
-define_key(default_global_keymap, "?", "isearch-backward");
-define_key(default_global_keymap, "j", "cmd_scrollLineDown");
-define_key(default_global_keymap, "k", "cmd_scrollLineUp");
 
 // Password management
 session_pref("signon.rememberSignons", true);
