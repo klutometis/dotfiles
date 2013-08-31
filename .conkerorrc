@@ -223,3 +223,7 @@ var replace_map = {
         }
     }
 };
+
+// Also put new buffers after the current buffer, not at the end.
+new_buffer_position = buffer_position_after
+
