@@ -139,7 +139,7 @@ interactive("switch-to-other-buffer",
                     switch_to_buffer(I.window, blist[1]);});
 
 // http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html
-can_kill_last_buffer = false;
+// can_kill_last_buffer = false;
 
 // Remember last save directory for downloads.
 function update_save_path (info) {
@@ -185,6 +185,7 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 // Thank god I've been manumitted from these tyrannical mother-fuckers
 // with their opinionated interfaces.
 require("key-kill");
+key_kill_mode.test.push(build_url_regexp($domain = "git2"));
 key_kill_mode.test.push(build_url_regexp($domain = "github"));
 key_kill_mode.test.push(build_url_regexp($domain = "google"));
 key_kill_mode.test.push(build_url_regexp($domain = "jira"));
