@@ -168,22 +168,22 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 // Focus-change blocking: <http://conkeror.org/Focus>. This actually
 // destroys a lot of things like Google docs and Facebook.
 
-// require("block-content-focus-change.js");
-// function focusblock (buffer) {
-//     var s = Components.utils.Sandbox(buffer.top_frame);
-//     s.document = buffer.document.wrappedJSObject;
-//     Components.utils.evalInSandbox(
-//         "(function () {\
-//             function nothing () {}\
-//             if (! document.forms)\
-//                 return;\
-//             for (var i = 0, nforms = document.forms.length; i < nforms; i++) {\
-//               for (var j = 0, nels = document.forms[i].elements.length; j < nels; j++)\
-//                 document.forms[i].elements[j].focus = nothing;\
-//             }\
-//           })();",
-//         s);}
-// add_hook('content_buffer_progress_change_hook', focusblock);
+require("block-content-focus-change.js");
+function focusblock (buffer) {
+    var s = Components.utils.Sandbox(buffer.top_frame);
+    s.document = buffer.document.wrappedJSObject;
+    Components.utils.evalInSandbox(
+        "(function () {\
+            function nothing () {}\
+            if (! document.forms)\
+                return;\
+            for (var i = 0, nforms = document.forms.length; i < nforms; i++) {\
+              for (var j = 0, nels = document.forms[i].elements.length; j < nels; j++)\
+                document.forms[i].elements[j].focus = nothing;\
+            }\
+          })();",
+        s);}
+add_hook('content_buffer_progress_change_hook', focusblock);
 
 // Block key-stealing by e.g. google, jira, github. It fucking works!
 // Fuck Google's reappriation of my alphanums; fuck github's
