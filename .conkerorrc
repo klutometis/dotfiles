@@ -234,3 +234,9 @@ var replace_map = {
 // Also put new buffers after the current buffer, not at the end.
 new_buffer_position = buffer_position_after
 
+
+// Open middle-clicked links in new buffers; thanks,
+// <http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html>.
+require("clicks-in-new-buffer.js");
+clicks_in_new_buffer_target = OPEN_NEW_BUFFER_BACKGROUND;
+
