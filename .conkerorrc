@@ -103,19 +103,19 @@ define_key(default_global_keymap, "k", "cmd_scrollLineUp");
 
 // Selection searches: http://conkeror.org/Tips
 function create_selection_search(webjump, key) {
-    interactive(webjump+"-selection-search",
-                "Search " + webjump + " with selection contents",
-                "find-url-new-buffer",
-                $browser_object = function (I) {
-                    return webjump + " " + I.buffer.top_frame.getSelection();});
-    define_key(content_buffer_normal_keymap, key.toUpperCase(), webjump + "-selection-search");
+  interactive(webjump+"-selection-search",
+              "Search " + webjump + " with selection contents",
+              "find-url-new-buffer",
+              $browser_object = function (I) {
+                return webjump + " " + I.buffer.top_frame.getSelection();});
+  define_key(content_buffer_normal_keymap, key.toUpperCase(), webjump + "-selection-search");
 
-    interactive("prompted-"+webjump+"-search", null,
-                function (I) {
-                    var term = yield I.minibuffer.read_url($prompt = "Search "+webjump+":",
-                                                           $initial_value = webjump+" ");
-                    browser_object_follow(I.buffer, FOLLOW_DEFAULT, term);});
-    define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
+  interactive("prompted-"+webjump+"-search", null,
+              function (I) {
+                var term = yield I.minibuffer.read_url($prompt = "Search "+webjump+":",
+                                                       $initial_value = webjump+" ");
+                browser_object_follow(I.buffer, OPEN_NEW_BUFFER, term);});
+  define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
 
 // g was erstwhile find-url; G, find-alternate-url.
 create_selection_search("g", "g");
