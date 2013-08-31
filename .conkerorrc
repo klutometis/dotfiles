@@ -240,3 +240,6 @@ new_buffer_position = buffer_position_after
 require("clicks-in-new-buffer.js");
 clicks_in_new_buffer_target = OPEN_NEW_BUFFER_BACKGROUND;
 
+// make C-c C-c "submit form"
+define_key(content_buffer_normal_keymap, "C-c C-c", "submit-form");
+
