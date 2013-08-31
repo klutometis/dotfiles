@@ -5,7 +5,10 @@ url_remoting_fn = load_url_in_new_buffer
 // Let's use hint-digits on the home row.
 hint_digits = "aoeuhtns";
 
-// Use history to complete URLs.
+// Use history to complete URLs; thanks,
+// <http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html>.
+minibuffer_auto_complete_default = true;
+url_completion_use_bookmarks = true;
 url_completion_use_history = true;
 
 // No downloads page at all
