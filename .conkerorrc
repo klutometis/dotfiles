@@ -11,6 +11,10 @@ minibuffer_auto_complete_default = true;
 url_completion_use_bookmarks = true;
 url_completion_use_history = true;
 
+// Display the URL before going to it in hints mode; thanks,
+// <http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html>.
+hints_display_url_panel = true;
+
 // No downloads page at all
 // remove_hook("download_added_hook", open_download_buffer_automatically);
 
