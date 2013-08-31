@@ -185,11 +185,10 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 // Thank god I've been manumitted from these tyrannical mother-fuckers
 // with their opinionated interfaces.
 require("key-kill");
-key_kill_mode.test.push(build_url_regexp($domain = "git2"));
 key_kill_mode.test.push(build_url_regexp($domain = "github"));
 key_kill_mode.test.push(build_url_regexp($domain = "google"));
-key_kill_mode.test.push(build_url_regexp($domain = "jira"));
 key_kill_mode.test.push(build_url_regexp($domain = "slashdot"));
+key_kill_mode.test.push(build_url_regexp($domain = "truecarcorp"));
 
 // Filename transformations for downloads
 function suggest_save_path_from_file_name (file_name, buffer) {
