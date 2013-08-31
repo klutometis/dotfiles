@@ -243,3 +243,14 @@ clicks_in_new_buffer_target = OPEN_NEW_BUFFER_BACKGROUND;
 // make C-c C-c "submit form"
 define_key(content_buffer_normal_keymap, "C-c C-c", "submit-form");
 
+// make C-x 0 "kill current buffer"
+define_key(default_global_keymap, "C-x 0", "kill-current-buffer");
+
+// make C-x 1 "kill other buffers"
+define_key(content_buffer_normal_keymap, "C-x 1", "kill-other-buffers");
+
+// make C-x 2 "duplicate buffer"
+interactive("duplicate-buffer", "Duplicate buffer",
+            function (I) {
+              browser_object_follow(I.buffer, OPEN_NEW_BUFFER, I.buffer.current_uri.spec);});
+define_key(content_buffer_normal_keymap, "C-x 2", "duplicate-buffer");
