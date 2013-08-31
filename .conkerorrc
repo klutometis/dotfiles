@@ -139,7 +139,7 @@ interactive("switch-to-other-buffer",
                     switch_to_buffer(I.window, blist[1]);});
 
 // http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html
-// can_kill_last_buffer = false;
+can_kill_last_buffer = false;
 
 // Remember last save directory for downloads.
 function update_save_path (info) {
