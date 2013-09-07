@@ -171,3 +171,4 @@ alias tt='tree -t'
 
 unsetopt CASE_GLOB
 setopt NO_NOMATCH
+set -o NULL_GLOB
