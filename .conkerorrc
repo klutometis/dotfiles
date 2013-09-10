@@ -165,6 +165,7 @@ session_pref("signon.expireMasterPassword", false);
 session_pref("signon.SignonFileName", "signons.txt");
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
+pref("ui.key.generalAccessKey", 0);
 // Focus-change blocking: <http://conkeror.org/Focus>. This actually
 // destroys a lot of things like Google docs and Facebook.
 
