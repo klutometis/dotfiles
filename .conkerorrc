@@ -94,6 +94,7 @@ define_key(content_buffer_normal_keymap, "C-1", "open-pinboard-home");
 define_key(content_buffer_normal_keymap, "C-2", "open-twitter");
 define_key(content_buffer_normal_keymap, "C-3", "open-google-voice");
 define_key(content_buffer_normal_keymap, "C-4", "open-egg-index");
+define_key(default_global_keymap, "C-w", "kill-current-buffer");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
 define_key(default_global_keymap, "/", "isearch-forward");
