@@ -80,21 +80,21 @@ interactive("open-readability", "readability", "follow", $browser_object = "read
 
 // One-key, follow-new-buffer; from
 // <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
-define_key(default_global_keymap, "t", "follow-new-buffer");
-define_key(default_global_keymap, "T", "follow-new-buffer-background");
-define_key(default_global_keymap, "n", "buffer-next");
-define_key(default_global_keymap, "h", "buffer-previous");
-define_key(default_global_keymap, "j", "cmd_scrollLineDown");
-define_key(default_global_keymap, "k", "cmd_scrollLineUp");
-define_key(default_global_keymap, "l", "find-url");
-define_key(default_global_keymap, "L", "find-alternate-url");
-define_key(default_global_keymap, "p", "open-pinboard");
-define_key(default_global_keymap, "b", "open-readability");
-define_key(default_global_keymap, "C-1", "open-pinboard-home");
-define_key(default_global_keymap, "C-2", "open-twitter");
-define_key(default_global_keymap, "C-3", "open-google-voice");
-define_key(default_global_keymap, "C-4", "open-egg-index");
-define_key(default_global_keymap, "C-w", "kill-current-buffer");
+define_key(content_buffer_normal_keymap, "t", "follow-new-buffer");
+define_key(content_buffer_normal_keymap, "T", "follow-new-buffer-background");
+define_key(content_buffer_normal_keymap, "n", "buffer-next");
+define_key(content_buffer_normal_keymap, "h", "buffer-previous");
+define_key(content_buffer_normal_keymap, "j", "cmd_scrollLineDown");
+define_key(content_buffer_normal_keymap, "k", "cmd_scrollLineUp");
+define_key(content_buffer_normal_keymap, "l", "find-url");
+define_key(content_buffer_normal_keymap, "L", "find-alternate-url");
+define_key(content_buffer_normal_keymap, "p", "open-pinboard");
+define_key(content_buffer_normal_keymap, "b", "open-readability");
+define_key(content_buffer_normal_keymap, "C-1", "open-pinboard-home");
+define_key(content_buffer_normal_keymap, "C-2", "open-twitter");
+define_key(content_buffer_normal_keymap, "C-3", "open-google-voice");
+define_key(content_buffer_normal_keymap, "C-4", "open-egg-index");
+define_key(content_buffer_normal_keymap, "C-w", "kill-current-buffer");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
 define_key(default_global_keymap, "/", "isearch-forward");
@@ -109,14 +109,14 @@ function create_selection_search(webjump, key) {
               "find-url-new-buffer",
               $browser_object = function (I) {
                 return webjump + " " + I.buffer.top_frame.getSelection();});
-  define_key(default_global_keymap, key.toUpperCase(), webjump + "-selection-search");
+  define_key(content_buffer_normal_keymap, key.toUpperCase(), webjump + "-selection-search");
 
   interactive("prompted-"+webjump+"-search", null,
               function (I) {
                 var term = yield I.minibuffer.read_url($prompt = "Search "+webjump+":",
                                                        $initial_value = webjump+" ");
                 browser_object_follow(I.buffer, OPEN_NEW_BUFFER, term);});
-  define_key(default_global_keymap, key, "prompted-" + webjump + "-search");}
+  define_key(content_buffer_normal_keymap, key, "prompted-" + webjump + "-search");}
 
 // g was erstwhile find-url; G, find-alternate-url.
 create_selection_search("g", "g");
@@ -166,7 +166,7 @@ session_pref("signon.expireMasterPassword", false);
 session_pref("signon.SignonFileName", "signons.txt");
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
-pref("ui.key.generalAccessKey", 0);
+session_pref("ui.key.generalAccessKey", 0);
 // Focus-change blocking: <http://conkeror.org/Focus>. This actually
 // destroys a lot of things like Google docs and Facebook.
 
@@ -234,8 +234,7 @@ var replace_map = {
 };
 
 // Also put new buffers after the current buffer, not at the end.
-new_buffer_position = buffer_position_after
-
+new_buffer_position = buffer_position_after;
 
 // Open middle-clicked links in new buffers; thanks,
 // <http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html>.
