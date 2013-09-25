@@ -255,3 +255,9 @@ interactive("duplicate-buffer", "Duplicate buffer",
             function (I) {
               browser_object_follow(I.buffer, OPEN_NEW_BUFFER, I.buffer.current_uri.spec);});
 define_key(default_global_keymap, "C-x 2", "duplicate-buffer");
+
+session_pref("network.proxy.type", 1)
+session_pref("network.proxy.http", "127.0.0.1");
+session_pref("network.proxy.http_port", 8118);
+session_pref("network.proxy.ssl", "127.0.0.1");
+session_pref("network.proxy.ssl_port", 8118);
