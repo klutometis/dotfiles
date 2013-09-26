@@ -40,6 +40,7 @@
                       markdown-mode
                       mediawiki
                       nrepl
+                      openwith
                       org-plus-contrib
                       paredit
                       php-mode
@@ -73,6 +74,16 @@
 (setq delete-old-versions t)
 
 ;;;; Miscellaneous
+
+;;; Openwith; thanks, Victor Deryagin:
+;;; <http://stackoverflow.com/a/6845470>.
+
+(openwith-mode t)
+(setf openwith-associations
+  '(("\\.pdf\\'" "evince" (file))
+    ("\\.mp3\\'" "mplayer" (file))
+    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
+    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
 
 ;;; Copy-and-paste from the terminal to X's clipboard.
 
