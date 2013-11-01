@@ -61,6 +61,7 @@ path+=/usr/local/apache2/bin
 path+=/usr/local/apr/bin
 path+=/usr/local/ec2/bin
 path+=/usr/local/hadoop/bin
+path+=/usr/local/hadoop/sbin
 path+=/usr/local/java/bin
 path+=/usr/local/maven/bin
 path+=/usr/local/mongo/bin
@@ -99,6 +100,12 @@ export GOBIN=~/bin
 # export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
 export GROFF_NO_SGR=1
 export HADOOP_PREFIX=/usr/local/hadoop
+export HADOOP_COMMON_HOME=$HADOOP_PREFIX
+export HADOOP_HDFS_HOME=$HADOOP_PREFIX
+export HADOOP_MAPRED_HOME=$HADOOP_PREFIX
+export HADOOP_YARN_HOME=$HADOOP_PREFIX
+export HADOOP_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
+export YARN_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
 export JAVA_HOME=/usr/local/java
 # For compatibility with IPv4.
 export JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
