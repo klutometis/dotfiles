@@ -1,0 +1,2 @@
+browser "conkeror %u"
+# browser "elinks -remote 'openURL(%u, new-tab)'"
