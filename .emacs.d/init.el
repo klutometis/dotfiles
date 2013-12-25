@@ -706,46 +706,46 @@ This function is called by `org-babel-execute-src-block'."
                          ?≡))))))
 
 ;;; Some way to program these so it maps e.g. `u' -> `ᵘ'.
-(font-lock-add-keywords
- 'scheme-mode
- '(("\\<\\(?:cond\\|if\\)\\(a\\)"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?ᵃ))))))
+;; (font-lock-add-keywords
+;;  'scheme-mode
+;;  '(("\\<\\(?:cond\\|if\\)\\(a\\)"
+;;     (0 (prog1 ()
+;;          (compose-region (match-beginning 1)
+;;                          (match-end 1)
+;;                          ?ᵃ))))))
 
-(font-lock-add-keywords
- 'scheme-mode
- '(("\\<\\(?:cond\\|if\\)\\(e\\)"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?ᵉ))))))
+;; (font-lock-add-keywords
+;;  'scheme-mode
+;;  '(("\\<\\(?:cond\\|if\\)\\(e\\)"
+;;     (0 (prog1 ()
+;;          (compose-region (match-beginning 1)
+;;                          (match-end 1)
+;;                          ?ᵉ))))))
 
-(font-lock-add-keywords
- 'scheme-mode
- '(("\\<\\(?:cond\\|if\\)\\(i\\)"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?ⁱ))))))
+;; (font-lock-add-keywords
+;;  'scheme-mode
+;;  '(("\\<\\(?:cond\\|if\\)\\(i\\)"
+;;     (0 (prog1 ()
+;;          (compose-region (match-beginning 1)
+;;                          (match-end 1)
+;;                          ?ⁱ))))))
 
-(font-lock-add-keywords
- 'scheme-mode
- '(("\\<\\(?:cond\\|if\\)\\(u\\)"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?ᵘ))))))
+;; (font-lock-add-keywords
+;;  'scheme-mode
+;;  '(("\\<\\(?:cond\\|if\\)\\(u\\)"
+;;     (0 (prog1 ()
+;;          (compose-region (match-beginning 1)
+;;                          (match-end 1)
+;;                          ?ᵘ))))))
 
-;;; Would be nice to be able to generalize this.
-(font-lock-add-keywords
- 'scheme-mode
- '(("\\<\\(?:car\\|cdr\\|cons\\|list\\|null\\|pair\\)\\(o\\)"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?ᵒ))))))
+;; ;;; Would be nice to be able to generalize this.
+;; (font-lock-add-keywords
+;;  'scheme-mode
+;;  '(("\\<\\(?:car\\|cdr\\|cons\\|list\\|null\\|pair\\)\\(o\\)"
+;;     (0 (prog1 ()
+;;          (compose-region (match-beginning 1)
+;;                          (match-end 1)
+;;                          ?ᵒ))))))
 
 ;;; The following doesn't work because the o is terminal at some point
 ;;; before the word is finished; leading to infix-os being
