@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+emacs -nw -e split-window-horizontally -e server-start "${@}"
