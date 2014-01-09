@@ -97,7 +97,6 @@ export GOROOT=~/lib/go
 export GOOS=linux
 export GOARCH=amd64
 export GOBIN=~/bin
-# export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
 export GROFF_NO_SGR=1
 export HADOOP_PREFIX=/usr/local/hadoop
 export HADOOP_COMMON_HOME=$HADOOP_PREFIX
