@@ -36,7 +36,7 @@ plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-hi
 
 source $ZSH/oh-my-zsh.sh
 
-export PROMPT='λ %~/ %n@%m $(git_prompt_info)%{$reset_color%}'
+export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
 
 if [[ "$TERM" == "dumb" ]]
 then
