@@ -2,6 +2,10 @@
   name = Peter Danenberg
   email = pcd@roxygen.org
   
+[include]
+  # For corp-specific setting, e.g. email.
+  path = ~/.gitconfig-email
+
 [github]
   user = klutometis
 
