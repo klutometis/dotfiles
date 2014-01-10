@@ -352,8 +352,6 @@ Then switch to the process buffer."
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
-(global-set-key (kbd "C-c R") 'recompile)
-(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
@@ -362,8 +360,10 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c o") 'occur)
 (global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
 (global-set-key (kbd "C-c r") 'rgrep)
+(global-set-key (kbd "C-c R") 'recompile)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c u") 'kill-line-backward)
+(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
