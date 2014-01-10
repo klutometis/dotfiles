@@ -1,6 +1,8 @@
 #include ".Xdefaults-font-misc"
 #include ".Xdefaults-font-dejavu"
 
+Xautolock.corners: ++++
+
 XTerm*foreground: white
 XTerm*background: black
 XTerm*scrollBar: false
