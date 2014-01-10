@@ -69,6 +69,7 @@ path+=/usr/local/mysql/bin
 path+=/usr/local/neo4j/bin
 path+=/usr/local/pgsql/bin
 path+=/usr/local/ssl/bin
+path+=/usr/local/xulrunner
 path+=/usr/libexec/surfraw
 path+=$HOME/src/stumpwm/contrib
 path+=/usr/local/sbin
