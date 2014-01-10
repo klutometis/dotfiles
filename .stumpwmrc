@@ -1,6 +1,6 @@
 (in-package :stumpwm)
 
-(load "/home/peter/src/stumpwm/contrib/surfraw.lisp")
+(load "src/stumpwm/contrib/surfraw.lisp")
 
 (define-key *root-map* (kbd "C-1") "sr-bookmark p")
 (define-key *root-map* (kbd "C-2") "sr-bookmark r")
