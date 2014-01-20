@@ -36,7 +36,7 @@ plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-hi
 
 source $ZSH/oh-my-zsh.sh
 
-export PROMPT='λ %~/ %n@%m $(git_prompt_info)%{$reset_color%}'
+export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
 
 if [[ "$TERM" == "dumb" ]]
 then
@@ -55,7 +55,7 @@ unsetopt correct_all
 # Pathdirs: <http://stackoverflow.com/a/9352979>; and another:
 # <http://unix.stackexchange.com/a/31235>.
 path=
-path+=/home/peter/bin
+path+=$HOME/bin
 path+=/usr/lib64/qt4/bin/
 path+=/usr/local/apache2/bin
 path+=/usr/local/apr/bin
@@ -69,15 +69,16 @@ path+=/usr/local/mysql/bin
 path+=/usr/local/neo4j/bin
 path+=/usr/local/pgsql/bin
 path+=/usr/local/ssl/bin
+path+=/usr/local/xulrunner
 path+=/usr/libexec/surfraw
-path+=/home/peter/src/stumpwm/contrib
+path+=$HOME/src/stumpwm/contrib
 path+=/usr/local/sbin
 path+=/usr/sbin
 path+=/sbin
 path+=/usr/local/bin
 path+=/usr/bin
 path+=/bin
-path+=/home/peter/.config/surfraw/elvi
+path+=$HOME/.config/surfraw/elvi
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
 export ANT_ARGS="$ANT_ARGS -emacs"
@@ -97,7 +98,6 @@ export GOROOT=~/lib/go
 export GOOS=linux
 export GOARCH=amd64
 export GOBIN=~/bin
-# export GOOGLE_KEY=AIzaSyDXfOh6HUK1ImU1oVsM0bFsKOpbcEjlW7g
 export GROFF_NO_SGR=1
 export HADOOP_PREFIX=/usr/local/hadoop
 export HADOOP_COMMON_HOME=$HADOOP_PREFIX
