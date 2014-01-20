@@ -2,7 +2,7 @@
 startup_message off
 
 # Unicode hack
-defutf8 on
+utf8 on
 encoding UTF-8
 
 # Scroll-back buffer
