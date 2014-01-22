@@ -67,6 +67,8 @@ define_webjump("pinboard", "javascript:q=location.href;if(document.getSelection)
 // Convert with readability
 define_webjump("readability", "javascript:((function(){window.baseUrl='https://www.readability.com';window.readabilityToken='';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src',baseUrl+'/bookmarklet/read.js');document.documentElement.appendChild(s);})())")
 
+define_webjump("google-bookmarks", "javascript:(function(){var%20a=window,b=document,c=encodeURIComponent,d=a.open(\"http://www.google.com/bookmarks/mark?op=edit&output=popup&bkmk=\"+c(b.location)+\"&title=\"+c(b.title),\"bkmk_popup\",\"left=\"+((a.screenX||a.screenLeft)+10)+\",top=\"+((a.screenY||a.screenTop)+10)+\",height=420px,width=550px,resizable=1,alwaysRaised=1\");a.setTimeout(function(){d.focus()},300)})();")
+
 // Webjump aliases
 webjumps.p = webjumps.pinboard
 webjumps.r = webjumps.readability
@@ -78,6 +80,8 @@ interactive("open-google-voice", "google-voice", "follow", $browser_object = "go
 interactive("open-twitter", "twitter", "follow", $browser_object = "twitter.com/klutometis");
 interactive("open-egg-index", "egg-index", "follow", $browser_object = "wiki.call-cc.org/chicken-projects/egg-index-4.html");
 interactive("open-readability", "readability", "follow", $browser_object = "readability");
+interactive("open-google-bookmarks", "google-bookmarks", "follow", $browser_object = "google-bookmarks");
+interactive("open-google-bookmarks-home", "google-bookmarks-home", "follow", $browser_object = "google.com/bookmarks/");
 
 // One-key, follow-new-buffer; from
 // <http://conkeror.org/Tips#Follow_Links_in_a_New_Buffer_with_a_One-Key_Binding>.
@@ -91,10 +95,12 @@ define_key(content_buffer_normal_keymap, "l", "find-url");
 define_key(content_buffer_normal_keymap, "L", "find-alternate-url");
 define_key(content_buffer_normal_keymap, "p", "open-pinboard");
 define_key(content_buffer_normal_keymap, "b", "open-readability");
+define_key(content_buffer_normal_keymap, "B", "open-google-bookmarks");
 define_key(content_buffer_normal_keymap, "C-1", "open-pinboard-home");
 define_key(content_buffer_normal_keymap, "C-2", "open-twitter");
 define_key(content_buffer_normal_keymap, "C-3", "open-google-voice");
 define_key(content_buffer_normal_keymap, "C-4", "open-egg-index");
+define_key(content_buffer_normal_keymap, "C-5", "open-google-bookmarks-home");
 define_key(content_buffer_normal_keymap, "C-w", "kill-current-buffer");
 define_key(default_global_keymap, "n", "buffer-next");
 define_key(default_global_keymap, "h", "buffer-previous");
