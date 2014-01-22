@@ -55,6 +55,7 @@ define_webjump("bookmark",
 
 // Go to the OED.
 define_webjump("oed", "http://oed.com/search?searchType=dictionary&q=%s")
+define_webjump("g", "https://www.google.com/search?ie=UTF-8&oe=UTF-8&q=%s")
 
 // Search Chicken.
 define_webjump("chicken", "http://api.call-cc.org/cdoc?q=%s&query-name=Look+up")
