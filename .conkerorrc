@@ -56,6 +56,7 @@ define_webjump("bookmark",
 // Go to the OED.
 define_webjump("oed", "http://oed.com/search?searchType=dictionary&q=%s")
 define_webjump("g", "https://www.google.com/search?ie=UTF-8&oe=UTF-8&q=%s")
+define_webjump("m", "https://search.corp.google.com/search?site=internal&entsp=a&sort=date:D:L:d1&client=internal&gsaRequestId=3732061082508767940&btnG=Search&entqr=3&access=a&oe=UTF-8&q=test&ie=UTF-8&ud=1&getfields=*&output=xml_no_dtd&proxystylesheet=internal&tlen=150#q=%s&start=0")
 
 // Search Chicken.
 define_webjump("chicken", "http://api.call-cc.org/cdoc?q=%s&query-name=Look+up")
@@ -127,6 +128,7 @@ function create_selection_search(webjump, key) {
 
 // g was erstwhile find-url; G, find-alternate-url.
 create_selection_search("g", "g");
+create_selection_search("m", "m");
 create_selection_search("oed", "o");
 create_selection_search("chicken-regex", "d");
 
