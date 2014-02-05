@@ -81,6 +81,7 @@ path+=/bin
 path+=$HOME/.config/surfraw/elvi
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
+# We're doing it wrong.
 export ANT_ARGS="$ANT_ARGS -emacs"
 export ANT_HOME=/usr/local/ant
 export ANT_OPTS="$ANT_OPTS -Dbuild.compiler.emacs=true"
@@ -130,6 +131,7 @@ alias ...='cd ../..'        # Go up two directories
 alias ....='cd ../../..'    # And for good measure
 alias a=ack
 alias c='cd'
+alias ca=cat
 alias cp='cp -v'
 alias cs='chicken-install -s'
 alias dc='dc -e "10 k" -'
@@ -166,6 +168,9 @@ alias pwgen='pwgen -s -y 14'
 alias rm='rm -v'
 alias s='sudo'
 alias sac0='sudo alsamixer -c 0'
+alias sai='sudo apt-get install'
+alias sls='screen -ls'
+alias srd='screen -RD'
 alias sy='sudo yum'
 alias syi='sudo yum install'
 alias sys='sudo yum search'
@@ -176,6 +181,7 @@ alias td='tree -d'
 alias tf='tree -f'
 alias tree='tree -CF'
 alias tt='tree -t'
+alias wh=which
 
 unsetopt CASE_GLOB
 setopt NO_NOMATCH
