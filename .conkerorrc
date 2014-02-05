@@ -276,3 +276,47 @@ session_pref("network.proxy.http", "127.0.0.1");
 session_pref("network.proxy.http_port", 8118);
 session_pref("network.proxy.ssl", "127.0.0.1");
 session_pref("network.proxy.ssl_port", 8118);
+
+function my_title_format (window) {
+    return '{'+get_current_profile()+'} '+window.buffers.current.description;
+}
+
+title_format_fn = my_title_format;
+
+clock_time_format = "%R"
+
+add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
+
+profile_widget.prototype = {
+    constructor: clock_widget,
+    __proto__: text_widget.prototype,
+    update: function () {
+      this.view.text = get_current_profile;
+    }
+};
+
+clock2_widget.prototype = {
+    constructor: clock_widget,
+    __proto__: text_widget.prototype,
+    update: function () {
+        var time = new Date();
+        this.view.text = time.toLocaleFormat(clock_time_format);
+        this.view.text = "harro"
+        if (time.getSeconds() > 0 || time.getMilliseconds() > 100) {
+            this.window.clearTimeout(this.timer_ID);
+            var time = time.getSeconds() * 1000 + time.getMilliseconds();
+            time = 60000 - time;
+            this.timer_ID = this.window.setTimeout(this.do_update, time);
+            this.timer_timeout = true;
+        } else if (this.timer_timeout) {
+            this.window.clearTimeout(this.timer_ID);
+            this.timer_ID = this.window.setInterval(this.do_update, 60000);
+            this.timer_timeout = false;
+        }
+    },
+    destroy: function () {
+        this.window.clearTimeout(this.timer_ID);
+    }
+};
+
+add_hook("mode_line_hook", mode_line_adder(clock2_widget));
