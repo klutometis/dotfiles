@@ -96,7 +96,7 @@ define_key(content_buffer_normal_keymap, "l", "find-url");
 define_key(content_buffer_normal_keymap, "L", "find-alternate-url");
 define_key(content_buffer_normal_keymap, "p", "open-pinboard");
 define_key(content_buffer_normal_keymap, "b", "open-readability");
-define_key(content_buffer_normal_keymap, "B", "open-google-bookmarks");
+define_key(content_buffer_normal_keymap, "e", "open-google-bookmarks");
 define_key(content_buffer_normal_keymap, "C-1", "open-pinboard-home");
 define_key(content_buffer_normal_keymap, "C-2", "open-twitter");
 define_key(content_buffer_normal_keymap, "C-3", "open-google-voice");
