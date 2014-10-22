@@ -3,6 +3,9 @@
 ;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
 (require 'hippie-exp)
 
+;;; Need for ad-hoc things.
+(add-to-list 'load-path "~/.emacs.d/")
+
 ;;;; ESK
 
 (require 'package)
@@ -58,6 +61,7 @@
                       unbound
                       undo-tree
                       window-number
+                      xclip
                       yaml-mode
                       )
   "A list of packages to ensure are installed at launch.")
@@ -74,6 +78,12 @@
 (setq delete-old-versions t)
 
 ;;;; Miscellaneous
+
+;;; Ox-ravel, for creating Rnw from org-mode.
+(require 'ox-ravel)
+
+;;; xclip-mode
+(xclip-mode 1)
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
@@ -92,38 +102,41 @@
 ;; effect. Instead, we use of xsel, see
 ;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
 ;; program for getting and setting the contents of the X selection"
-(unless window-system
-  (when (getenv "DISPLAY")
-    ;; Callback for when user cuts
-    (defun xsel-cut-function (text &optional push)
-      ;; Insert text to temp-buffer, and "send" content to xsel
-      ;; stdin
-      (with-temp-buffer
-        (insert text)
-        ;; I prefer using the "clipboard" selection (the one the
-        ;; typically is used by c-c/c-v) before the primary
-        ;; selection
-        ;; (that uses mouse-select/middle-button-click)
-        (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-    ;; Call back for when user pastes
-    (defun xsel-paste-function ()
-      ;; Find out what is current selection by xsel. If it is
-      ;;different
-      ;; from the top of the kill-ring (car kill-ring), then
-      ;; return
-      ;; it. Else, nil is returned, so whatever is in the top of
-      ;; the
-      ;; kill-ring will be used.
-      (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-        (unless (string= (car kill-ring) xsel-output)
-          xsel-output)))
-    ;; Attach callbacks to hooks
-    (setq interprogram-cut-function 'xsel-cut-function)
-    (setq interprogram-paste-function 'xsel-paste-function)
-    ;; Idea from
-    ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-    ))
+;; (unless window-system
+;;   ;; This only gets called at startup; need to test within the
+;;   ;; function itself and defer to normal yank and kill.
+;;   (when (and (getenv "DISPLAY")
+;;              (not (getenv "SSH_CLIENT")))
+;;     ;; Callback for when user cuts
+;;     (defun xsel-cut-function (text &optional push)
+;;       ;; Insert text to temp-buffer, and "send" content to xsel
+;;       ;; stdin
+;;       (with-temp-buffer
+;;         (insert text)
+;;         ;; I prefer using the "clipboard" selection (the one the
+;;         ;; typically is used by c-c/c-v) before the primary
+;;         ;; selection
+;;         ;; (that uses mouse-select/middle-button-click)
+;;         (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
+;;     ;; Call back for when user pastes
+;;     (defun xsel-paste-function ()
+;;       ;; Find out what is current selection by xsel. If it is
+;;       ;;different
+;;       ;; from the top of the kill-ring (car kill-ring), then
+;;       ;; return
+;;       ;; it. Else, nil is returned, so whatever is in the top of
+;;       ;; the
+;;       ;; kill-ring will be used.
+;;       (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+;;         (unless (string= (car kill-ring) xsel-output)
+;;           xsel-output)))
+;;     ;; Attach callbacks to hooks
+;;     (setq interprogram-cut-function 'xsel-cut-function)
+;;     (setq interprogram-paste-function 'xsel-paste-function)
+;;     ;; Idea from
+;;     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+;;     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
+;;     ))
 
 ;;; Normal comments in Javascript, despite the fact that we use
 ;;; paredit
@@ -333,6 +346,13 @@ Then switch to the process buffer."
 (add-hook 'comint-exec-hook
   (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
 
+(define-key comint-mode-map (kbd "C-c C-z") nil)
+(define-key comint-mode-map (kbd "C-c C-z .") 'browse-url-at-point)
+(define-key comint-mode-map (kbd "C-c C-z b") 'browse-url-of-buffer)
+(define-key comint-mode-map (kbd "C-c C-z r") 'browse-url-of-region)
+(define-key comint-mode-map (kbd "C-c C-z u") 'browse-url)
+(define-key comint-mode-map (kbd "C-c C-z v") 'browse-url-of-file)
+
 ;;; Hack to disable flyspell, which was freezing up when writing e.g.
 ;;; git commit-comments.
 (eval-after-load "flyspell"
@@ -340,11 +360,11 @@ Then switch to the process buffer."
 
 ;;;;; Bindings
 
-(defun copy-region-to-clipboard ()
-  (interactive)
-  (shell-command-on-region (region-beginning)
-                           (region-end)
-                           "xsel -i -b"))
+;; (defun copy-region-to-clipboard ()
+;;   (interactive)
+;;   (shell-command-on-region (region-beginning)
+;;                            (region-end)
+;;                            "xsel -i -b"))
 
 ;;; Thanks, unbound; on the other hand, see
 ;;; <http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html>:
@@ -356,6 +376,8 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c c") 'compile)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c L") 'google-lint)
+(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c o") 'occur)
 (global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
@@ -366,6 +388,13 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
+;; From
+;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>.
+(global-set-key (kbd "C-c C-z .") 'browse-url-at-point)
+(global-set-key (kbd "C-c C-z b") 'browse-url-of-buffer)
+(global-set-key (kbd "C-c C-z r") 'browse-url-of-region)
+(global-set-key (kbd "C-c C-z u") 'browse-url)
+(global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
 (global-set-key (kbd "<up>") 'windmove-up)
@@ -436,6 +465,8 @@ Then switch to the process buffer."
 (add-hook 'nrepl-mode-hook 'paredit-mode)
 
 ;;;;; org-mode
+
+(require 'org-special-blocks)
 
 ;;; Stuff to publish the daybook.
 (load "~/prg/org/daybook/daybook.el")
@@ -526,7 +557,27 @@ This function is called by `org-babel-execute-src-block'."
                  "conkeror"
                  url))
 
-(setq browse-url-browser-function 'browse-url-conkeror)
+(defun browse-url-conkeror (url &optional new-window)
+  (setq url (browse-url-encode-url url))
+  (start-process "conkeror"
+                 nil
+                 "conkeror"
+                 url))
+
+(defun browse-url-chrome (url &optional new-window)
+  (setq url (browse-url-encode-url url))
+  (start-process "google-chrome"
+                 nil
+                 "google-chrome"
+                 url))
+
+(setq browse-url-browser-function 'browse-url-chrome)
+
+(defun browse-lucky (start end)
+  (interactive "r")
+  (let ((q (buffer-substring-no-properties start end)))
+    (browse-url (concat "http://www.google.com/search?btnI&q="
+                        (url-hexify-string q)))))
 
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
@@ -570,7 +621,7 @@ This function is called by `org-babel-execute-src-block'."
 
     ;; For LaTeX output, use no indentation but paragraph-skips by
     ;; default.
-    (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
+    ;; (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
 
     ;; Let's do auto-quotes, dashes, &c.; see:
     ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
@@ -769,7 +820,11 @@ This function is called by `org-babel-execute-src-block'."
     (read-kbd-macro paredit-backward-delete-key) nil))
 
 (defun paredit-plus-one ()
-  (paredit-mode +1))
+  (paredit-mode +1)
+  ;; Rescue Taylor's more reasonable defaults from the starter-kit's
+  ;; bindings.
+  (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
+  (define-key paredit-mode-map (kbd "M-)") 'paredit-close-round-and-newline))
 
 (defun setup-lisp-like (mode-map eval-buffer)
   (paredit-plus-one)
@@ -935,3 +990,45 @@ This function is called by `org-babel-execute-src-block'."
     (slime-setup '(slime-repl))
     (add-to-list 'slime-lisp-implementations
                  '(sbcl ("/usr/local/bin/sbcl --noinform")))))
+
+;;; Magit
+
+(setq magit-save-some-buffers t)
+(setq magit-save-repository-buffers t)
+
+;;; Google
+
+(load-file "/home/build/google3/template/soy/emacs/soy-mode.el")
+(require 'soy-mode)
+(add-to-list 'auto-mode-alist '("\\.soy\\'" . soy-mode))
+
+(load-file "/usr/share/emacs/site-lisp/google/google.el")
+(require 'google)
+(require 'p4-google)                ; g4-annotate, improves
+                                    ; find-file-at-point
+(require 'compilation-colorization) ; colorizes output of (i)grep
+(require 'rotate-clients)           ; google-rotate-client
+(require 'rotate-among-files)       ; google-rotate-among-files
+(require 'googlemenu)               ; handy Google menu bar
+(require 'p4-files)                 ; transparent support for Perforce
+                                    ; filesystem
+(require 'google3)                  ; magically set paths for
+                                    ; compiling google3 code
+(require 'google3-build)            ; support for blaze builds
+(require 'csearch)                  ; Search the whole Google code
+                                    ; base.
+(require 'google-logo)
+(require 'google-imports)
+
+(setq google-build-system "blaze")
+(add-hook 'find-file-not-found-hooks 'autogen)
+(load-file "/home/build/public/eng/elisp/google.el")
+(global-set-key [(?\M-.)] 'gtags-feeling-lucky) ;; equiv: find-tag
+(global-set-key [(?\M-,)] 'gtags-next-tag)      ;; equiv: tags-loop-continue
+(global-set-key [(?\M-*)] 'gtags-pop-tag)       ;; equiv: pop-tag-mark
+(global-set-key [?\M-.] 'gtags-feeling-lucky)
+(global-set-key [f7] 'gtags-show-tag-locations-regexp)
+(global-set-key [f8] 'gtags-show-callers)
+(global-set-key [f9] 'gtags-pop-tag)
+(global-set-key [f10] 'gtags-show-matching-tags)
+;; (define-key java-mode-map "\C-\M-i" 'gtags-complete-tag)

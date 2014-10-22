@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+id3v2 -R $1 | grep -oP 'TIT2: \K(.*)'

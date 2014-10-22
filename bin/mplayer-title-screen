@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+mp3-title-screen $1 || echo Unknown > ~/var/mp3-title
+mplayer "$@"
+truncate -s 0 ~/var/mp3-title

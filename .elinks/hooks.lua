@@ -1,1 +1,1 @@
-dofile("/home/peter/prg/lua/pinboard-elinks/pinboard.lua")
+-- dofile("/home/peter/prg/lua/pinboard-elinks/pinboard.lua")

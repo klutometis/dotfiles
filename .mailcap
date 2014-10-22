@@ -4,7 +4,7 @@
 application/pdf; /usr/bin/evince %s
 # text/*; /usr/bin/opera %s
 # text/html; /usr/bin/links -dump 1 %s ; copiousoutput
-text/html; /usr/local/bin/elinks -dump 1 %s ; copiousoutput
+text/html; /usr/bin/elinks -dump 1 %s ; copiousoutput
 text/calendar; ~/bin/format-ics %s ; copiousoutput
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; /usr/bin/oowriter %s
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; /usr/bin/oocalc %s
