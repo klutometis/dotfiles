@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+mp3-title $1 > ~/var/mp3-title

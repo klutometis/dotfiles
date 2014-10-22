@@ -56,7 +56,8 @@ define_webjump("bookmark",
 // Go to the OED.
 define_webjump("oed", "http://oed.com/search?searchType=dictionary&q=%s")
 define_webjump("g", "https://www.google.com/search?ie=UTF-8&oe=UTF-8&q=%s")
-define_webjump("m", "https://search.corp.google.com/search?site=internal&entsp=a&sort=date:D:L:d1&client=internal&gsaRequestId=3732061082508767940&btnG=Search&entqr=3&access=a&oe=UTF-8&q=test&ie=UTF-8&ud=1&getfields=*&output=xml_no_dtd&proxystylesheet=internal&tlen=150#q=%s&start=0")
+// define_webjump("m", "https://search.corp.google.com/search?site=internal&entsp=a&sort=date:D:L:d1&client=internal&gsaRequestId=3732061082508767940&btnG=Search&entqr=3&access=a&oe=UTF-8&q=test&ie=UTF-8&ud=1&getfields=*&output=xml_no_dtd&proxystylesheet=internal&tlen=150#q=%s&start=0")
+define_webjump("m", "https://moma.corp.google.com/moma?q=%s")
 
 // Search Chicken.
 define_webjump("chicken", "http://api.call-cc.org/cdoc?q=%s&query-name=Look+up")
@@ -276,6 +277,14 @@ session_pref("network.proxy.http", "127.0.0.1");
 session_pref("network.proxy.http_port", 8118);
 session_pref("network.proxy.ssl", "127.0.0.1");
 session_pref("network.proxy.ssl_port", 8118);
+
+/* Open javascript console */
+function jsconsole(args)
+{
+    var prefix = args[0];
+    open_url_in (prefix, "chrome://global/content/console.xul");}
+
+add_command("jsconsole", jsconsole, [["z"]]);
 
 function my_title_format (window) {
     return '{'+get_current_profile()+'} '+window.buffers.current.description;
