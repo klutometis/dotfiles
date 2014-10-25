@@ -2,7 +2,7 @@
 startup_message off
 
 # Unicode hack
-utf8 on
+defutf8 on
 encoding UTF-8
 
 # Scroll-back buffer
@@ -20,9 +20,11 @@ shelltitle '% |zsh'
 shell "/bin/zsh"
 
 # Status line
+backtick 2 60 60 cat-title-screen
+
 hardstatus off
 hardstatus alwayslastline
-hardstatus string '%{= kw}%-Lw%{+s}%n%f* %t%{-}%+Lw%=%D %M %d %c:%s %Y'
+hardstatus string '%{= kw}%-Lw%{+s}%n%f* %t%{-}%+Lw %L=%2`%5L> %-26=%D %M %d %c:%s %Y'
 
 # Bindings
 bind f eval "hardstatus ignore"
