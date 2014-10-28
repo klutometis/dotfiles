@@ -79,11 +79,19 @@
 
 ;;;; Miscellaneous
 
+;;; So that Emacs recognizes aliases when running commands.
+(setq shell-file-name "zsh")
+(setq shell-command-switch "-ic")
+
 ;;; Ox-ravel, for creating Rnw from org-mode.
 (require 'ox-ravel)
 
 ;;; xclip-mode
-(xclip-mode 1)
+(require 'xclip)
+(turn-on-xclip)
+
+;;; Why do we need this suddenly?
+(normal-erase-is-backspace-mode 1)
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
@@ -94,49 +102,6 @@
     ("\\.mp3\\'" "mplayer" (file))
     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
     ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
-
-;;; Copy-and-paste from the terminal to X's clipboard.
-
-;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
-;; If emacs is run in a terminal, the clipboard- functions have no
-;; effect. Instead, we use of xsel, see
-;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
-;; program for getting and setting the contents of the X selection"
-;; (unless window-system
-;;   ;; This only gets called at startup; need to test within the
-;;   ;; function itself and defer to normal yank and kill.
-;;   (when (and (getenv "DISPLAY")
-;;              (not (getenv "SSH_CLIENT")))
-;;     ;; Callback for when user cuts
-;;     (defun xsel-cut-function (text &optional push)
-;;       ;; Insert text to temp-buffer, and "send" content to xsel
-;;       ;; stdin
-;;       (with-temp-buffer
-;;         (insert text)
-;;         ;; I prefer using the "clipboard" selection (the one the
-;;         ;; typically is used by c-c/c-v) before the primary
-;;         ;; selection
-;;         ;; (that uses mouse-select/middle-button-click)
-;;         (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-;;     ;; Call back for when user pastes
-;;     (defun xsel-paste-function ()
-;;       ;; Find out what is current selection by xsel. If it is
-;;       ;;different
-;;       ;; from the top of the kill-ring (car kill-ring), then
-;;       ;; return
-;;       ;; it. Else, nil is returned, so whatever is in the top of
-;;       ;; the
-;;       ;; kill-ring will be used.
-;;       (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-;;         (unless (string= (car kill-ring) xsel-output)
-;;           xsel-output)))
-;;     ;; Attach callbacks to hooks
-;;     (setq interprogram-cut-function 'xsel-cut-function)
-;;     (setq interprogram-paste-function 'xsel-paste-function)
-;;     ;; Idea from
-;;     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-;;     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-;;     ))
 
 ;;; Normal comments in Javascript, despite the fact that we use
 ;;; paredit
@@ -1031,4 +996,15 @@ This function is called by `org-babel-execute-src-block'."
 (global-set-key [f8] 'gtags-show-callers)
 (global-set-key [f9] 'gtags-pop-tag)
 (global-set-key [f10] 'gtags-show-matching-tags)
-;; (define-key java-mode-map "\C-\M-i" 'gtags-complete-tag)
+(add-hook 'java-mode-hook
+  (lambda ()
+    (define-key java-mode-map "\C-\M-i" 'gtags-complete-tag)))
+
+;;; From
+;;; <https://wiki.corp.google.com/twiki/bin/view/Nonconf/GTagsEmacsClient#Advanced_Users>.
+;; (setq gtags-default-mode 'c++-mode)
+;; (setq gtags-default-mode 'java-mode)
+;; (setq gtags-default-mode 'python-mode)
+;; (setq gtags-output-mode 'single-line)
+;; (setq gtags-output-mode 'single-line-grouped)
+;; (setq gtags-output-mode 'standard)
