@@ -183,6 +183,9 @@ alias sai='sudo apt-get install'
 alias sas='sudo apt-cache search'
 alias sls='screen -ls'
 alias srd='screen -RD'
+# From <http://askubuntu.com/a/22043>: allows aliases to be used with
+# sudo.
+alias sudo='sudo '
 alias sy='sudo yum'
 alias syi='sudo yum install'
 alias sys='sudo yum search'
