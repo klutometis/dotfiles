@@ -83,6 +83,19 @@
 (setq shell-file-name "zsh")
 (setq shell-command-switch "-ic")
 
+;;; Turn color on
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;;; Also turn color on for ad-hoc commands (see
+;;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
+(defadvice display-message-or-buffer (before ansi-color activate)
+  "Process ANSI color codes in shell output."
+  (let ((buf (ad-get-arg 0)))
+    (and (bufferp buf)
+         (string= (buffer-name buf) "*Shell Command Output*")
+         (with-current-buffer buf
+           (ansi-color-apply-on-region (point-min) (point-max))))))
+
 ;;; Ox-ravel, for creating Rnw from org-mode.
 (require 'ox-ravel)
 
