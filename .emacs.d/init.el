@@ -978,6 +978,15 @@ This function is called by `org-babel-execute-src-block'."
 (setq magit-save-some-buffers t)
 (setq magit-save-repository-buffers t)
 
+;; Can't see green-on-blue, for some reason; from
+;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")
+     (when (not window-system)
+       (set-face-background 'magit-item-highlight "white"))))
+
 ;;; Google
 
 (load-file "/home/build/google3/template/soy/emacs/soy-mode.el")
