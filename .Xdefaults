@@ -153,3 +153,11 @@ XTerm*charClass: 33-126:48,10:48
 !    Meta  ~Ctrl  ~Shift  <Key>space: string(0x1b) string("[4Sx")\n\
 !   ~Meta   Ctrl  ~Shift  <Key>space: string(0x1b) string("[2Sx")\n\
 !   ~Meta  ~Ctrl   Shift  <Key>space: string(0x1b) string("[1Sx")\n\
+
+! See
+! <http://lukas.zapletalovi.com/2013/07/hidden-gems-of-xterm.html>;
+! also <https://github.com/mbedna/mbedna/blob/master/.Xresources> and
+! <https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=xterm+exec-formatted+chrome>.
+!
+! Get this to work for e.g. Googling, too!
+*VT100*translations: #override Shift <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY)
