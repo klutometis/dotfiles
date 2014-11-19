@@ -417,6 +417,7 @@ Then switch to the process buffer."
 (add-to-list 'auto-mode-alist '("\\.bats\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("\\.egg-locations\\'" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.gss\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.hy\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.meta\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.release-info\\'" . scheme-mode))
