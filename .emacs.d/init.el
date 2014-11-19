@@ -928,6 +928,9 @@ This function is called by `org-babel-execute-src-block'."
 ;;; Get rid of the irritating semi-colon behavior.
 (setq graphviz-dot-auto-indent-on-semi nil)
 
+;;; Set an external viewer.
+(setq graphviz-dot-view-command "display %s")
+
 ;;;;; Clojure
 
 ;;; Indentation for λ (should we suffice with Emacs changing the
