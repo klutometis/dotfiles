@@ -1,6 +1,7 @@
 (in-package :stumpwm)
 
-(load "src/stumpwm/contrib/surfraw.lisp")
+(load-module "surfraw")
+(setf *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
 
 (define-key *root-map* (kbd "C-1") "sr-bookmark p")
 (define-key *root-map* (kbd "C-2") "sr-bookmark r")
@@ -11,8 +12,8 @@
 (define-key *root-map* (kbd "C-7") "sr-bookmark r5rs")
 (define-key *root-map* (kbd "C-8") "sr-bookmark c")
 
-(define-key *root-map* (kbd "c") "exec xterm -ls")
-(define-key *root-map* (kbd "C-c") "exec xterm -ls")
+(define-key *root-map* (kbd "c") "sr-code-search")
+(define-key *root-map* (kbd "C") "sr-sel-code-search")
 
 (define-key *root-map* (kbd "d") "sr-chicken")
 (define-key *root-map* (kbd "D") "sr-sel-chicken")
@@ -23,17 +24,31 @@
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
 
-(define-key *root-map* (kbd "o") "exec conkeror")
-(define-key *root-map* (kbd "C-o") "exec conkeror")
-
 (define-key *root-map* (kbd "g") "sr-google")
 (define-key *root-map* (kbd "G") "sr-sel-google")
 
+(define-key *root-map* (kbd "l") "sr-bookmark l")
+
+(define-key *root-map* (kbd "m") "sr-bookmark i")
+
+(define-key *root-map* (kbd "o") "sr-moma")
+(define-key *root-map* (kbd "O") "sr-sel-moma")
+
+;; (define-key *root-map* (kbd "o") "exec chrome")
+;; (define-key *root-map* (kbd "C-o") "exec chrome")
+
+(define-key *root-map* (kbd "q") "sr-bookmark q")
+
+(define-key *root-map* (kbd "r") "sr-groups")
+(define-key *root-map* (kbd "R") "sr-sel-groups")
+
 (define-key *root-map* (kbd "w") "sr-w")
 (define-key *root-map* (kbd "W") "sr-sel-w")
+
+(define-key *root-map* (kbd "x") "exec xterm -ls")
+(define-key *root-map* (kbd "C-x") "exec xterm -ls")
 
 ;;; Turn on mode-line; thanks, Prael:
 ;;; <http://prael.wordpress.com/stumpwmrc/>.
 (if (not (head-mode-line (current-head)))
     (toggle-mode-line (current-screen) (current-head)))
-
