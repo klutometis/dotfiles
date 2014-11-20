@@ -29,7 +29,9 @@
 
 (define-key *root-map* (kbd "l") "sr-bookmark l")
 
-(define-key *root-map* (kbd "m") "sr-bookmark i")
+;; (define-key *root-map* (kbd "m") "sr-bookmark i")
+(define-key *root-map* (kbd "m") "sr-gmail")
+(define-key *root-map* (kbd "M") "sr-sel-gmail")
 
 (define-key *root-map* (kbd "o") "sr-moma")
 (define-key *root-map* (kbd "O") "sr-sel-moma")
