@@ -558,6 +558,20 @@ This function is called by `org-babel-execute-src-block'."
     (browse-url (concat "http://www.google.com/search?btnI&q="
                         (url-hexify-string q)))))
 
+(define-skeleton org-mode-src-skel-with-tangle
+  "Insert #+BEGIN_SRC <source>...#+END_SRC blocks with :tangle."
+  nil
+  > "#+BEGIN_SRC " (skeleton-read "Source: ")
+  (let ((tangle (skeleton-read "Tangle: ")))
+    (if (string= "" tangle)
+        ""
+      (concat " :tangle " tangle)))
+  \n
+  _
+  \n
+  "#+END_SRC"
+  > \n)
+
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
   "Source: "
@@ -594,7 +608,7 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook
     'org-mode-hook
   (lambda ()
-    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel)
+    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel-with-tangle)
     (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
     (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
 
