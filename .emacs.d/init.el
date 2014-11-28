@@ -104,7 +104,7 @@
 (turn-on-xclip)
 
 ;;; Why do we need this suddenly?
-(normal-erase-is-backspace-mode 1)
+;; (normal-erase-is-backspace-mode 1)
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
