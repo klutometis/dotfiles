@@ -352,10 +352,10 @@ Then switch to the process buffer."
 ;;; users, so do not block them."
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c L") 'google-lint)
-(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c o") 'occur)
 (global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
