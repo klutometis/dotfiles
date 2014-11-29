@@ -989,9 +989,6 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-(setq magit-save-some-buffers t)
-(setq magit-save-repository-buffers t)
-
 ;; Can't see green-on-blue, for some reason; from
 ;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
 (eval-after-load 'magit
