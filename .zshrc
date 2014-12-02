@@ -56,6 +56,7 @@ unsetopt correct_all
 # <http://unix.stackexchange.com/a/31235>.
 path=
 path+=$HOME/bin
+path+=/usr/games
 path+=/usr/lib64/qt4/bin/
 path+=/usr/local/apache2/bin
 path+=/usr/local/apr/bin
