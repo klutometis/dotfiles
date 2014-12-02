@@ -7,7 +7,5 @@ setxkbmap dvorak
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 xscreensaver -nosplash &
-# Use this to activate xscreensaver with e.g.? We should also have a
-# stumpwm command.
 xautolock -corners ++++ -locker "xscreensaver-command -lock" &
 redshift-mountain-view &
