@@ -104,7 +104,7 @@
 (turn-on-xclip)
 
 ;;; Why do we need this suddenly?
-(normal-erase-is-backspace-mode 1)
+;; (normal-erase-is-backspace-mode 1)
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
@@ -352,10 +352,10 @@ Then switch to the process buffer."
 ;;; users, so do not block them."
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c L") 'google-lint)
-(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c o") 'occur)
 (global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
@@ -558,6 +558,20 @@ This function is called by `org-babel-execute-src-block'."
     (browse-url (concat "http://www.google.com/search?btnI&q="
                         (url-hexify-string q)))))
 
+(define-skeleton org-mode-src-skel-with-tangle
+  "Insert #+BEGIN_SRC <source>...#+END_SRC blocks with :tangle."
+  nil
+  > "#+BEGIN_SRC " (skeleton-read "Source: ")
+  (let ((tangle (skeleton-read "Tangle: ")))
+    (if (string= "" tangle)
+        ""
+      (concat " :tangle " tangle)))
+  \n
+  _
+  \n
+  "#+END_SRC"
+  > \n)
+
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
   "Source: "
@@ -594,7 +608,7 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook
     'org-mode-hook
   (lambda ()
-    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel)
+    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel-with-tangle)
     (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
     (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
 
@@ -975,9 +989,6 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-(setq magit-save-some-buffers t)
-(setq magit-save-repository-buffers t)
-
 ;; Can't see green-on-blue, for some reason; from
 ;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
 (eval-after-load 'magit
@@ -985,7 +996,8 @@ This function is called by `org-babel-execute-src-block'."
      (set-face-foreground 'magit-diff-add "green3")
      (set-face-foreground 'magit-diff-del "red3")
      (when (not window-system)
-       (set-face-background 'magit-item-highlight "white"))))
+       (set-face-background 'magit-item-highlight "white")
+       (set-face-background 'magit-tag "black"))))
 
 ;;; Google
 
