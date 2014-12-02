@@ -3,20 +3,10 @@
 (load-module "surfraw")
 (setf *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
 
-;; (define-key *root-map* (kbd "C-1") "sr-bookmark p")
-;; (define-key *root-map* (kbd "C-2") "sr-bookmark r")
-;; (define-key *root-map* (kbd "C-3") "sr-bookmark h")
-;; (define-key *root-map* (kbd "C-4") "sr-bookmark t")
-;; (define-key *root-map* (kbd "C-5") "sr-bookmark v")
-;; (define-key *root-map* (kbd "C-6") "sr-bookmark e")
-;; (define-key *root-map* (kbd "C-7") "sr-bookmark r5rs")
-;; (define-key *root-map* (kbd "C-8") "sr-bookmark c")
+(define-key *root-map* (kbd "a") "sr-bookmark calendar")
 
 (define-key *root-map* (kbd "c") "sr-code-search")
 (define-key *root-map* (kbd "C") "sr-sel-code-search")
-
-;; (define-key *root-map* (kbd "d") "sr-chicken")
-;; (define-key *root-map* (kbd "D") "sr-sel-chicken")
 
 (define-key *root-map* (kbd "d") "sr-chicken-regex")
 (define-key *root-map* (kbd "D") "sr-sel-chicken-regex")
@@ -27,17 +17,14 @@
 (define-key *root-map* (kbd "g") "sr-google")
 (define-key *root-map* (kbd "G") "sr-sel-google")
 
-(define-key *root-map* (kbd "l") "sr-bookmark calendar")
+(define-key *root-map* (kbd "l") "exec xscreensaver-command -lock")
+(define-key *root-map* (kbd "C-l") "exec xscreensaver-command -lock")
 
-;; (define-key *root-map* (kbd "m") "sr-bookmark gmail")
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
 
 (define-key *root-map* (kbd "o") "sr-moma")
 (define-key *root-map* (kbd "O") "sr-sel-moma")
-
-;; (define-key *root-map* (kbd "o") "exec chrome")
-;; (define-key *root-map* (kbd "C-o") "exec chrome")
 
 (define-key *root-map* (kbd "q") "sr-bookmark critique")
 
