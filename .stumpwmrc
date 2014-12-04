@@ -20,6 +20,10 @@
 (define-key *root-map* (kbd "l") "exec xscreensaver-command -lock")
 (define-key *root-map* (kbd "C-l") "exec xscreensaver-command -lock")
 
+;;; Caps, too, just in case.
+(define-key *root-map* (kbd "L") "exec xscreensaver-command -lock")
+(define-key *root-map* (kbd "C-L") "exec xscreensaver-command -lock")
+
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
 
