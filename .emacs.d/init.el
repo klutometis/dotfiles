@@ -278,6 +278,9 @@ Then switch to the process buffer."
 ;;; find-name-dired should run case-insensitively.
 (setq read-file-name-completion-ignore-case t)
 
+;;; Dired should reuse files when changing directories.
+(diredp-toggle-find-file-reuse-dir 1)
+
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
 (defun current-buffer-not-mini ()
