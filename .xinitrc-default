@@ -7,5 +7,4 @@ setxkbmap dvorak
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 xscreensaver -nosplash &
-xautolock -corners ++++ -locker "xscreensaver-command -lock" &
 redshift-mountain-view &
