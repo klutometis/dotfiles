@@ -732,6 +732,8 @@ This function is called by `org-babel-execute-src-block'."
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
+(put 'with-mutex-locked 'scheme-indent-function 1)
+(put 'with-semaphore-acquired 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
