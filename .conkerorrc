@@ -31,7 +31,7 @@ editor_shell_command = "emacsclient";
 add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
 
 // Show tabs.
-// 
+//
 // Second thought, let's see what we can do without tabs: they're
 // slow.
 
@@ -214,7 +214,7 @@ function suggest_save_path_from_file_name (file_name, buffer) {
             }
             file_name = replace_map[re].transformer(file_name);
         }
-    }    
+    }
     file.append(file_name);
     return file.path;
 }
@@ -265,6 +265,29 @@ interactive("duplicate-buffer", "Duplicate buffer",
             function (I) {
               browser_object_follow(I.buffer, OPEN_NEW_BUFFER, I.buffer.current_uri.spec);});
 define_key(default_global_keymap, "C-x 2", "duplicate-buffer");
+
+// Thanks, Mark Roddy! See
+// <http://mozdev.org/pipermail/conkeror/2010-February/001918.html>.
+function shell_on_url(funcname, funcdesc, cmd) {
+    //Create an interactive function for running a predetermined
+    //shell command on a url
+    //Bind a specific shell command for a url to 'functionname'
+
+    //Taken largely from "shell-command-on-url"  and
+    //"shell-command-on-file" in commands.js
+    interactive(funcname, funcdesc,
+        function (I) {
+            var cwd = I.local.cwd;
+            var element = yield read_browser_object(I);
+            var spec = load_spec(element);
+            var uri = load_spec_uri_string(spec);
+            shell_command_with_argument_blind(cmd, uri, $cwd = cwd);
+        },
+        $browser_object = browser_object_links);
+}
+
+shell_on_url("follow-in-chrome", "Open a url in Chrome", "google-chrome");
+define_key(default_global_keymap, "C-x x", "follow-in-chrome");
 
 session_pref("network.proxy.type", 1)
 session_pref("network.proxy.http", "127.0.0.1");
