@@ -707,6 +707,7 @@ This function is called by `org-babel-execute-src-block'."
 ;;; Indent-functions for match
 (put 'and-let* 'scheme-indent-function 1)
 (put 'add-hook 'lisp-indent-function 1)
+(put 'bind-lambda 'lisp-indent-function 1)
 (put 'call-with-database 'scheme-indent-function 1)
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
 (put 'call-with-values 'scheme-indent-function 1)
@@ -736,6 +737,8 @@ This function is called by `org-babel-execute-src-block'."
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
 (put 'with-mutex-locked 'scheme-indent-function 1)
+(put 'with-primitive-procedures 'scheme-indent-function 1)
+(put 'with-require 'scheme-indent-function 1)
 (put 'with-semaphore-acquired 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
