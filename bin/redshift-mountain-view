@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+redshift -l 37.389444:-122.081944 -t 5700:3600 -g 0.8 -m vidmode
