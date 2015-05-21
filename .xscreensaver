@@ -4,7 +4,7 @@
 
 timeout:	0:10:00
 cycle:		0:10:00
-lock:		True
+lock:           True
 lockTimeout:	0:00:00
 passwdTimeout:	0:00:30
 visualID:	default
@@ -24,7 +24,7 @@ fadeTicks:	20
 captureStderr:	True
 ignoreUninstalledPrograms:False
 font:		*-medium-r-*-140-*-m-*
-dpmsEnabled:	True
+dpmsEnabled:    True
 dpmsQuickOff:	False
 dpmsStandby:	0:30:00
 dpmsSuspend:	0:30:00
@@ -310,4 +310,3 @@ GetViewPortIsFullOfLies:False
 procInterrupts:	True
 xinputExtensionDev: False
 overlayStderr:	True
-

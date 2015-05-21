@@ -42,7 +42,6 @@
                       magit
                       markdown-mode
                       mediawiki
-                      nrepl
                       openwith
                       org-plus-contrib
                       paredit
@@ -97,7 +96,7 @@
            (ansi-color-apply-on-region (point-min) (point-max))))))
 
 ;;; Ox-ravel, for creating Rnw from org-mode.
-(require 'ox-ravel)
+;; (require 'ox-ravel)
 
 ;;; xclip-mode
 (require 'xclip)
@@ -1025,50 +1024,4 @@ This function is called by `org-babel-execute-src-block'."
           (set-visited-file-name new-name)
                     (set-buffer-modified-p nil))))))
 
-;;; Google
 
-(load-file "/home/build/google3/template/soy/emacs/soy-mode.el")
-(require 'soy-mode)
-(add-to-list 'auto-mode-alist '("\\.soy\\'" . soy-mode))
-
-(load-file "/usr/share/emacs/site-lisp/google/google.el")
-(require 'google)
-(require 'p4-google)                ; g4-annotate, improves
-                                    ; find-file-at-point
-(require 'compilation-colorization) ; colorizes output of (i)grep
-(require 'rotate-clients)           ; google-rotate-client
-(require 'rotate-among-files)       ; google-rotate-among-files
-(require 'googlemenu)               ; handy Google menu bar
-(require 'p4-files)                 ; transparent support for Perforce
-                                    ; filesystem
-(require 'google3)                  ; magically set paths for
-                                    ; compiling google3 code
-(require 'google3-build)            ; support for blaze builds
-(require 'csearch)                  ; Search the whole Google code
-                                    ; base.
-(require 'google-logo)
-(require 'google-imports)
-
-(setq google-build-system "blaze")
-(add-hook 'find-file-not-found-hooks 'autogen)
-(load-file "/home/build/public/eng/elisp/google.el")
-(global-set-key [(?\M-.)] 'gtags-feeling-lucky) ;; equiv: find-tag
-(global-set-key [(?\M-,)] 'gtags-next-tag)      ;; equiv: tags-loop-continue
-(global-set-key [(?\M-*)] 'gtags-pop-tag)       ;; equiv: pop-tag-mark
-(global-set-key [?\M-.] 'gtags-feeling-lucky)
-(global-set-key [f7] 'gtags-show-tag-locations-regexp)
-(global-set-key [f8] 'gtags-show-callers)
-(global-set-key [f9] 'gtags-pop-tag)
-(global-set-key [f10] 'gtags-show-matching-tags)
-(add-hook 'java-mode-hook
-  (lambda ()
-    (define-key java-mode-map "\C-\M-i" 'gtags-complete-tag)))
-
-;;; From
-;;; <https://wiki.corp.google.com/twiki/bin/view/Nonconf/GTagsEmacsClient#Advanced_Users>.
-;; (setq gtags-default-mode 'c++-mode)
-;; (setq gtags-default-mode 'java-mode)
-;; (setq gtags-default-mode 'python-mode)
-;; (setq gtags-output-mode 'single-line)
-;; (setq gtags-output-mode 'single-line-grouped)
-;; (setq gtags-output-mode 'standard)
