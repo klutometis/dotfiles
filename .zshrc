@@ -32,7 +32,9 @@ ZSH_THEME="lambda"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-highlighting)
+
+# ssh-agent
+plugins=(battery git git-flow github heroku lein lol yum zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
