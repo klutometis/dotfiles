@@ -1,5 +1,4 @@
-#include ".Xdefaults-font-misc"
-#include ".Xdefaults-font-dejavu"
+#include ".Xdefaults-font"
 
 Xautolock.corners: ++++
 

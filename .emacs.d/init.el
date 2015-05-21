@@ -42,7 +42,6 @@
                       magit
                       markdown-mode
                       mediawiki
-                      nrepl
                       openwith
                       org-plus-contrib
                       paredit
@@ -97,7 +96,7 @@
            (ansi-color-apply-on-region (point-min) (point-max))))))
 
 ;;; Ox-ravel, for creating Rnw from org-mode.
-(require 'ox-ravel)
+;; (require 'ox-ravel)
 
 ;;; xclip-mode
 (require 'xclip)
@@ -736,10 +735,13 @@ This function is called by `org-babel-execute-src-block'."
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
+(put 'with-lazy-lists 'scheme-indent-function 1)
 (put 'with-mutex-locked 'scheme-indent-function 1)
 (put 'with-primitive-procedures 'scheme-indent-function 1)
 (put 'with-require 'scheme-indent-function 1)
 (put 'with-semaphore-acquired 'scheme-indent-function 1)
+(put 'with-output-to-pipe 'scheme-indent-function 1)
+(put 'with-primitive-procedures 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
@@ -1006,6 +1008,8 @@ This function is called by `org-babel-execute-src-block'."
      (when (not window-system)
        (set-face-background 'magit-item-highlight "white")
        (set-face-background 'magit-tag "black"))))
+
+(setq magit-auto-revert-mode nil)
 
 ;; http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
