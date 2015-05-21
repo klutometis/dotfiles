@@ -4,7 +4,7 @@
 (require 'hippie-exp)
 
 ;;; Need for ad-hoc things.
-;; (add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/")
 
 ;;;; ESK
 
@@ -447,10 +447,9 @@ Then switch to the process buffer."
 
 ;;;;; org-mode
 
-;; (require 'org-special-blocks)
-
 ;;; Stuff to publish the daybook.
-(load "~/prg/org/daybook/daybook.el")
+(if (file-exists-p "~/prg/org/daybook/daybook.el")
+    (load "~/prg/org/daybook/daybook.el"))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
