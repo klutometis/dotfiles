@@ -201,4 +201,7 @@ alias wh=which
 
 unsetopt CASE_GLOB
 setopt NO_NOMATCH
-source /etc/bash_completion.d/g4d
+
+if [ -f ~/.$(hostname -s).sh ]; then
+        source ~/.$(hostname -s).sh
+fi
