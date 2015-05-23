@@ -3,11 +3,7 @@
 ;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
 (require 'hippie-exp)
 
-;;; Need for ad-hoc things.
-(add-to-list 'load-path "~/.emacs.d/")
-
 ;;;; ESK
-
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
