@@ -1,0 +1,54 @@
+#!/usr/bin/env zsh
+
+zmodload zsh/mathfunc
+
+# According to power_supply.h: All voltages, currents, charges,
+# energies, time and temperatures in uV, µA, µAh, µWh, seconds and
+# tenths of degree Celsius unless otherwise stated.
+
+# Also, according to
+# <http://www.spinics.net/lists/linux-acpi/msg22059.html>, remaining
+# time is energy_now/power_now.
+
+float full=$(cat /sys/class/power_supply/BAT0/energy_full)
+float remaining=$(cat /sys/class/power_supply/BAT0/energy_now)
+float power=$(cat /sys/class/power_supply/BAT0/power_now)
+
+# These calculations seem to overestimate the remaining battery.
+# float voltage=$(cat /sys/class/power_supply/BAT0/voltage_now)
+# float rate=$(( power * voltage / 1e7 ))
+rate=$power
+
+# TODO: Icon for state, e.g. charging: ⌁?
+state=$(cat /sys/class/power_supply/BAT0/status)
+
+# In order to do minutes correctly, we should probably average-dampen
+# the rate.
+if (( rate == 0 )); then
+    time=∞
+else
+    # Do minutes, seconds; if you want to.
+    # minutes=$(printf "%.0f" $(( $remaining / $rate )))
+    hours=$(( remaining / rate ))
+    minutes=$(( hours * 60 % 60 ))
+
+    # Lop off the minutes.
+    hours=$(( floor(hours) ))
+
+    if (( hours == 0 )); then
+        time=$(printf "%d min" $minutes)
+    else
+        time=$(printf "%d h %d min" $hours $minutes)
+    fi
+fi
+
+# Convert to percentage.
+percentage=$(printf "%.1f" $(( 100.0 * remaining / full )))
+
+# Convert to mWh.
+integer remaining=$(( remaining / 1000.0 ))
+
+# Convert to mW.
+integer rate=$(( rate / 1000.0 ))
+
+echo "(${state}) ${time} | ${percentage}% | ${remaining} mWh | ${rate} mW"

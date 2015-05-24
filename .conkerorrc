@@ -13,7 +13,7 @@ url_completion_use_history = true;
 
 // Display the URL before going to it in hints mode; thanks,
 // <http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html>.
-hints_display_url_panel = true;
+// hints_display_url_panel = true;
 
 // No downloads page at all
 remove_hook("download_added_hook", open_download_buffer_automatically);
@@ -31,7 +31,7 @@ editor_shell_command = "emacsclient";
 add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
 
 // Show tabs.
-// 
+//
 // Second thought, let's see what we can do without tabs: they're
 // slow.
 
@@ -46,12 +46,12 @@ read_buffer_show_icons = true;
 /// Webjumps
 
 // Add a webjump for bookmarks.
-define_webjump("bookmark",
-               function(term) {return term;},
-               $completer = history_completer($use_history = false,
-                                              $use_bookmarks = true,
-                                              $match_required = true),
-               $description = "Visit a conkeror bookmark");
+// define_webjump("bookmark",
+//                function(term) {return term;},
+//                $completer = history_completer($use_history = false,
+//                                               $use_bookmarks = true,
+//                                               $match_required = true),
+//                $description = "Visit a conkeror bookmark");
 
 // Go to the OED.
 define_webjump("oed", "http://oed.com/search?searchType=dictionary&q=%s")
@@ -197,17 +197,11 @@ session_pref("ui.key.generalAccessKey", 0);
 //         s);}
 // add_hook('content_buffer_progress_change_hook', focusblock);
 
-// Block key-stealing by e.g. google, jira, github. It fucking works!
-// Fuck Google's reappriation of my alphanums; fuck github's
-// reappriation of slash; fuck jira's reappriation of slash.
-//
-// Thank god I've been manumitted from these tyrannical mother-fuckers
-// with their opinionated interfaces.
-// require("key-kill");
+// Block key-stealing by e.g. google, jira, github.
+require("key-kill");
 // key_kill_mode.test.push(build_url_regexp($domain = "github"));
-// key_kill_mode.test.push(build_url_regexp($domain = "google"));
-// key_kill_mode.test.push(build_url_regexp($domain = "slashdot"));
-// key_kill_mode.test.push(build_url_regexp($domain = "truecarcorp"));
+key_kill_mode.test.push(build_url_regexp($domain = "google"));
+key_kill_mode.test.push(build_url_regexp($domain = "slashdot"));
 
 // Filename transformations for downloads
 function suggest_save_path_from_file_name (file_name, buffer) {
@@ -220,7 +214,7 @@ function suggest_save_path_from_file_name (file_name, buffer) {
             }
             file_name = replace_map[re].transformer(file_name);
         }
-    }    
+    }
     file.append(file_name);
     return file.path;
 }
@@ -272,6 +266,29 @@ interactive("duplicate-buffer", "Duplicate buffer",
               browser_object_follow(I.buffer, OPEN_NEW_BUFFER, I.buffer.current_uri.spec);});
 define_key(default_global_keymap, "C-x 2", "duplicate-buffer");
 
+// Thanks, Mark Roddy! See
+// <http://mozdev.org/pipermail/conkeror/2010-February/001918.html>.
+function shell_on_url(funcname, funcdesc, cmd) {
+    //Create an interactive function for running a predetermined
+    //shell command on a url
+    //Bind a specific shell command for a url to 'functionname'
+
+    //Taken largely from "shell-command-on-url"  and
+    //"shell-command-on-file" in commands.js
+    interactive(funcname, funcdesc,
+        function (I) {
+            var cwd = I.local.cwd;
+            var element = yield read_browser_object(I);
+            var spec = load_spec(element);
+            var uri = load_spec_uri_string(spec);
+            shell_command_with_argument_blind(cmd, uri, $cwd = cwd);
+        },
+        $browser_object = browser_object_links);
+}
+
+shell_on_url("follow-in-chrome", "Open a url in Chrome", "google-chrome");
+define_key(default_global_keymap, "C-x x", "follow-in-chrome");
+
 session_pref("network.proxy.type", 1)
 session_pref("network.proxy.http", "127.0.0.1");
 session_pref("network.proxy.http_port", 8118);
@@ -284,7 +301,7 @@ function jsconsole(args)
     var prefix = args[0];
     open_url_in (prefix, "chrome://global/content/console.xul");}
 
-add_command("jsconsole", jsconsole, [["z"]]);
+// add_command("jsconsole", jsconsole, [["z"]]);
 
 function my_title_format (window) {
     return '{'+get_current_profile()+'} '+window.buffers.current.description;
@@ -296,36 +313,36 @@ clock_time_format = "%R"
 
 add_hook("mode_line_hook", mode_line_adder(downloads_status_widget));
 
-profile_widget.prototype = {
-    constructor: clock_widget,
-    __proto__: text_widget.prototype,
-    update: function () {
-      this.view.text = get_current_profile;
-    }
-};
+// profile_widget.prototype = {
+//     constructor: clock_widget,
+//     __proto__: text_widget.prototype,
+//     update: function () {
+//       this.view.text = get_current_profile;
+//     }
+// };
 
-clock2_widget.prototype = {
-    constructor: clock_widget,
-    __proto__: text_widget.prototype,
-    update: function () {
-        var time = new Date();
-        this.view.text = time.toLocaleFormat(clock_time_format);
-        this.view.text = "harro"
-        if (time.getSeconds() > 0 || time.getMilliseconds() > 100) {
-            this.window.clearTimeout(this.timer_ID);
-            var time = time.getSeconds() * 1000 + time.getMilliseconds();
-            time = 60000 - time;
-            this.timer_ID = this.window.setTimeout(this.do_update, time);
-            this.timer_timeout = true;
-        } else if (this.timer_timeout) {
-            this.window.clearTimeout(this.timer_ID);
-            this.timer_ID = this.window.setInterval(this.do_update, 60000);
-            this.timer_timeout = false;
-        }
-    },
-    destroy: function () {
-        this.window.clearTimeout(this.timer_ID);
-    }
-};
+// clock2_widget.prototype = {
+//     constructor: clock_widget,
+//     __proto__: text_widget.prototype,
+//     update: function () {
+//         var time = new Date();
+//         this.view.text = time.toLocaleFormat(clock_time_format);
+//         this.view.text = "harro"
+//         if (time.getSeconds() > 0 || time.getMilliseconds() > 100) {
+//             this.window.clearTimeout(this.timer_ID);
+//             var time = time.getSeconds() * 1000 + time.getMilliseconds();
+//             time = 60000 - time;
+//             this.timer_ID = this.window.setTimeout(this.do_update, time);
+//             this.timer_timeout = true;
+//         } else if (this.timer_timeout) {
+//             this.window.clearTimeout(this.timer_ID);
+//             this.timer_ID = this.window.setInterval(this.do_update, 60000);
+//             this.timer_timeout = false;
+//         }
+//     },
+//     destroy: function () {
+//         this.window.clearTimeout(this.timer_ID);
+//     }
+// };
 
-add_hook("mode_line_hook", mode_line_adder(clock2_widget));
+// add_hook("mode_line_hook", mode_line_adder(clock2_widget));
