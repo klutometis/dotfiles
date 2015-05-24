@@ -726,7 +726,9 @@ This function is called by `org-babel-execute-src-block'."
 (put 'match-let* 'scheme-indent-function 1)
 (put 'match-letrec 'scheme-indent-function 1)
 (put 'module 'scheme-indent-function 1)
+(put 'nwhile 'scheme-indent-function 1)
 (put 'parameterize 'scheme-indent-function 1)
+(put 'process-with-environment 'scheme-indent-function 1)
 (put 'receive 'scheme-indent-function 1)
 (put 'regex-case 'scheme-indent-function 1)
 (put 'set-read-syntax! 'scheme-indent-function 1)
@@ -739,6 +741,10 @@ This function is called by `org-babel-execute-src-block'."
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
+(put 'with-error-output-to-port 'scheme-indent-function 1)
+(put 'with-input-from-download 'scheme-indent-function 1)
+(put 'with-output-to-mail 'scheme-indent-function 1)
+(put 'with-output-to-pipe 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
