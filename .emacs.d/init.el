@@ -3,11 +3,7 @@
 ;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
 (require 'hippie-exp)
 
-;;; Need for ad-hoc things.
-(add-to-list 'load-path "~/.emacs.d/")
-
 ;;;; ESK
-
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
@@ -42,7 +38,6 @@
                       magit
                       markdown-mode
                       mediawiki
-                      nrepl
                       openwith
                       org-plus-contrib
                       paredit
@@ -79,11 +74,32 @@
 
 ;;;; Miscellaneous
 
+;;; So that Emacs recognizes aliases when running commands.
+(setq shell-file-name "zsh")
+(setq shell-command-switch "-ic")
+
+;;; Turn color on
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;;; Also turn color on for ad-hoc commands (see
+;;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
+(defadvice display-message-or-buffer (before ansi-color activate)
+  "Process ANSI color codes in shell output."
+  (let ((buf (ad-get-arg 0)))
+    (and (bufferp buf)
+         (string= (buffer-name buf) "*Shell Command Output*")
+         (with-current-buffer buf
+           (ansi-color-apply-on-region (point-min) (point-max))))))
+
 ;;; Ox-ravel, for creating Rnw from org-mode.
-(require 'ox-ravel)
+;; (require 'ox-ravel)
 
 ;;; xclip-mode
-(xclip-mode 1)
+(require 'xclip)
+(turn-on-xclip)
+
+;;; Why do we need this suddenly?
+;; (normal-erase-is-backspace-mode 1)
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
@@ -94,49 +110,6 @@
     ("\\.mp3\\'" "mplayer" (file))
     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
     ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
-
-;;; Copy-and-paste from the terminal to X's clipboard.
-
-;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
-;; If emacs is run in a terminal, the clipboard- functions have no
-;; effect. Instead, we use of xsel, see
-;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
-;; program for getting and setting the contents of the X selection"
-;; (unless window-system
-;;   ;; This only gets called at startup; need to test within the
-;;   ;; function itself and defer to normal yank and kill.
-;;   (when (and (getenv "DISPLAY")
-;;              (not (getenv "SSH_CLIENT")))
-;;     ;; Callback for when user cuts
-;;     (defun xsel-cut-function (text &optional push)
-;;       ;; Insert text to temp-buffer, and "send" content to xsel
-;;       ;; stdin
-;;       (with-temp-buffer
-;;         (insert text)
-;;         ;; I prefer using the "clipboard" selection (the one the
-;;         ;; typically is used by c-c/c-v) before the primary
-;;         ;; selection
-;;         ;; (that uses mouse-select/middle-button-click)
-;;         (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-;;     ;; Call back for when user pastes
-;;     (defun xsel-paste-function ()
-;;       ;; Find out what is current selection by xsel. If it is
-;;       ;;different
-;;       ;; from the top of the kill-ring (car kill-ring), then
-;;       ;; return
-;;       ;; it. Else, nil is returned, so whatever is in the top of
-;;       ;; the
-;;       ;; kill-ring will be used.
-;;       (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-;;         (unless (string= (car kill-ring) xsel-output)
-;;           xsel-output)))
-;;     ;; Attach callbacks to hooks
-;;     (setq interprogram-cut-function 'xsel-cut-function)
-;;     (setq interprogram-paste-function 'xsel-paste-function)
-;;     ;; Idea from
-;;     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-;;     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-;;     ))
 
 ;;; Normal comments in Javascript, despite the fact that we use
 ;;; paredit
@@ -300,6 +273,9 @@ Then switch to the process buffer."
 ;;; find-name-dired should run case-insensitively.
 (setq read-file-name-completion-ignore-case t)
 
+;;; Dired should reuse files when changing directories.
+(diredp-toggle-find-file-reuse-dir 1)
+
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
 (defun current-buffer-not-mini ()
@@ -374,10 +350,10 @@ Then switch to the process buffer."
 ;;; users, so do not block them."
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c L") 'google-lint)
-(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c o") 'occur)
 (global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
@@ -439,6 +415,7 @@ Then switch to the process buffer."
 (add-to-list 'auto-mode-alist '("\\.bats\\'" . sh-mode))
 (add-to-list 'auto-mode-alist '("\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("\\.egg-locations\\'" . scheme-mode))
+(add-to-list 'auto-mode-alist '("\\.gss\\'" . css-mode))
 (add-to-list 'auto-mode-alist '("\\.hy\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.meta\\'" . scheme-mode))
 (add-to-list 'auto-mode-alist '("\\.release-info\\'" . scheme-mode))
@@ -466,10 +443,9 @@ Then switch to the process buffer."
 
 ;;;;; org-mode
 
-(require 'org-special-blocks)
-
 ;;; Stuff to publish the daybook.
-(load "~/prg/org/daybook/daybook.el")
+(if (file-exists-p "~/prg/org/daybook/daybook.el")
+    (load "~/prg/org/daybook/daybook.el"))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -579,6 +555,20 @@ This function is called by `org-babel-execute-src-block'."
     (browse-url (concat "http://www.google.com/search?btnI&q="
                         (url-hexify-string q)))))
 
+(define-skeleton org-mode-src-skel-with-tangle
+  "Insert #+BEGIN_SRC <source>...#+END_SRC blocks with :tangle."
+  nil
+  > "#+BEGIN_SRC " (skeleton-read "Source: ")
+  (let ((tangle (skeleton-read "Tangle: ")))
+    (if (string= "" tangle)
+        ""
+      (concat " :tangle " tangle)))
+  \n
+  _
+  \n
+  "#+END_SRC"
+  > \n)
+
 (define-skeleton org-mode-src-skel
   "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
   "Source: "
@@ -615,7 +605,7 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook
     'org-mode-hook
   (lambda ()
-    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel)
+    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel-with-tangle)
     (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
     (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
 
@@ -709,8 +699,9 @@ This function is called by `org-babel-execute-src-block'."
 (setq scheme-program-name "csi -n")
 
 ;;; Indent-functions for match
-(put 'and-let* 'scheme-indent-function 1)
 (put 'add-hook 'lisp-indent-function 1)
+(put 'and-let* 'scheme-indent-function 1)
+(put 'bind-lambda 'lisp-indent-function 1)
 (put 'call-with-database 'scheme-indent-function 1)
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
 (put 'call-with-values 'scheme-indent-function 1)
@@ -743,8 +734,13 @@ This function is called by `org-babel-execute-src-block'."
 (put 'with 'scheme-indent-function 1)
 (put 'with-error-output-to-port 'scheme-indent-function 1)
 (put 'with-input-from-download 'scheme-indent-function 1)
+(put 'with-lazy-lists 'scheme-indent-function 1)
+(put 'with-mutex-locked 'scheme-indent-function 1)
 (put 'with-output-to-mail 'scheme-indent-function 1)
 (put 'with-output-to-pipe 'scheme-indent-function 1)
+(put 'with-primitive-procedures 'scheme-indent-function 1)
+(put 'with-require 'scheme-indent-function 1)
+(put 'with-semaphore-acquired 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
@@ -955,6 +951,9 @@ This function is called by `org-babel-execute-src-block'."
 ;;; Get rid of the irritating semi-colon behavior.
 (setq graphviz-dot-auto-indent-on-semi nil)
 
+;;; Set an external viewer.
+(setq graphviz-dot-view-command "display %s")
+
 ;;;;; Clojure
 
 ;;; Indentation for λ (should we suffice with Emacs changing the
@@ -999,42 +998,34 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-(setq magit-save-some-buffers t)
-(setq magit-save-repository-buffers t)
+;; Can't see green-on-blue, for some reason; from
+;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")
+     (when (not window-system)
+       (set-face-background 'magit-item-highlight "white")
+       (set-face-background 'magit-tag "black"))))
 
-;;; Google
+(setq magit-auto-revert-mode nil)
 
-(load-file "/home/build/google3/template/soy/emacs/soy-mode.el")
-(require 'soy-mode)
-(add-to-list 'auto-mode-alist '("\\.soy\\'" . soy-mode))
+;; http://steve.yegge.googlepages.com/my-dot-emacs-file
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file name new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+                    (set-buffer-modified-p nil))))))
 
-(load-file "/usr/share/emacs/site-lisp/google/google.el")
-(require 'google)
-(require 'p4-google)                ; g4-annotate, improves
-                                    ; find-file-at-point
-(require 'compilation-colorization) ; colorizes output of (i)grep
-(require 'rotate-clients)           ; google-rotate-client
-(require 'rotate-among-files)       ; google-rotate-among-files
-(require 'googlemenu)               ; handy Google menu bar
-(require 'p4-files)                 ; transparent support for Perforce
-                                    ; filesystem
-(require 'google3)                  ; magically set paths for
-                                    ; compiling google3 code
-(require 'google3-build)            ; support for blaze builds
-(require 'csearch)                  ; Search the whole Google code
-                                    ; base.
-(require 'google-logo)
-(require 'google-imports)
-
-(setq google-build-system "blaze")
-(add-hook 'find-file-not-found-hooks 'autogen)
-(load-file "/home/build/public/eng/elisp/google.el")
-(global-set-key [(?\M-.)] 'gtags-feeling-lucky) ;; equiv: find-tag
-(global-set-key [(?\M-,)] 'gtags-next-tag)      ;; equiv: tags-loop-continue
-(global-set-key [(?\M-*)] 'gtags-pop-tag)       ;; equiv: pop-tag-mark
-(global-set-key [?\M-.] 'gtags-feeling-lucky)
-(global-set-key [f7] 'gtags-show-tag-locations-regexp)
-(global-set-key [f8] 'gtags-show-callers)
-(global-set-key [f9] 'gtags-pop-tag)
-(global-set-key [f10] 'gtags-show-matching-tags)
-;; (define-key java-mode-map "\C-\M-i" 'gtags-complete-tag)
+(let ((host-file (format "~/.emacs.d/%s.el" system-name)))
+  (if (file-exists-p host-file)
+      (load host-file)))

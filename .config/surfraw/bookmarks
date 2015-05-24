@@ -1,8 +1,10 @@
-c http://api.call-cc.org/doc/
-e http://wiki.call-cc.org/chicken-projects/egg-index-4.html
-h http://news.ycombinator.com
-p http://pinboard.in/u:klutometis
-r http://reddit.com
+calendar https://www.google.com/calendar
+call-cc http://api.call-cc.org/doc/
+critique https://critique.corp.google.com/
+eggs http://wiki.call-cc.org/chicken-projects/egg-index-4.html
+hacker-news http://news.ycombinator.com
+gmail https://mail.google.com/
+pinboard http://pinboard.in/u:klutometis
 r5rs http://www.schemers.org/Documents/Standards/R5RS/HTML/r5rs-Z-H-15.html#%_index_start
-t http://twitter.com
-v https://www.google.com/voice
+reddit http://reddit.com
+voice https://www.google.com/voice

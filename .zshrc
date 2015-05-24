@@ -32,7 +32,9 @@ ZSH_THEME="lambda"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-highlighting)
+
+# ssh-agent
+plugins=(battery git git-flow github heroku lein lol yum zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -43,8 +45,8 @@ then
   unsetopt zle
   unsetopt prompt_cr
   unsetopt prompt_subst
-  unfunction precmd
-  unfunction preexec
+  # unfunction precmd
+  # unfunction preexec
   PS1='$ '
 fi
 
@@ -56,6 +58,7 @@ unsetopt correct_all
 # <http://unix.stackexchange.com/a/31235>.
 path=
 path+=$HOME/bin
+path+=/usr/games
 path+=/usr/lib64/qt4/bin/
 path+=/usr/local/apache2/bin
 path+=/usr/local/apr/bin
@@ -74,6 +77,7 @@ path+=/usr/local/ssl/bin
 path+=/usr/local/xulrunner
 path+=$HOME/src/stumpwm/contrib
 path+=$HOME/lib/go/bin
+path+=$HOME/google-cloud-sdk/bin
 path+=/usr/local/sbin
 path+=/usr/sbin
 path+=/sbin
@@ -112,7 +116,7 @@ export HADOOP_MAPRED_HOME=$HADOOP_PREFIX
 export HADOOP_YARN_HOME=$HADOOP_PREFIX
 export HADOOP_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
 export YARN_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
-export JAVA_HOME=/usr/local/java
+# export JAVA_HOME=/usr/local/java
 # For compatibility with IPv4.
 export JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
 # export HADOOP_HOME=/usr/local/hadoop
@@ -134,7 +138,7 @@ export XCOMPOSEFILE=~/.Xcompose
 alias ..='cd ..'            # Go up one directory
 alias ...='cd ../..'        # Go up two directories
 alias ....='cd ../../..'    # And for good measure
-alias a=ack
+alias a=ack-grep
 alias b=blaze
 alias c='cd'
 alias ca=cat
@@ -183,6 +187,9 @@ alias sai='sudo apt-get install'
 alias sas='sudo apt-cache search'
 alias sls='screen -ls'
 alias srd='screen -RD'
+# From <http://askubuntu.com/a/22043>: allows aliases to be used with
+# sudo.
+alias sudo='sudo '
 alias sy='sudo yum'
 alias syi='sudo yum install'
 alias sys='sudo yum search'
@@ -197,4 +204,7 @@ alias wh=which
 
 unsetopt CASE_GLOB
 setopt NO_NOMATCH
-source /etc/bash_completion.d/g4d
+
+if [ -f ~/.$(hostname -s).sh ]; then
+        source ~/.$(hostname -s).sh
+fi
