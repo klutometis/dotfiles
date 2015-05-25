@@ -3,11 +3,7 @@
 ;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
 (require 'hippie-exp)
 
-;;; Need for ad-hoc things.
-(add-to-list 'load-path "~/.emacs.d/")
-
 ;;;; ESK
-
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
@@ -703,8 +699,8 @@ This function is called by `org-babel-execute-src-block'."
 (setq scheme-program-name "csi -n")
 
 ;;; Indent-functions for match
-(put 'and-let* 'scheme-indent-function 1)
 (put 'add-hook 'lisp-indent-function 1)
+(put 'and-let* 'scheme-indent-function 1)
 (put 'bind-lambda 'lisp-indent-function 1)
 (put 'call-with-database 'scheme-indent-function 1)
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
@@ -721,7 +717,9 @@ This function is called by `org-babel-execute-src-block'."
 (put 'match-let* 'scheme-indent-function 1)
 (put 'match-letrec 'scheme-indent-function 1)
 (put 'module 'scheme-indent-function 1)
+(put 'nwhile 'scheme-indent-function 1)
 (put 'parameterize 'scheme-indent-function 1)
+(put 'process-with-environment 'scheme-indent-function 1)
 (put 'receive 'scheme-indent-function 1)
 (put 'regex-case 'scheme-indent-function 1)
 (put 'set-read-syntax! 'scheme-indent-function 1)
@@ -734,13 +732,15 @@ This function is called by `org-babel-execute-src-block'."
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
+(put 'with-error-output-to-port 'scheme-indent-function 1)
+(put 'with-input-from-download 'scheme-indent-function 1)
 (put 'with-lazy-lists 'scheme-indent-function 1)
 (put 'with-mutex-locked 'scheme-indent-function 1)
+(put 'with-output-to-mail 'scheme-indent-function 1)
+(put 'with-output-to-pipe 'scheme-indent-function 1)
 (put 'with-primitive-procedures 'scheme-indent-function 1)
 (put 'with-require 'scheme-indent-function 1)
 (put 'with-semaphore-acquired 'scheme-indent-function 1)
-(put 'with-output-to-pipe 'scheme-indent-function 1)
-(put 'with-primitive-procedures 'scheme-indent-function 1)
 (put 'with-working-directory 'scheme-indent-function 1)
 
 ;;;;;; mini-kanren
