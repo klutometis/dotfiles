@@ -84,7 +84,6 @@ path+=/sbin
 path+=/usr/local/bin
 path+=/usr/bin
 path+=/bin
-path+=/google/src/head/depot/google3/devtools/maintenance/include_what_you_use
 path+=$HOME/.config/surfraw/elvi
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
