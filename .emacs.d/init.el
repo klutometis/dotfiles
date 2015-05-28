@@ -592,13 +592,6 @@ This function is called by `org-babel-execute-src-block'."
                  "conkeror"
                  url))
 
-(defun browse-url-conkeror (url &optional new-window)
-  (setq url (browse-url-encode-url url))
-  (start-process "conkeror"
-                 nil
-                 "conkeror"
-                 url))
-
 (defun browse-url-chrome (url &optional new-window)
   (setq url (browse-url-encode-url url))
   (start-process "google-chrome"
@@ -606,7 +599,7 @@ This function is called by `org-babel-execute-src-block'."
                  "google-chrome"
                  url))
 
-(setq browse-url-browser-function 'browse-url-chrome)
+(setq browse-url-browser-function 'browse-url-conkeror)
 
 (defun browse-lucky (start end)
   (interactive "r")
