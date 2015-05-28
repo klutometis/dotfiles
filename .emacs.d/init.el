@@ -21,6 +21,10 @@
 ;;; Missing: css-mode, bc, ess, fp, lilypond, maxima, php-repl,
 ;;; wikipedia-mode, xml-lite
 (defvar my-packages '(
+                      ace-jump-buffer
+                      ace-jump-helmline
+                      ace-jump-mode
+                      ace-jump-zap
                       apache-mode
                       clojure-mode
                       dired+
@@ -73,6 +77,17 @@
 (setq delete-old-versions t)
 
 ;;;; Miscellaneous
+
+;;; Ace-jump-mode
+
+;; Everything becomes invisible, otherwise; should we let emacs know
+;; that we have a dark background, somehow?
+;;
+;; E.g. (set-variable 'frame-background-mode 'dark) doesn't seem to
+;; work.
+(eval-after-load "ace-jump-mode"
+  '(progn
+     (set-face-foreground 'ace-jump-face-background "gray100")))
 
 ;;; So that Emacs recognizes aliases when running commands.
 (setq shell-file-name "zsh")
@@ -371,6 +386,7 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c C-z r") 'browse-url-of-region)
 (global-set-key (kbd "C-c C-z u") 'browse-url)
 (global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
+(global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
 (global-set-key (kbd "<up>") 'windmove-up)
