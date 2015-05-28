@@ -36,6 +36,8 @@
                       go-mode
                       graphviz-dot-mode
                       haskell-mode
+                      helm
+                      helm-descbinds
                       htmlize
                       keyfreq
                       lua-mode
@@ -88,6 +90,40 @@
 (eval-after-load "ace-jump-mode"
   '(progn
      (set-face-foreground 'ace-jump-face-background "gray100")))
+
+;;; Helm-mode
+(helm-mode 1)
+
+;; Fuzzy match
+(setq helm-M-x-fuzzy-match t
+      helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match t
+      helm-semantic-fuzzy-match t
+      helm-imenu-fuzzy-match t
+      helm-locate-fuzzy-match t
+      helm-apropos-fuzzy-match t)
+
+;; Add a hook in eshell-mode for command-history.
+(add-hook 'eshell-mode-hook
+  #'(lambda ()
+      (define-key eshell-mode-map (kbd "C-c C-l")  'helm-eshell-history)))
+
+;; Comint command-history
+(define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring)
+
+;; Minibuffer command-history
+(define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
+
+;; Use ack.
+(when (executable-find "ack-grep")
+  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
+        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
+
+;; Man-page at point
+(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+
+;; Helm-descbinds
+(helm-descbinds-mode)
 
 ;;; So that Emacs recognizes aliases when running commands.
 (setq shell-file-name "zsh")
@@ -363,22 +399,24 @@ Then switch to the process buffer."
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
+(global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c G") 'autogen)
+(global-set-key (kbd "C-c L") 'google-lint)
+(global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
+(global-set-key (kbd "C-c R") 'recompile)
+(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c a") 'list-matching-lines)
 (global-set-key (kbd "C-c c") 'compile)
-(global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c f") 'find-grep-dired)
+(global-set-key (kbd "C-c h o") 'helm-occur)
 (global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c L") 'google-lint)
 (global-set-key (kbd "C-c n") 'find-name-dired)
 (global-set-key (kbd "C-c o") 'occur)
-(global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
 (global-set-key (kbd "C-c r") 'rgrep)
-(global-set-key (kbd "C-c R") 'recompile)
 (global-set-key (kbd "C-c s") 'svn-status)
 (global-set-key (kbd "C-c u") 'kill-line-backward)
-(global-set-key (kbd "C-c U") 'rename-uniquely)
 (global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
-(global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 ;; From
 ;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>.
 (global-set-key (kbd "C-c C-z .") 'browse-url-at-point)
@@ -386,9 +424,14 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c C-z r") 'browse-url-of-region)
 (global-set-key (kbd "C-c C-z u") 'browse-url)
 (global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
+(global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "<up>") 'windmove-up)
 (global-set-key (kbd "<down>") 'windmove-down)
 (global-set-key (kbd "<right>") 'windmove-right)
