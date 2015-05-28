@@ -38,6 +38,7 @@
                       haskell-mode
                       helm
                       helm-descbinds
+                      helm-swoop
                       htmlize
                       keyfreq
                       lua-mode
@@ -124,6 +125,9 @@
 
 ;; Helm-descbinds
 (helm-descbinds-mode)
+
+;; Helm-swoop should save file after edit.
+(setq helm-multi-swoop-edit-save t)
 
 ;;; So that Emacs recognizes aliases when running commands.
 (setq shell-file-name "zsh")
@@ -399,6 +403,7 @@ Then switch to the process buffer."
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
+(global-set-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c L") 'google-lint)
@@ -424,18 +429,31 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c C-z r") 'browse-url-of-region)
 (global-set-key (kbd "C-c C-z u") 'browse-url)
 (global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
+(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
 (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x M-i") 'help-multi-swoop-all)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
+(global-set-key (kbd "M-i") 'helm-swoop)
+(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "<up>") 'windmove-up)
 (global-set-key (kbd "<down>") 'windmove-down)
 (global-set-key (kbd "<right>") 'windmove-right)
 (global-set-key (kbd "<left>") 'windmove-left)
+
+(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+
+(require 'helm-swoop)
+(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
+(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
 
 ;;; Compensate for screen.
 (define-key input-decode-map "\e[1;2A" [S-up])
