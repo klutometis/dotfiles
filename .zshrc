@@ -33,10 +33,12 @@ ZSH_THEME="lambda"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 
-# ssh-agent
-plugins=(battery git git-flow github heroku lein lol yum zsh-syntax-highlighting)
+plugins=(battery git git-flow github heroku lein lol ssh-agent yum zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
+
+zstyle :omz:plugins:ssh-agent agent-forwarding on
+zstyle :omz:plugins:ssh-agent identities id_rsa
 
 export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
 
