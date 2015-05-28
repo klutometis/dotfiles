@@ -22,7 +22,7 @@
 ;;; wikipedia-mode, xml-lite
 (defvar my-packages '(
                       ace-jump-buffer
-                      ace-jump-helmline
+                      ace-jump-helm-line
                       ace-jump-mode
                       ace-jump-zap
                       apache-mode
