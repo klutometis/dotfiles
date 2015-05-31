@@ -442,6 +442,7 @@ Then switch to the process buffer."
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
 (global-set-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
+(global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-c G") 'autogen)
 (global-set-key (kbd "C-c L") 'google-lint)
