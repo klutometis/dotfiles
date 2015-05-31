@@ -468,6 +468,8 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-c C-z u") 'browse-url)
 (global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
 (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+(global-set-key (kbd "C-h") 'kill-whole-line)
+;;; This is incompatible with kill-whole-line above.
 (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
