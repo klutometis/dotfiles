@@ -19,7 +19,6 @@ then
   PS1='$ '
 fi
 
-# Customize to your needs...
 # Thanks, Marshall: <http://yountlabs.com/automation/disable-autocorrect-in-zsh/>.
 unsetopt correct_all
 
