@@ -1,4 +1,8 @@
 // -*- mode: js -*-
+modifiers.M = new modifier(
+    function (event) { return event.metaKey; },
+    function (event) { event.metaKey = true; });
+
 // Open URLs in new buffer, not window.
 url_remoting_fn = load_url_in_new_buffer
 
