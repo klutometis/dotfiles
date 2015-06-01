@@ -81,6 +81,17 @@
 
 ;;;; Miscellaneous
 
+;;; Use ace-window keys that are right above the home-row; we would
+;;; have used the home-row, but it interferes with the action.
+;;;
+;;;(setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
+(setq aw-keys '(?' ?, ?. ?p ?g ?c ?r ?l))
+
+;;; Otherwise, the dimming makes the screens unreadable.
+(eval-after-load "ace-window"
+  '(progn
+     (set-face-foreground 'aw-background-face "gray100")))
+
 ;;; Indent when issuing open-line; see e.g.
 ;;; <http://www.emacswiki.org/emacs/OpenNextLine> or
 ;;; <http://emacsredux.com/blog/2013/03/26/smarter-open-line/>.
