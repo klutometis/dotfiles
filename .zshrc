@@ -107,6 +107,7 @@ alias ...='cd ../..'        # Go up two directories
 alias ..='cd ..'            # Go up one directory
 alias a=ack-grep
 alias b=blaze
+alias bc='bc -l'
 alias c='cd'
 alias ca=cat
 alias cp='cp -v'
