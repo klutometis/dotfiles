@@ -81,13 +81,24 @@
 
 ;;;; Miscellaneous
 
-;;; Use ace-window keys that are right above the home-row; we would
-;;; have used the home-row, but it interferes with the action.
-;;;
-;;;(setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
-(setq aw-keys '(?' ?, ?. ?p ?g ?c ?r ?l))
+;;; Ace-window
 
-;;; Otherwise, the dimming makes the screens unreadable.
+;; Redefine the action keys so we can select windows with the
+;; home-row.
+(setq aw-dispatch-alist
+  '((?x aw-delete-window " Ace - Delete Window")
+    (?m aw-swap-window " Ace - Swap Window")
+    (?n aw-flip-window)
+    (?v aw-split-window-vert " Ace - Split Vert Window")
+    (?b aw-split-window-horz " Ace - Split Horz Window")
+    (?i delete-other-windows " Ace - Maximize Window")
+    (?o delete-other-windows)))
+
+;; On second thought, let's use home-row keys which are not already
+;; defined in aw-dispatch-list.
+(setq aw-keys '(?a ?e ?u ?i ?d ?h ?t ?s))
+
+;; Otherwise, the dimming makes the screens unreadable.
 (eval-after-load "ace-window"
   '(progn
      (set-face-foreground 'aw-background-face "gray100")))
@@ -161,6 +172,10 @@ point reaches the beginning or end of the buffer, stop there."
 (eval-after-load "ace-jump-mode"
   '(progn
      (set-face-foreground 'ace-jump-face-background "gray100")))
+
+;; Let's try using the home-keys, even though the author recommends
+;; using more than 10.
+(setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
 ;;; Helm-mode
 (helm-mode 1)
