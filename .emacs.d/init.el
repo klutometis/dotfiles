@@ -496,7 +496,7 @@ Then switch to the process buffer."
 (global-set-key (kbd "C-o") 'smart-open-line)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x M-i") 'help-multi-swoop-all)
+(global-set-key (kbd "C-x M-i") 'helm-multi-swoop-all)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 (global-set-key (kbd "C-x TAB") 'indent-rigidly)
 (global-set-key (kbd "M-%") 'query-replace-regexp)
