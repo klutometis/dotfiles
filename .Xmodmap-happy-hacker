@@ -3,9 +3,9 @@ keycode 134 = Multi_key
 ! Thanks: <http://www.emacswiki.org/emacs/XModMap>; the perennial
 ! <http://www.emacswiki.org/emacs/MetaKeyProblems>.
 clear mod1
-keycode 64 = Alt_L Meta_L
-keycode 108 = Alt_R Meta_R
-add mod1 = Meta_L Meta_R
+keycode 64 = Meta_L Alt_L 
+keycode 108 = Meta_R Alt_R 
+add mod1 = Meta_L Meta_R 
 
 ! Thanks, Olin; thanks, Kragen:
 ! <http://canonical.org/~kragen/setting-up-keyboard.html>,
