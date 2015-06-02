@@ -1,5 +1,7 @@
 #include ".Xdefaults-font"
 
+XTerm*modifyOtherKeys: 1
+
 Xautolock.corners: ++++
 
 XTerm*foreground: white
