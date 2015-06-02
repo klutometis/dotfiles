@@ -63,6 +63,7 @@
                       typopunct
                       unbound
                       undo-tree
+                      use-package
                       window-number
                       xclip
                       yaml-mode
@@ -176,7 +177,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Let's try using the home-keys, even though the author recommends
 ;; using more than 10.
-(setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
+;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
 ;;; Helm-mode
 (helm-mode 1)
@@ -489,63 +490,74 @@ Then switch to the process buffer."
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
-(global-set-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
-(global-set-key (kbd "<f1> a") 'helm-apropos)
-(global-set-key (kbd "C-c ;") 'comment-or-uncomment-region)
-(global-set-key (kbd "C-c C-h SPC") 'helm-all-mark-rings)
-;; From
-;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>.
-(global-set-key (kbd "C-c C-z .") 'browse-url-at-point)
-(global-set-key (kbd "C-c C-z b") 'browse-url-of-buffer)
-(global-set-key (kbd "C-c C-z r") 'browse-url-of-region)
-(global-set-key (kbd "C-c C-z u") 'browse-url)
-(global-set-key (kbd "C-c C-z v") 'browse-url-of-file)
-(global-set-key (kbd "C-c G") 'autogen)
-(global-set-key (kbd "C-c L") 'google-lint)
-(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
-(global-set-key (kbd "C-c O") 'multi-occur-in-this-mode)
-(global-set-key (kbd "C-c R") 'recompile)
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-(global-set-key (kbd "C-c U") 'rename-uniquely)
-(global-set-key (kbd "C-c a") 'list-matching-lines)
-(global-set-key (kbd "C-c c") 'compile)
-(global-set-key (kbd "C-c f") 'find-grep-dired)
-(global-set-key (kbd "C-c h o") 'helm-occur)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c n") 'find-name-dired)
-(global-set-key (kbd "C-c o") 'occur)
-(global-set-key (kbd "C-c r") 'rgrep)
-(global-set-key (kbd "C-c s") 'svn-status)
-(global-set-key (kbd "C-c u") 'kill-line-backward)
-(global-set-key (kbd "C-c x") 'copy-region-to-clipboard)
-(global-set-key (kbd "C-h") 'kill-whole-line)
-(global-set-key (kbd "C-o") 'smart-open-line)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x M-i") 'helm-multi-swoop-all)
-(global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-(global-set-key (kbd "C-x TAB") 'indent-rigidly)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "M-%") 'query-replace-regexp)
-(global-set-key (kbd "M-I") 'helm-swoop-back-to-last-point)
-(global-set-key (kbd "M-i") 'helm-swoop)
-(global-set-key (kbd "M-o") 'smart-open-line-above)
-(global-set-key (kbd "M-p") 'ace-window)
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(bind-keys
+ :map global-map
+ ("<f1> a" . helm-apropos)
+ ("C-<" . mc/mark-previous-like-this)
+ ("C->" . mc/mark-next-like-this)
+ ("C-a" . smarter-move-beginning-of-line)
+ ("C-c ;" . comment-or-uncomment-region)
+ ("C-c C-<" . mc/mark-all-like-this)
+ ("C-c C-c" . mc/edit-lines)
+ ("C-c C-h SPC" . helm-all-mark-rings)
+ ;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>
+ ("C-c C-z ." . browse-url-at-point)
+ ("C-c C-z b" . browse-url-of-buffer)
+ ("C-c C-z r" . browse-url-of-region)
+ ("C-c C-z u" . browse-url)
+ ("C-c C-z v" . browse-url-of-file)
+ ("C-c G" . autogen)
+ ("C-c L" . google-lint)
+ ("C-c M-i" . helm-multi-swoop)
+ ("C-c O" . multi-occur-in-this-mode)
+ ("C-c R" . recompile)
+ ("C-c SPC" . ace-jump-mode)
+ ("C-c U" . rename-uniquely)
+ ("C-c a" . list-matching-lines)
+ ("C-c c" . compile)
+ ("C-c f" . find-grep-dired)
+ ("C-c h o" . helm-occur)
+ ("C-c l" . org-store-link)
+ ("C-c n" . find-name-dired)
+ ("C-c o" . occur)
+ ("C-c r" . rgrep)
+ ("C-c s" . svn-status)
+ ("C-c u" . kill-line-backward)
+ ("C-c x" . copy-region-to-clipboard)
+ ("C-h" . kill-whole-line)
+ ("C-o" . smart-open-line-above)
+ ("C-x C-f" . helm-find-files)
+ ("C-x M-i" . helm-multi-swoop-all)
+ ("C-x SPC" . ace-jump-mode-pop-mark)
+ ("C-x TAB" . indent-rigidly)
+ ("C-x b" . helm-mini)
+ ("C-x o" . ace-window)
+ ("M-%" . query-replace-regexp)
+ ("M-I" . helm-swoop-back-to-last-point)
+ ("M-SPC" . set-rectangular-region-anchor)
+ ("M-i" . helm-swoop)
+ ("M-o" . smart-open-line)
+ ("M-x" . helm-M-x)
+ ("M-y" . helm-show-kill-ring)
+ ("M-z" . ace-jump-zap-to-char)
 
-(global-set-key (kbd "<up>") 'windmove-up)
-(global-set-key (kbd "<down>") 'windmove-down)
-(global-set-key (kbd "<right>") 'windmove-right)
-(global-set-key (kbd "<left>") 'windmove-left)
+ ("<up>" . windmove-up)
+ ("<down>" . windmove-down)
+ ("<right>" . windmove-right)
+ ("<left>" . windmove-left))
 
-(define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+(bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map)
+
+(bind-key "M-p" 'previous-history-element minibuffer-local-map)
 
 (require 'helm-swoop)
-(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
-(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
-(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
+(bind-keys :map helm-swoop-map
+           ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
+           ("C-r" . 'helm-previous-line)
+           ("C-s" . 'helm-next-line))
+(bind-keys :map helm-multi-swoop-map
+           ("C-r" . helm-previous-line)
+           ("C-s" . helm-next-line))
 
 ;;; Compensate for screen.
 (define-key input-decode-map "\e[1;2A" [S-up])
@@ -1172,6 +1184,8 @@ This function is called by `org-babel-execute-src-block'."
 
 (setq magit-auto-revert-mode nil)
 
+(setq magit-last-seen-setup-instructions "1.4.0")
+
 ;; http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -1191,3 +1205,19 @@ This function is called by `org-babel-execute-src-block'."
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (if (file-exists-p host-file)
       (load host-file)))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (use-package yaml-mode xclip window-number undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
