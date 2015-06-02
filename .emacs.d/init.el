@@ -175,7 +175,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Let's try using the home-keys, even though the author recommends
 ;; using more than 10.
-(setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
+;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
 ;;; Helm-mode
 (helm-mode 1)
