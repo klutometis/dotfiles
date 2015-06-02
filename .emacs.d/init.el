@@ -25,6 +25,7 @@
                       ace-jump-helm-line
                       ace-jump-mode
                       ace-jump-zap
+                      ace-window
                       apache-mode
                       clojure-mode
                       dired+
