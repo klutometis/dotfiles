@@ -1,5 +1,10 @@
 #include ".Xdefaults-font"
 
+! From <http://www.in-ulm.de/~mascheck/X11/XTerm>:
+! XTerm*otherKeymap.translations:  #override \
+!     None<Key>BackSpace:      string(0x08) \n\
+!     Ctrl<Key>BackSpace:      string(0x7F) \n
+
 Xautolock.corners: ++++
 
 XTerm*foreground: white
