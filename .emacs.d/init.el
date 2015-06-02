@@ -1183,6 +1183,8 @@ This function is called by `org-babel-execute-src-block'."
 
 (setq magit-auto-revert-mode nil)
 
+(setq magit-last-seen-setup-instructions "1.4.0")
+
 ;; http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
