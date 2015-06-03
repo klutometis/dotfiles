@@ -609,7 +609,7 @@ Then switch to the process buffer."
 (add-to-list 'auto-mode-alist '("/mutt" .
                                 (lambda ()
                                   (footnote-mode)
-                                  (auto-fill-mode)
+                                  (auto-fill-mode 0)
                                   (turn-on-orgtbl))))
 
 (setq vc-follow-symlinks t)
