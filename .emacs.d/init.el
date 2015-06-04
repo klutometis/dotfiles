@@ -527,6 +527,7 @@ Then switch to the process buffer."
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
  ("C-x C-f" . helm-find-files)
+ ("C-x C-r" . revert-buffer)
  ("C-x M-i" . helm-multi-swoop-all)
  ("C-x SPC" . ace-jump-mode-pop-mark)
  ("C-x TAB" . indent-rigidly)
