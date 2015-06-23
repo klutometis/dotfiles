@@ -46,6 +46,7 @@
                       magit
                       markdown-mode
                       mediawiki
+                      multiple-cursors
                       openwith
                       org-plus-contrib
                       paredit
