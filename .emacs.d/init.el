@@ -1056,68 +1056,9 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;;;; Latex
 
-;;; Don't we need more scaffolding for xelatex?
-;; (setq tex-dvi-view-command "xdvi")
-(setq tex-dvi-view-command "evince")
-;; (setq latex-run-command "xelatex -shell-escape")
-(setq org-latex-to-pdf-process
-      '("xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"))
-(setq org-export-latex-default-packages-alist
-      '(
-        ;; ("AUTO" "inputenc" t)
-        ;; ("T1" "fontenc" t)
-        ("" "fixltx2e" nil)
-        ("" "xltxtra" nil)
-        ("" "fontspec" nil)
-        ("" "graphicx" t)
-        ("" "longtable" nil)
-        ("" "float" nil)
-        ("" "wrapfig" nil)
-        ("" "soul" t)
-        ("" "textcomp" t)
-        ;; ("" "marvosym" t)
-        ;; ("" "wasysym" t)
-        ;; ("" "latexsym" t)
-        ("" "amssymb" t)
-        ("" "amsmath" t)
-        ("xetex,pdfborder=0 0 0,colorlinks,linkcolor=blue,citecolor=blue,urlcolor=blue" "hyperref" nil)
-        "\\tolerance=1000")
-      )
-
-;; (setq org-export-latex-classes
-;;       ("article"
-;;        "\\documentclass[11pt]{article}"
-;;        ("\\section{%s}" . "\\section*{%s}")
-;;        ("\\subsection{%s}" . "\\subsection*{%s}")
-;;        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;;        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;;        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-;; (eval-after-load 'tex-mode
-;;   '(progn
-;;      (defun tex-print (&optional alt)
-;;        "Print the .dvi file made by \\[tex-region], \\[tex-buffer] or \\[tex-file].
-;; Runs the shell command defined by `tex-dvi-print-command'. If prefix argument
-;; is provided, use the alternative command, `tex-alt-dvi-print-command'."
-;;        (interactive "P")
-;;        (let ((print-file-name-dvi (tex-append tex-print-file ".pdf"))
-;;              test-name)
-;;          (if (and (not (equal (current-buffer) tex-last-buffer-texed))
-;;                   (buffer-file-name)
-;;                   ;; Check that this buffer's printed file is up to date.
-;;                   (file-newer-than-file-p
-;;                    (setq test-name (tex-append (buffer-file-name) ".pdf"))
-;;                    (buffer-file-name)))
-;;              (setq print-file-name-dvi test-name))
-;;          (if (not (file-exists-p print-file-name-dvi))
-;;              (error "No appropriate `.pdf' file could be found")
-;;            (if (tex-shell-running)
-;;                (tex-kill-job)
-;;              (tex-start-shell))
-;;            (tex-send-command
-;;             (if alt tex-alt-dvi-print-command tex-dvi-print-command)
-;;             print-file-name-dvi t))))))
+(setq tex-dvi-view-command "mupdf")
+(setq org-latex-pdf-process
+      '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
 ;;;;; Graphviz
 
