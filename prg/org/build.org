@@ -1,0 +1,6 @@
+* stumpwm
+  To install surfraw, etc.; do:
+
+  #+BEGIN_SRC sh
+    make install-modules
+  #+END_SRC
