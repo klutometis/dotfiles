@@ -877,6 +877,8 @@ This function is called by `org-babel-execute-src-block'."
 (put 'add-hook 'lisp-indent-function 1)
 (put 'and-let* 'scheme-indent-function 1)
 (put 'bind-lambda 'lisp-indent-function 1)
+(put 'bind-let 'lisp-indent-function 1)
+(put 'bind-let* 'lisp-indent-function 1)
 (put 'call-with-database 'scheme-indent-function 1)
 (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
 (put 'call-with-values 'scheme-indent-function 1)
