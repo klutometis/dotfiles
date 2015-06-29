@@ -4,3 +4,9 @@
   #+BEGIN_SRC sh
     make install-modules
   #+END_SRC
+* bitlbee
+  See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]; for using full names:
+
+  #+BEGIN_EXAMPLE
+    account gtalk set nick_format %full_name
+  #+END_EXAMPLE
