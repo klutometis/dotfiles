@@ -6,6 +6,8 @@
 (setq mc/cmds-to-run-for-all
       '(
         helm-M-x
+        helm-show-kill-ring
+        kill-region
         kill-sexp
         mark-sexp
         paredit-forward-delete
@@ -18,5 +20,6 @@
 
 (setq mc/cmds-to-run-once
       '(
+        compile
         reindent-then-newline-and-indent
         ))

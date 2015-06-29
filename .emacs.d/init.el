@@ -1214,7 +1214,7 @@ This function is called by `org-babel-execute-src-block'."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (use-package yaml-mode xclip window-number undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (ac-html use-package yaml-mode xclip window-number undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
