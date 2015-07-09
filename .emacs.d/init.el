@@ -106,6 +106,20 @@
   '(progn
      (set-face-foreground 'aw-background-face "gray100")))
 
+;;; Kill the region, so that it's available for yanking, instead of
+;;; just deleting it.
+(setq ajz/zap-function 'kill-region)
+
+;;; Consider this if we don't use backwards very much; practice
+;;; backwards, though.
+(setq ajz/forward-only nil)
+
+;;; Sort by closest instead of the ace-default.
+(setq ajz/sort-by-closest t)
+
+;;; Only pick the nearest 52 characters.
+(setq ajz/52-character-limit t)
+
 ;;; Indent when issuing open-line; see e.g.
 ;;; <http://www.emacswiki.org/emacs/OpenNextLine> or
 ;;; <http://emacsredux.com/blog/2013/03/26/smarter-open-line/>.
