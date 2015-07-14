@@ -260,7 +260,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
-
 (openwith-mode t)
 (setf openwith-associations
   '(("\\.pdf\\'" "evince" (file))
@@ -928,6 +927,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'with-input-from-download 'scheme-indent-function 1)
 (put 'with-lazy-lists 'scheme-indent-function 1)
 (put 'with-mutex-locked 'scheme-indent-function 1)
+(put 'with-natural-language 'scheme-indent-function 1)
 (put 'with-output-to-mail 'scheme-indent-function 1)
 (put 'with-output-to-pipe 'scheme-indent-function 1)
 (put 'with-primitive-procedures 'scheme-indent-function 1)
