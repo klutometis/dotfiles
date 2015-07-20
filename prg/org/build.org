@@ -10,3 +10,39 @@
   #+BEGIN_EXAMPLE
     account gtalk set nick_format %full_name
   #+END_EXAMPLE
+* xscreensaver
+  For getting all the hacks, try e.g.:
+  
+  #+BEGIN_SRC sh
+    ./configure \
+        --with-gl \
+        --with-gle \
+        --with-gles \
+        --with-pixbuf \
+        --with-jpeg \
+        --with-xft \
+        --with-xdbe-ext \
+        --with-xshm-ext \
+        --with-setuid-hacks \
+        --with-record-animation
+  #+END_SRC
+
+  and in Ubuntu, getting the necessary packages:
+
+  #+BEGIN_SRC sh
+    sudo apt-get install \
+        intltool \
+        libgdk-pixbuf2.0-0 \
+        libgdk-pixbuf2.0-dev \
+        libxshmfence-dev \
+        libgtk2.0-0 \
+        libgtk2.0-dev \
+        libxml2 libxml2-dev \
+        libglade2-0 \
+        libglade2-dev \
+        libjpeg-dev \
+        freeglut3 \
+        freeglut3-dev \
+        libgle3 \
+        libgle3-dev
+  #+END_SRC
