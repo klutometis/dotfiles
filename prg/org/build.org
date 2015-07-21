@@ -1,17 +1,17 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env bash
-* stumpwm
+* Building stumpwm
   To install surfraw, etc.; do:
 
   #+BEGIN_SRC sh :tangle stumpwm-install-modules
     make install-modules
   #+END_SRC
-* bitlbee
+* Building bitlbee
   See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]; for using full names:
 
   #+BEGIN_EXAMPLE
     account gtalk set nick_format %full_name
   #+END_EXAMPLE
-* xscreensaver
+* Building xscreensaver
   For getting all the hacks, try e.g.:
   
   #+BEGIN_SRC sh :tangle xscreensaver-configure
@@ -47,7 +47,13 @@
         libgle3 \
         libgle3-dev
   #+END_SRC
-* emacs
+* Building emacs
   #+BEGIN_SRC sh :tangle emacs-configure
     ./configure --without-x
+  #+END_SRC
+* Changing the console keybord-layout
+  In [[http://askubuntu.com/a/158895][Ubuntu]], try:
+
+  #+BEGIN_SRC sh :tangle console-keyboard
+    sudo dpkg-reconfigure keyboard-configuration
   #+END_SRC
