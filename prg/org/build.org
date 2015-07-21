@@ -45,7 +45,8 @@
         freeglut3 \
         freeglut3-dev \
         libgle3 \
-        libgle3-dev
+        libgle3-dev \
+        libxmu-dev
   #+END_SRC
 * Building emacs
   #+BEGIN_SRC sh :tangle emacs-configure
