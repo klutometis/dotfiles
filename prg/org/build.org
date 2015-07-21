@@ -57,3 +57,9 @@
   #+BEGIN_SRC sh :tangle console-keyboard
     sudo dpkg-reconfigure keyboard-configuration
   #+END_SRC
+* Building privoxy
+  #+BEGIN_SRC sh :tangle privoxy-configure
+    autoheader
+    autoconf
+    ./configure --with-user=privoxy --with-group=privoxy
+  #+END_SRC
