@@ -1,7 +1,8 @@
+#+PROPERTY: header-args :shebang #!/usr/bin/env bash
 * stumpwm
   To install surfraw, etc.; do:
 
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle stumpwm-install-modules
     make install-modules
   #+END_SRC
 * bitlbee
@@ -13,7 +14,7 @@
 * xscreensaver
   For getting all the hacks, try e.g.:
   
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle xscreensaver-configure
     ./configure \
         --with-gl \
         --with-gle \
@@ -29,7 +30,7 @@
 
   and in Ubuntu, getting the necessary packages:
 
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle xscreensaver-make
     sudo apt-get install \
         intltool \
         libgdk-pixbuf2.0-0 \
@@ -45,4 +46,8 @@
         freeglut3-dev \
         libgle3 \
         libgle3-dev
+  #+END_SRC
+* emacs
+  #+BEGIN_SRC sh :tangle emacs-configure
+    ./configure --without-x
   #+END_SRC
