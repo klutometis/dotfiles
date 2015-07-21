@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+google-chrome --enable-webgl --enable-plugins %U --proxy-server=localhost:8118
