@@ -27,6 +27,7 @@
                       ace-jump-zap
                       ace-window
                       apache-mode
+                      better-defaults
                       clojure-mode
                       dired+
                       discord
@@ -57,10 +58,6 @@
                       slime-repl
                       smart-tab
                       sql-indent
-                      starter-kit
-                      starter-kit-bindings
-                      starter-kit-js
-                      starter-kit-lisp
                       typopunct
                       unbound
                       undo-tree
@@ -530,6 +527,7 @@ Then switch to the process buffer."
  ("C-c a" . list-matching-lines)
  ("C-c c" . compile)
  ("C-c f" . find-grep-dired)
+ ("C-c g" . magit-status)
  ("C-c h o" . helm-occur)
  ("C-c l" . org-store-link)
  ("C-c n" . find-name-dired)
