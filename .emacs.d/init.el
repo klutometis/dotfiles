@@ -552,7 +552,8 @@ Then switch to the process buffer."
  ("M-o" . smart-open-line)
  ("M-x" . helm-M-x)
  ("M-y" . helm-show-kill-ring)
- ("M-z" . ace-jump-zap-to-char)
+ ;; As opposed to ace-jump-zap-to-char?
+ ("M-z" . ace-jump-zap-up-to-char)
 
  ("<up>" . windmove-up)
  ("<down>" . windmove-down)
