@@ -71,7 +71,7 @@
   #+END_SRC
 * Building R
   #+BEGIN_SRC sh :tangle R-configure
-    ./configure –enable-R-shlib
+    ./configure --enable-R-shlib
   #+END_SRC
   
   #+BEGIN_SRC sh :tangle R-checkout
