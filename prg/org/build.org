@@ -70,15 +70,15 @@
     ./configure --with-user=privoxy --with-group=privoxy
   #+END_SRC
 * Building R
-  #+BEGIN_SRC sh :tangle R-configure
-    ./configure --enable-R-shlib
-  #+END_SRC
-  
   #+BEGIN_SRC sh :tangle R-checkout
     svn co https://svn.r-project.org/R/trunk R
   #+END_SRC
+  
+  #+BEGIN_SRC sh :tangle R-configure
+    sh tools/rsync-recommended
+    ./configure --enable-R-shlib
+  #+END_SRC
 
   #+BEGIN_SRC sh :tangle R-make
-    sh tools/rsync-recommended
     make && sudo make install
   #+END_SRC
