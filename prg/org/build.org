@@ -78,7 +78,3 @@
     sh tools/rsync-recommended
     ./configure --enable-R-shlib
   #+END_SRC
-
-  #+BEGIN_SRC sh :tangle R-make
-    make && sudo make install
-  #+END_SRC
