@@ -27,6 +27,7 @@
                       ace-jump-zap
                       ace-window
                       apache-mode
+                      better-defaults
                       clojure-mode
                       dired+
                       discord
@@ -57,10 +58,6 @@
                       slime-repl
                       smart-tab
                       sql-indent
-                      starter-kit
-                      starter-kit-bindings
-                      starter-kit-js
-                      starter-kit-lisp
                       typopunct
                       unbound
                       undo-tree
@@ -105,6 +102,20 @@
 (eval-after-load "ace-window"
   '(progn
      (set-face-foreground 'aw-background-face "gray100")))
+
+;;; Kill the region, so that it's available for yanking, instead of
+;;; just deleting it.
+(setq ajz/zap-function 'kill-region)
+
+;;; Consider this if we don't use backwards very much; practice
+;;; backwards, though.
+(setq ajz/forward-only nil)
+
+;;; Sort by closest instead of the ace-default.
+(setq ajz/sort-by-closest t)
+
+;;; Only pick the nearest 52 characters.
+(setq ajz/52-character-limit t)
 
 ;;; Indent when issuing open-line; see e.g.
 ;;; <http://www.emacswiki.org/emacs/OpenNextLine> or
@@ -246,7 +257,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;; Openwith; thanks, Victor Deryagin:
 ;;; <http://stackoverflow.com/a/6845470>.
-
 (openwith-mode t)
 (setf openwith-associations
   '(("\\.pdf\\'" "evince" (file))
@@ -517,6 +527,7 @@ Then switch to the process buffer."
  ("C-c a" . list-matching-lines)
  ("C-c c" . compile)
  ("C-c f" . find-grep-dired)
+ ("C-c g" . magit-status)
  ("C-c h o" . helm-occur)
  ("C-c l" . org-store-link)
  ("C-c n" . find-name-dired)
@@ -541,7 +552,8 @@ Then switch to the process buffer."
  ("M-o" . smart-open-line)
  ("M-x" . helm-M-x)
  ("M-y" . helm-show-kill-ring)
- ("M-z" . ace-jump-zap-to-char)
+ ;; As opposed to ace-jump-zap-to-char?
+ ("M-z" . ace-jump-zap-up-to-char)
 
  ("<up>" . windmove-up)
  ("<down>" . windmove-down)
@@ -914,6 +926,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'with-input-from-download 'scheme-indent-function 1)
 (put 'with-lazy-lists 'scheme-indent-function 1)
 (put 'with-mutex-locked 'scheme-indent-function 1)
+(put 'with-natural-language 'scheme-indent-function 1)
 (put 'with-output-to-mail 'scheme-indent-function 1)
 (put 'with-output-to-pipe 'scheme-indent-function 1)
 (put 'with-primitive-procedures 'scheme-indent-function 1)
@@ -935,60 +948,6 @@ This function is called by `org-babel-execute-src-block'."
          (compose-region (match-beginning 1)
                          (match-end 1)
                          ?≡))))))
-
-;;; Some way to program these so it maps e.g. `u' -> `ᵘ'.
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\<\\(?:cond\\|if\\)\\(a\\)"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ᵃ))))))
-
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\<\\(?:cond\\|if\\)\\(e\\)"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ᵉ))))))
-
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\<\\(?:cond\\|if\\)\\(i\\)"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ⁱ))))))
-
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\<\\(?:cond\\|if\\)\\(u\\)"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ᵘ))))))
-
-;; ;;; Would be nice to be able to generalize this.
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\<\\(?:car\\|cdr\\|cons\\|list\\|null\\|pair\\)\\(o\\)"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ᵒ))))))
-
-;;; The following doesn't work because the o is terminal at some point
-;;; before the word is finished; leading to infix-os being
-;;; font-locked.
-
-;; (font-lock-add-keywords
-;;  'scheme-mode
-;;  '(("\\(o\\)\\>"
-;;     (0 (prog1 ()
-;;          (compose-region (match-beginning 1)
-;;                          (match-end 1)
-;;                          ?ᵒ))))))
 
 ;;;;; Paredit
 
@@ -1117,16 +1076,6 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-;; Can't see green-on-blue, for some reason; from
-;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
-     (when (not window-system)
-       (set-face-background 'magit-item-highlight "white")
-       (set-face-background 'magit-tag "black"))))
-
 (setq magit-auto-revert-mode nil)
 
 (setq magit-last-seen-setup-instructions "1.4.0")
@@ -1158,7 +1107,7 @@ This function is called by `org-babel-execute-src-block'."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (use-package yaml-mode xclip window-number undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (ac-html use-package yaml-mode xclip window-number undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
