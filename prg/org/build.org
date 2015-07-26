@@ -65,6 +65,7 @@
   #+END_SRC
 * Building privoxy
   #+BEGIN_SRC sh :tangle privoxy-configure
+    sudo /usr/sbin/useradd privoxy
     autoheader
     autoconf
     ./configure --with-user=privoxy --with-group=privoxy
