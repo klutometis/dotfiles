@@ -83,7 +83,7 @@
     ./configure --enable-R-shlib
   #+END_SRC
 
-  After upgrading, update all the packages:
+  After upgrading, [[http://stackoverflow.com/a/3974549][update all the packages]]:
 
   #+BEGIN_SRC R :tangle R-update.R :shebang #!/usr/bin/env R
     update.packages(checkBuilt=TRUE, ask=FALSE)
