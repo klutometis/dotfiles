@@ -70,11 +70,21 @@
     ./configure --with-user=privoxy --with-group=privoxy
   #+END_SRC
 * Building R
+  Pull the sources down from svn:
+  
   #+BEGIN_SRC sh :tangle R-checkout
     svn co https://svn.r-project.org/R/trunk R
   #+END_SRC
   
+  Download the recommended packages and build:
+  
   #+BEGIN_SRC sh :tangle R-configure
     sh tools/rsync-recommended
     ./configure --enable-R-shlib
+  #+END_SRC
+
+  After upgrading, update all the packages:
+
+  #+BEGIN_SRC R :tangle R-update.R :shebang #!/usr/bin/env R
+    update.packages(checkBuilt=TRUE, ask=FALSE)
   #+END_SRC
