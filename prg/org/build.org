@@ -92,6 +92,10 @@
 * Building Screen
   #+BEGIN_SRC sh :tangle screen-configure
     ./configure --prefix=/usr/local --enable-colors256
+  #+END_SRC
+
+  #+BEGIN_SRC sh :tangle screen-make
+    make && sudo make install
     sudo cp -v ./etc/etcscreenrc /usr/local/etc/screenrc
     cd terminfo
     sudo tee -a /etc/termcap < screencap
