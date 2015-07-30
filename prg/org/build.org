@@ -89,3 +89,11 @@
   #+BEGIN_SRC R :tangle R-update.R :shebang #!/usr/bin/env R
     update.packages(checkBuilt=TRUE, ask=FALSE)
   #+END_SRC
+* Building Screen
+  #+BEGIN_SRC sh :tangle screen-configure
+    ./configure --prefix=/usr/local --enable-colors256
+    sudo cp -v ./etc/etcscreenrc /usr/local/etc/screenrc
+    cd terminfo
+    sudo tee -a /etc/termcap < screencap
+    sudo tic screeninfo.src
+  #+END_SRC
