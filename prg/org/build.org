@@ -1,19 +1,20 @@
-* stumpwm
+#+PROPERTY: header-args :shebang #!/usr/bin/env bash
+* Building stumpwm
   To install surfraw, etc.; do:
 
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle stumpwm-install-modules
     make install-modules
   #+END_SRC
-* bitlbee
+* Building bitlbee
   See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]; for using full names:
 
   #+BEGIN_EXAMPLE
     account gtalk set nick_format %full_name
   #+END_EXAMPLE
-* xscreensaver
+* Building xscreensaver
   For getting all the hacks, try e.g.:
   
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle xscreensaver-configure
     ./configure \
         --with-gl \
         --with-gle \
@@ -29,7 +30,7 @@
 
   and in Ubuntu, getting the necessary packages:
 
-  #+BEGIN_SRC sh
+  #+BEGIN_SRC sh :tangle xscreensaver-apt-get
     sudo apt-get install \
         intltool \
         libgdk-pixbuf2.0-0 \
@@ -44,5 +45,59 @@
         freeglut3 \
         freeglut3-dev \
         libgle3 \
-        libgle3-dev
+        libgle3-dev \
+        libxmu-dev \
+        fortunes \
+        fortune-mod \
+        fortunes-mario \
+        fortunes-off \
+        fortunes-spam
+  #+END_SRC
+* Building emacs
+  #+BEGIN_SRC sh :tangle emacs-configure
+    ./configure --without-x
+  #+END_SRC
+* Changing the console keybord-layout
+  In [[http://askubuntu.com/a/158895][Ubuntu]], try:
+
+  #+BEGIN_SRC sh :tangle console-keyboard
+    sudo dpkg-reconfigure keyboard-configuration
+  #+END_SRC
+* Building privoxy
+  #+BEGIN_SRC sh :tangle privoxy-configure
+    sudo /usr/sbin/useradd privoxy
+    autoheader
+    autoconf
+    ./configure --with-user=privoxy --with-group=privoxy
+  #+END_SRC
+* Building R
+  Pull the sources down from svn:
+  
+  #+BEGIN_SRC sh :tangle R-checkout
+    svn co https://svn.r-project.org/R/trunk R
+  #+END_SRC
+  
+  Download the recommended packages and build:
+  
+  #+BEGIN_SRC sh :tangle R-configure
+    sh tools/rsync-recommended
+    ./configure --enable-R-shlib
+  #+END_SRC
+
+  After upgrading, [[http://stackoverflow.com/a/3974549][update all the packages]]:
+
+  #+BEGIN_SRC R :tangle R-update.R :shebang #!/usr/bin/env R
+    update.packages(checkBuilt=TRUE, ask=FALSE)
+  #+END_SRC
+* Building Screen
+  #+BEGIN_SRC sh :tangle screen-configure
+    ./configure --prefix=/usr/local --enable-colors256
+  #+END_SRC
+
+  #+BEGIN_SRC sh :tangle screen-make
+    make && sudo make install
+    sudo cp -v ./etc/etcscreenrc /usr/local/etc/screenrc
+    cd terminfo
+    sudo tee -a /etc/termcap < screencap
+    sudo tic screeninfo.src
   #+END_SRC
