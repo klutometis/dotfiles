@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+trap 'kill -TERM -$$' 1 2 3 6
+
+COMMAND=echo
+
+queue="${1:?'Must specify a queue'}"; shift
+command="${@:-${COMMAND}}"
+fifo=$(mktemp -d)/fifo
+
+mkfifo "${fifo}"
+
+exec 3<> "${fifo}"
+
+# Race condition, though: it might dequeue more than one before we can
+# sleep it? No: it puts itself to sleep.
+#
+# Neither would there be a race condition where the read loop
+# encounters a spurious EOF, reading and sleeping prematurely: read
+# would otherwise return 1 and the while loop would end.
+{
+    trap continue SIGCONT
+    while dequeue "${queue}" >&3; do
+        kill -s SIGSTOP $BASHPID
+    done
+    # This kills the parent with a non-zero exit code (see below).
+    kill $$
+} &
+
+dequeuer=$!
+
+# Let's deal with the minor annoyance of this thing not closing on
+# end-of-queue; maybe it's even a feature in the sense that it will
+# begin dequeuing again if we add elements while it's waiting.
+#
+# No, this doesn't work: read hangs; let the dequeuer commit
+# parenticide (see above).
+while read -u 3 element; do
+    ${command} "${element}"
+    kill -s SIGCONT $dequeuer
+done

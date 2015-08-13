@@ -27,6 +27,7 @@
                       ace-jump-zap
                       ace-window
                       apache-mode
+                      better-defaults
                       clojure-mode
                       dired+
                       discord
@@ -57,10 +58,6 @@
                       slime-repl
                       smart-tab
                       sql-indent
-                      starter-kit
-                      starter-kit-bindings
-                      starter-kit-js
-                      starter-kit-lisp
                       typopunct
                       unbound
                       undo-tree
@@ -530,6 +527,7 @@ Then switch to the process buffer."
  ("C-c a" . list-matching-lines)
  ("C-c c" . compile)
  ("C-c f" . find-grep-dired)
+ ("C-c g" . magit-status)
  ("C-c h o" . helm-occur)
  ("C-c l" . org-store-link)
  ("C-c n" . find-name-dired)
@@ -554,7 +552,8 @@ Then switch to the process buffer."
  ("M-o" . smart-open-line)
  ("M-x" . helm-M-x)
  ("M-y" . helm-show-kill-ring)
- ("M-z" . ace-jump-zap-to-char)
+ ;; As opposed to ace-jump-zap-to-char?
+ ("M-z" . ace-jump-zap-up-to-char)
 
  ("<up>" . windmove-up)
  ("<down>" . windmove-down)
@@ -1077,16 +1076,6 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-;; Can't see green-on-blue, for some reason; from
-;; <http://readystate4.com/2011/02/22/emacs-changing-magits-default-diff-colors/>.
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
-     (when (not window-system)
-       (set-face-background 'magit-item-highlight "white")
-       (set-face-background 'magit-tag "black"))))
-
 (setq magit-auto-revert-mode nil)
 
 (setq magit-last-seen-setup-instructions "1.4.0")
@@ -1126,3 +1115,4 @@ This function is called by `org-babel-execute-src-block'."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'upcase-region 'disabled nil)

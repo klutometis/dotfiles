@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+queue="${1:?'Must specify a queue'}"
+
+while read element; do
+    echo ${element} >> "${queue}"
+done
