@@ -101,3 +101,25 @@
     sudo tee -a /etc/termcap < screencap
     sudo tic screeninfo.src
   #+END_SRC
+* Creating Gmail filters
+  This is how you might create Gmail filters for a set of domains
+  where e.g. everything To, Cc or Bcc you goes into the inbox; and
+  everything else goes into a Groups label.
+  
+  #+BEGIN_SRC sh :tangle gmail-filters
+    DOMAINS=domains.txt
+    domains=$({while read domain; do
+                 echo -n "${domain} "
+               done} < "${DOMAINS}")
+
+    echo "-{to:{${domains}} cc:{${domains}} bcc:{${domains}}}"
+  #+END_SRC
+
+  #+BEGIN_SRC text :tangle domains.txt :shebang
+    danenberg.name
+    googlerugby.com
+    mitdasein.com
+    pcd.la
+    post.harvard.edu
+    roxygen.org
+  #+END_SRC
