@@ -112,7 +112,7 @@
                  echo -n "${domain} "
                done} < "${DOMAINS}")
 
-    echo "-{to:{${domains}} cc:{${domains}} bcc:{${domains}}}"
+    echo "-{to:{${domains}} cc:{${domains}} bcc:{${domains}} from:{${domains}} label:saved}"
   #+END_SRC
 
   #+BEGIN_SRC text :tangle domains.txt :shebang
