@@ -124,4 +124,5 @@
     pcd.la
     post.harvard.edu
     roxygen.org
+    wikitex.org
   #+END_SRC
