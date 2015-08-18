@@ -108,9 +108,11 @@
   
   #+BEGIN_SRC sh :tangle gmail-filters
     DOMAINS=domains.txt
-    domains=$({while read domain; do
-                 echo -n "${domain} "
-               done} < "${DOMAINS}")
+    domains=$({
+                 while read domain; do
+                     echo -n "${domain} "
+                 done
+             } < "${DOMAINS}")
 
     echo "-{to:{${domains}} cc:{${domains}} bcc:{${domains}} from:{${domains}} label:saved}"
   #+END_SRC
