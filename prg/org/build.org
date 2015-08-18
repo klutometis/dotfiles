@@ -1,4 +1,4 @@
-#+PROPERTY: header-args :shebang #!/usr/bin/env bash
+#+PROPERTY: header-args :shebang #!/usr/bin/env sh
 * Building stumpwm
   To install surfraw, etc.; do:
 
