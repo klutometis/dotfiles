@@ -123,3 +123,9 @@
     post.harvard.edu
     roxygen.org
   #+END_SRC
+* Ad-hoc HTTP-server
+  See the [[https://gist.github.com/willurd/5720255][big list]]; this one’s pretty good:
+
+  #+BEGIN_SRC sh :tangle httpd-ad-hoc
+    python -m SimpleHTTPServer 8000
+  #+END_SRC
