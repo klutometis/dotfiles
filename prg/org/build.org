@@ -1,4 +1,4 @@
-#+PROPERTY: header-args :shebang #!/usr/bin/env bash
+#+PROPERTY: header-args :shebang #!/usr/bin/env sh
 * Building stumpwm
   To install surfraw, etc.; do:
 
@@ -108,9 +108,11 @@
   
   #+BEGIN_SRC sh :tangle gmail-filters
     DOMAINS=domains.txt
-    domains=$({while read domain; do
-                 echo -n "${domain} "
-               done} < "${DOMAINS}")
+    domains=$({
+                 while read domain; do
+                     echo -n "${domain} "
+                 done
+             } < "${DOMAINS}")
 
     echo "-{to:{${domains}} cc:{${domains}} bcc:{${domains}} from:{${domains}} label:saved}"
   #+END_SRC
@@ -122,6 +124,7 @@
     pcd.la
     post.harvard.edu
     roxygen.org
+    wikitex.org
   #+END_SRC
 * Ad-hoc HTTP-server
   See the [[https://gist.github.com/willurd/5720255][big list]]; this one’s pretty good:
