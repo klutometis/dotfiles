@@ -735,7 +735,7 @@ This function is called by `org-babel-execute-src-block'."
                  "google-chrome"
                  url))
 
-(setq browse-url-browser-function 'browse-url-conkeror)
+(setq browse-url-browser-function 'browse-url-chrome)
 
 (defun browse-lucky (start end)
   (interactive "r")
