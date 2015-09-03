@@ -132,3 +132,9 @@
   #+BEGIN_SRC sh :tangle httpd-ad-hoc
     python -m SimpleHTTPServer 8000
   #+END_SRC
+* Unpack a gif with partial updates
+  See e.g. [[http://www.imagemagick.org/discourse-server/viewtopic.php?t%3D11578][this]]:
+
+  #+BEGIN_SRC sh
+    convert google-new.gif -coalesce /tmp/google-new/%03d.gif
+  #+END_SRC
