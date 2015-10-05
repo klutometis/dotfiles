@@ -13,13 +13,17 @@
              '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
 
-(when (not package-archive-contents)
+(unless package-archive-contents
   (package-refresh-contents))
 
 ;;; Missing: css-mode, bc, ess, fp, lilypond, maxima, php-repl,
 ;;; wikipedia-mode, xml-lite
+;;;
+;;; TODO: Transition these all to use-package?
 (defvar my-packages '(
                       ace-jump-buffer
                       ace-jump-helm-line
@@ -62,7 +66,6 @@
                       unbound
                       undo-tree
                       use-package
-                      window-number
                       xclip
                       yaml-mode
                       )
@@ -81,41 +84,237 @@
 
 ;;;; Miscellaneous
 
+;;; TODO: Transition to use-package.
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
+
+(setq use-package-always-ensure t)
+
+(use-package org
+  :init
+  ;; Modify the MathJax path to work with https hosts.
+  (setq org-html-mathjax-options
+        '((path "//cdn.mathjax.org/mathjax/latest/MathJax.js"))))
+
 ;;; Ace-window
 
-;; Redefine the action keys so we can select windows with the
-;; home-row.
-(setq aw-dispatch-alist
-  '((?x aw-delete-window " Ace - Delete Window")
-    (?m aw-swap-window " Ace - Swap Window")
-    (?n aw-flip-window)
-    (?v aw-split-window-vert " Ace - Split Vert Window")
-    (?b aw-split-window-horz " Ace - Split Horz Window")
-    (?i delete-other-windows " Ace - Maximize Window")
-    (?o delete-other-windows)))
+(use-package ace-window
+  :init
+  ;; Redefine the action keys so we can select windows with the
+  ;; home-row.
+  (setq aw-dispatch-alist
+        '((?x aw-delete-window " Ace - Delete Window")
+          (?m aw-swap-window " Ace - Swap Window")
+          (?n aw-flip-window)
+          (?v aw-split-window-vert " Ace - Split Vert Window")
+          (?b aw-split-window-horz " Ace - Split Horz Window")
+          (?i delete-other-windows " Ace - Maximize Window")
+          (?o delete-other-windows)))
+  ;; On second thought, let's use home-row keys which are not already
+  ;; defined in aw-dispatch-list.
+  (setq aw-keys '(?a ?e ?u ?i ?d ?h ?t ?s))
+  
+  :config
+  ;; Otherwise, the dimming makes the screens unreadable.
+  (set-face-foreground 'aw-background-face "gray100"))
 
-;; On second thought, let's use home-row keys which are not already
-;; defined in aw-dispatch-list.
-(setq aw-keys '(?a ?e ?u ?i ?d ?h ?t ?s))
+(use-package ace-jump-zap
+  :init
+  ;; Kill the region, so that it's available for yanking, instead of
+  ;; just deleting it.
+  (setq ajz/zap-function 'kill-region)
 
-;; Otherwise, the dimming makes the screens unreadable.
-(eval-after-load "ace-window"
-  '(progn
-     (set-face-foreground 'aw-background-face "gray100")))
+  ;; Consider this if we don't use backwards very much; practice
+  ;; backwards, though.
+  (setq ajz/forward-only nil)
 
-;;; Kill the region, so that it's available for yanking, instead of
-;;; just deleting it.
-(setq ajz/zap-function 'kill-region)
+  ;; Sort by closest instead of the ace-default.
+  (setq ajz/sort-by-closest t)
 
-;;; Consider this if we don't use backwards very much; practice
-;;; backwards, though.
-(setq ajz/forward-only nil)
+  ;; Only pick the nearest 52 characters.
+  (setq ajz/52-character-limit t))
 
-;;; Sort by closest instead of the ace-default.
-(setq ajz/sort-by-closest t)
+(use-package ace-jump-mode
+  :bind  ("C-c SPC" . ace-jump-mode) 
+  :init
+  ;; Let's try using the home-keys, even though the author recommends
+  ;; using more than 10.
+  ;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
-;;; Only pick the nearest 52 characters.
-(setq ajz/52-character-limit t)
+  :config
+  ;; Everything becomes invisible, otherwise; should we let emacs know
+  ;; that we have a dark background, somehow?
+  ;;
+  ;; E.g. (set-variable 'frame-background-mode 'dark) doesn't seem to
+  ;; work.
+  (set-face-foreground 'ace-jump-face-background "gray100"))
+
+(use-package helm
+  :bind (("<f1> a" . helm-apropos)
+         ("C-c C-h SPC" . helm-all-mark-rings)
+         ("C-c h o" . helm-occur))
+  :init
+  ;; Fuzzy match
+  (setq helm-M-x-fuzzy-match t
+        helm-buffers-fuzzy-matching t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t
+        helm-imenu-fuzzy-match t
+        helm-locate-fuzzy-match t
+        helm-apropos-fuzzy-match t)
+
+  :config
+  (helm-mode 1)
+  ;; Minibuffer command-history
+  (bind-key "C-c C-l" 'helm-minibuffer-history minibuffer-local-map)
+  ;; Use ack.
+  (when (executable-find "ack-grep")
+    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
+          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
+  ;; Man-page at point
+  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
+
+(use-package helm-descbinds
+  :config
+  (helm-descbinds-mode))
+
+(use-package helm-swoop
+  :bind ("C-c M-i" . helm-multi-swoop)
+  :init
+  ;; Helm-swoop should save file after edit.
+  (setq helm-multi-swoop-edit-save t)
+  
+  :config
+  (bind-keys :map helm-swoop-map
+             ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
+             ("C-r" . 'helm-previous-line)
+             ("C-s" . 'helm-next-line))
+  (bind-keys :map helm-multi-swoop-map
+             ("C-r" . helm-previous-line)
+             ("C-s" . helm-next-line)))
+
+(use-package multiple-cursors
+  :bind (("C-<" . mc/mark-previous-like-this)
+         ("C->" . mc/mark-next-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("C-c C-c" . mc/edit-lines)))
+
+(use-package eshell
+  :config
+  (add-hook 'eshell-mode-hook
+    (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
+
+(use-package shell
+  :init
+  (bind-key "C-c C-l" 'helm-comint-input-ring shell-mode-map)
+  ;; So that Emacs recognizes aliases when running commands.
+  (setq shell-file-name "zsh")
+  (setq shell-command-switch "-ic")
+
+  :config
+  ;; Turn color on
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+  
+  ;; Also turn color on for ad-hoc commands (see
+  ;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
+  (defadvice display-message-or-buffer (before ansi-color activate)
+    "Process ANSI color codes in shell output."
+    (let ((buf (ad-get-arg 0)))
+      (and (bufferp buf)
+           (string= (buffer-name buf) "*Shell Command Output*")
+           (with-current-buffer buf
+             (ansi-color-apply-on-region (point-min) (point-max)))))))
+
+(use-package xclip
+  :if (executable-find "xclip")
+  :config
+  (turn-on-xclip))
+
+;;; Openwith; thanks, Victor Deryagin:
+;;; <http://stackoverflow.com/a/6845470>.
+(use-package openwith
+  :init
+  (setf openwith-associations
+  '(("\\.pdf\\'" "mupdf" (file))
+    ("\\.mp3\\'" "mplayer" (file))
+    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
+    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
+  :config
+  (openwith-mode t))
+
+(use-package js
+  :config
+  ;; Normal comments in Javascript, despite the fact that we use
+  ;; paredit
+  (add-hook 'js-mode-hook
+    (lambda ()
+      (bind-key "M-;" 'comment-dwim paredit-mode-map))))
+
+(use-package calendar
+  :init
+  (setq calendar-latitude 37.3894
+        calendar-longitude -122.0819
+        calendar-location-name "Mountain View, CA")
+  
+  :config
+  ;; Add Discordian date to other-dates
+  (defadvice calendar-other-dates
+      (after calendar-other-dates-with-discordian)
+    (push (format "Discordian date: %s"
+                  (calendar-discordian-date-string date))
+          ad-return-value))
+  (use-package discord)
+  (ad-activate 'calendar-other-dates)
+  (add-hook 'calendar-mode-hook
+    (lambda ()
+      (bind-key "p D"
+                (lambda ()
+                  (interactive)
+                  (calendar-discordian-print-date))
+                calendar-mode-map))))
+
+;;; Replace
+
+;; Rename the occur buffer.
+(add-hook 'occur-hook
+  (lambda ()
+    ;; Follows automatically in the buffer.
+    (next-error-follow-minor-mode)
+    (occur-rename-buffer)))
+
+;; Thanks,
+;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (if (eq mode major-mode)
+            (add-to-list 'buffer-mode-matches buf))))
+    buffer-mode-matches))
+
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
+
+;; Convert an occur search into a multi-occur search from within
+;; occur.
+(defun occur-multi-occur ()
+  "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode
+    (with-current-buffer (car (nth 2 occur-revert-arguments))
+      major-mode))
+   (car occur-revert-arguments)))
+
+(bind-key "C-o" 'isearch-occur isearch-mode-map)
+(bind-key "m" 'occur-multi-occur occur-mode-map)
 
 ;;; Indent when issuing open-line; see e.g.
 ;;; <http://www.emacswiki.org/emacs/OpenNextLine> or
@@ -176,168 +375,6 @@ point reaches the beginning or end of the buffer, stop there."
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 
-;;; Ace-jump-mode
-
-;; Everything becomes invisible, otherwise; should we let emacs know
-;; that we have a dark background, somehow?
-;;
-;; E.g. (set-variable 'frame-background-mode 'dark) doesn't seem to
-;; work.
-(eval-after-load "ace-jump-mode"
-  '(progn
-     (set-face-foreground 'ace-jump-face-background "gray100")))
-
-;; Let's try using the home-keys, even though the author recommends
-;; using more than 10.
-;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-
-;;; Helm-mode
-(helm-mode 1)
-
-;; Fuzzy match
-(setq helm-M-x-fuzzy-match t
-      helm-buffers-fuzzy-matching t
-      helm-recentf-fuzzy-match t
-      helm-semantic-fuzzy-match t
-      helm-imenu-fuzzy-match t
-      helm-locate-fuzzy-match t
-      helm-apropos-fuzzy-match t)
-
-;; Add a hook in eshell-mode for command-history.
-(add-hook 'eshell-mode-hook
-  #'(lambda ()
-      (define-key eshell-mode-map (kbd "C-c C-l")  'helm-eshell-history)))
-
-;; Comint command-history
-(define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring)
-
-;; Minibuffer command-history
-(define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
-
-;; Use ack.
-(when (executable-find "ack-grep")
-  (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
-        helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
-
-;; Man-page at point
-(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
-
-;; Helm-descbinds
-(helm-descbinds-mode)
-
-;; Helm-swoop should save file after edit.
-(setq helm-multi-swoop-edit-save t)
-
-;;; So that Emacs recognizes aliases when running commands.
-(setq shell-file-name "zsh")
-(setq shell-command-switch "-ic")
-
-;;; Turn color on
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-;;; Also turn color on for ad-hoc commands (see
-;;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
-(defadvice display-message-or-buffer (before ansi-color activate)
-  "Process ANSI color codes in shell output."
-  (let ((buf (ad-get-arg 0)))
-    (and (bufferp buf)
-         (string= (buffer-name buf) "*Shell Command Output*")
-         (with-current-buffer buf
-           (ansi-color-apply-on-region (point-min) (point-max))))))
-
-;;; Ox-ravel, for creating Rnw from org-mode.
-;; (require 'ox-ravel)
-
-;;; xclip-mode
-(require 'xclip)
-(turn-on-xclip)
-
-;;; Why do we need this suddenly?
-;; (normal-erase-is-backspace-mode 1)
-
-;;; Openwith; thanks, Victor Deryagin:
-;;; <http://stackoverflow.com/a/6845470>.
-(openwith-mode t)
-(setf openwith-associations
-  '(("\\.pdf\\'" "evince" (file))
-    ("\\.mp3\\'" "mplayer" (file))
-    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
-    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
-
-;;; Normal comments in Javascript, despite the fact that we use
-;;; paredit
-(add-hook 'js-mode-hook
-  (lambda ()
-    (define-key paredit-mode-map (kbd "M-;") 'comment-dwim)))
-
-;;; Add Discordian date to other-dates
-(defadvice calendar-other-dates
-  (after calendar-other-dates-with-discordian)
-  (push (format "Discordian date: %s"
-                (calendar-discordian-date-string date))
-        ad-return-value))
-
-(eval-after-load "calendar"
-  '(progn
-     (require 'discord)
-     (ad-activate 'calendar-other-dates)))
-
-(add-hook 'calendar-mode-hook
-  (lambda ()
-    (define-key calendar-mode-map (kbd "p D")
-      (lambda ()
-        (interactive)
-        (calendar-discordian-print-date)))))
-
-;;; Calendar, for sunrise and sunset
-(setq calendar-latitude 34.1)
-(setq calendar-longitude -118.2)
-(setq calendar-location-name "Los Angeles, CA")
-
-;;;;; Occur
-
-;;; Rename the occur buffer.
-(add-hook 'occur-hook
-  (lambda ()
-    ;; Follows automatically in the buffer.
-    (next-error-follow-minor-mode)
-    (occur-rename-buffer)))
-
-;;; Thanks,
-;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
-(defun get-buffers-matching-mode (mode)
-  "Returns a list of buffers where their major-mode is equal to MODE"
-  (let ((buffer-mode-matches '()))
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (if (eq mode major-mode)
-            (add-to-list 'buffer-mode-matches buf))))
-    buffer-mode-matches))
-
-(defun multi-occur-in-this-mode ()
-  "Show all lines matching REGEXP in buffers with this major mode."
-  (interactive)
-  (multi-occur
-   (get-buffers-matching-mode major-mode)
-   (car (occur-read-primary-args))))
-
-;;; Enable isearch-occur with C-o.
-(define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
-
-;;; Convert an occur search into a multi-occur search from within
-;;; occur.
-(defun occur-multi-occur ()
-  "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
-  (interactive)
-  (multi-occur
-   (get-buffers-matching-mode
-    (with-current-buffer (car (nth 2 occur-revert-arguments))
-      major-mode))
-   (car occur-revert-arguments)))
-
-;;; Bind occur-multi-occur to m.
-(define-key occur-mode-map "m" 'occur-multi-occur)
-
 ;;; Killing a line backwards; see
 ;;; <http://www.emacswiki.org/emacs/BackwardKillLine>.
 (defun kill-line-backward (arg)
@@ -348,86 +385,82 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; Subword mode
 (global-subword-mode 1)
 
-;;; Window-number
-(autoload 'window-number-mode "window-number"
-  "A global minor mode that enables selection of windows according
-to
-numbers with the C-x C-j prefix.  Another mode,
-`window-number-meta-mode' enables the use of the M- prefix."
-  t)
-
-(autoload 'window-number-meta-mode "window-number"
-  "A global minor mode that enables use of the M- prefix to select
-windows, use `window-number-mode' to display the window numbers in
-the mode-line."
-  t)
-
-(window-number-mode 1)
-(window-number-meta-mode 1)
-
 ;;; Keyfreq, for collecting keystroke statistics
-(require 'keyfreq)
-(keyfreq-mode 1)
-(keyfreq-autosave-mode 1)
+(use-package keyfreq
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
 
-;;; Winner mode
-(winner-mode 1)
+(use-package winner
+  :config
+  (winner-mode 1))
 
-;;; Windmove
-(windmove-default-keybindings)
-(setq windmove-wrap-around t)
+(use-package windmove
+  :bind (("<up>" . windmove-up)
+         ("<down>" . windmove-down)
+         ("<right>" . windmove-right)
+         ("<left>" . windmove-left))
+  :config
+  (windmove-default-keybindings)
+  (setq windmove-wrap-around t))
 
-;;; Python
-(defun python-send-buffer-and-go ()
-  "Send the buffer to the inferior Python process.
+(use-package python
+  :config
+  (defun python-send-buffer-and-go ()
+    "Send the buffer to the inferior Python process.
 Then switch to the process buffer."
-  (interactive)
-  (python-send-buffer)
-  (python-switch-to-python t))
+    (interactive)
+    (python-send-buffer)
+    (python-switch-to-python t))
 
-(add-hook 'python-mode-hook
-  (lambda ()
-    (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
-    (define-key python-mode-map (kbd "C-c z")
-      (lambda () (interactive) (python-switch-to-python t)))))
+  (add-hook 'python-mode-hook
+    (lambda ()
+      (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+      (define-key python-mode-map (kbd "C-c z")
+        (lambda () (interactive) (python-switch-to-python t))))))
 
-;;; SQL
-(defun my-sql-save-history-hook ()
-  (let ((lval 'sql-input-ring-file-name)
-        (rval 'sql-product))
-    (if (symbol-value rval)
-        (let ((filename
-               (concat "~/.emacs.d/sql/"
-                       (symbol-name (symbol-value rval))
-                       "-history.sql")))
-          (set (make-local-variable lval) filename))
-      (error
-       (format "SQL history will not be saved because %s is nil"
-               (symbol-name rval))))))
+(use-package sql
+  :config
+  (defun my-sql-save-history-hook ()
+    (let ((lval 'sql-input-ring-file-name)
+          (rval 'sql-product))
+      (if (symbol-value rval)
+          (let ((filename
+                 (concat "~/.emacs.d/sql/"
+                         (symbol-name (symbol-value rval))
+                         "-history.sql")))
+            (set (make-local-variable lval) filename))
+        (error
+         (format "SQL history will not be saved because %s is nil"
+                 (symbol-name rval))))))
 
-(eval-after-load "sql"
-  '(load-library "sql-indent"))
+  (use-package sql-indent)
+  
+  (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+  (add-hook 'sql-mode-hook
+    (lambda ()
+      (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
 
-(add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
-(add-hook 'sql-mode-hook
-  (lambda ()
-    (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+  ;; The executable is osql, but osql doesn't seem to pass things to
+  ;; isql correctly.
+  (setq sql-ms-options '("--" "-w" "300" "-n")))
 
-;; The executable is osql, but osql doesn't seem to pass things to
-;; isql correctly.
-(setq sql-ms-options '("--" "-w" "300" "-n"))
-
-;;; Dired should grep case insensitively.
-(setq find-grep-options "-q -i")
-(add-hook 'dired-mode-hook
-  (lambda ()
-    (define-key dired-mode-map (kbd "F") 'dired-do-find-marked-files)))
+(use-package find-dired
+  :init
+  (setq find-grep-options "-q -i")
+  :config
+  ;; Dired should grep case insensitively.
+  (add-hook 'dired-mode-hook
+    (lambda ()
+      (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
 
 ;;; find-name-dired should run case-insensitively.
 (setq read-file-name-completion-ignore-case t)
 
-;;; Dired should reuse files when changing directories.
-(diredp-toggle-find-file-reuse-dir 1)
+(use-package dired+
+  :config
+  ;; Dired should reuse files when changing directories.
+  (diredp-toggle-find-file-reuse-dir 1))
 
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
@@ -442,7 +475,8 @@ Then switch to the process buffer."
   (kbd "C-c TAB") (lambda () (interactive)
                     (insert (buffer-name (current-buffer-not-mini)))))
 
-;;; We need this, after all?
+;;; TODO: Use-packagify this; see e.g.
+;;; <https://github.com/jwiegley/use-package/issues/117>.
 (require 'ess-site)
 
 ;;; For makefiles, dot, SQL and such things.
@@ -452,7 +486,8 @@ Then switch to the process buffer."
 ;;; TODO: shell no longer tells me where we're executing.
 
 ;;; http://www.emacswiki.org/emacs/TabCompletion#toc2
-(smart-tab-mode-on)
+(use-package smart-tab
+  :config (smart-tab-mode-on))
 
 ;;; Disable hl-line-mode in ESK; found here:
 ;;; <http://stackoverflow.com/questions/3545458/disable-hl-line-in-emacs-when-using-emacs-starter-kit>.
@@ -467,33 +502,26 @@ Then switch to the process buffer."
 
 (setq user-mail-address "pcd@roxygen.org")
 
-;;; Answer y-or-ns with enter.
-(define-key query-replace-map (kbd "C-m") 'act)
+(bind-key "C-m" 'act query-replace-map)
 
 ;;; Prevent "Active processes exist" on exit; thanks, Jürgen Hötzel:
 ;;; <http://stackoverflow.com/a/2708042>.
 (add-hook 'comint-exec-hook
   (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
 
-(define-key comint-mode-map (kbd "C-c C-z") nil)
-(define-key comint-mode-map (kbd "C-c C-z .") 'browse-url-at-point)
-(define-key comint-mode-map (kbd "C-c C-z b") 'browse-url-of-buffer)
-(define-key comint-mode-map (kbd "C-c C-z r") 'browse-url-of-region)
-(define-key comint-mode-map (kbd "C-c C-z u") 'browse-url)
-(define-key comint-mode-map (kbd "C-c C-z v") 'browse-url-of-file)
+(bind-keys
+ :map comint-mode-map
+ ("C-c C-z" . nil)
+ ("C-c C-z ." . 'browse-url-at-point)
+ ("C-c C-z b" . 'browse-url-of-buffer)
+ ("C-c C-z r" . 'browse-url-of-region)
+ ("C-c C-z u" . 'browse-url)
+ ("C-c C-z v" . 'browse-url-of-file))
 
-;;; Hack to disable flyspell, which was freezing up when writing e.g.
-;;; git commit-comments.
-(eval-after-load "flyspell"
-  '(defun flyspell-mode (&optional arg)))
+(use-package flyspell
+  :disabled t)
 
 ;;;;; Bindings
-
-;; (defun copy-region-to-clipboard ()
-;;   (interactive)
-;;   (shell-command-on-region (region-beginning)
-;;                            (region-end)
-;;                            "xsel -i -b"))
 
 ;;; Thanks, unbound; on the other hand, see
 ;;; <http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html>:
@@ -503,37 +531,25 @@ Then switch to the process buffer."
 ;;; users, so do not block them."
 (bind-keys
  :map global-map
- ("<f1> a" . helm-apropos)
- ("C-<" . mc/mark-previous-like-this)
- ("C->" . mc/mark-next-like-this)
  ("C-a" . smarter-move-beginning-of-line)
  ("C-c ;" . comment-or-uncomment-region)
- ("C-c C-<" . mc/mark-all-like-this)
- ("C-c C-c" . mc/edit-lines)
- ("C-c C-h SPC" . helm-all-mark-rings)
  ;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>
  ("C-c C-z ." . browse-url-at-point)
  ("C-c C-z b" . browse-url-of-buffer)
  ("C-c C-z r" . browse-url-of-region)
  ("C-c C-z u" . browse-url)
  ("C-c C-z v" . browse-url-of-file)
- ("C-c G" . autogen)
- ("C-c L" . google-lint)
- ("C-c M-i" . helm-multi-swoop)
  ("C-c O" . multi-occur-in-this-mode)
  ("C-c R" . recompile)
- ("C-c SPC" . ace-jump-mode)
  ("C-c U" . rename-uniquely)
  ("C-c a" . list-matching-lines)
  ("C-c c" . compile)
  ("C-c f" . find-grep-dired)
- ("C-c g" . magit-status)
- ("C-c h o" . helm-occur)
  ("C-c l" . org-store-link)
  ("C-c n" . find-name-dired)
  ("C-c o" . occur)
  ("C-c r" . rgrep)
- ("C-c s" . svn-status)
+ ("C-c s" . sort-lines)
  ("C-c u" . kill-line-backward)
  ("C-c x" . copy-region-to-clipboard)
  ("C-h" . kill-whole-line)
@@ -553,56 +569,45 @@ Then switch to the process buffer."
  ("M-x" . helm-M-x)
  ("M-y" . helm-show-kill-ring)
  ;; As opposed to ace-jump-zap-to-char?
- ("M-z" . ace-jump-zap-up-to-char)
-
- ("<up>" . windmove-up)
- ("<down>" . windmove-down)
- ("<right>" . windmove-right)
- ("<left>" . windmove-left))
+ ("M-z" . ace-jump-zap-up-to-char))
 
 (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map)
 
 (bind-key "M-p" 'previous-history-element minibuffer-local-map)
 
-(require 'helm-swoop)
-(bind-keys :map helm-swoop-map
-           ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
-           ("C-r" . 'helm-previous-line)
-           ("C-s" . 'helm-next-line))
-(bind-keys :map helm-multi-swoop-map
-           ("C-r" . helm-previous-line)
-           ("C-s" . helm-next-line))
-
 ;;; Compensate for screen.
-(define-key input-decode-map "\e[1;2A" [S-up])
-(define-key input-decode-map "\e[1;2B" [S-down])
-(define-key input-decode-map "\e[1;2D" [S-left])
-(define-key input-decode-map "\e[1;2C" [S-right])
+(bind-keys
+ :map input-decode-map
+ ("\e[1;2A" . [S-up])
+ ("\e[1;2B" . [S-down])
+ ("\e[1;2D" . [S-left])
+ ("\e[1;2C" . [S-right])
 
-(define-key input-decode-map "\e[1;3A" [M-up])
-(define-key input-decode-map "\e[1;3B" [M-down])
-(define-key input-decode-map "\e[1;3D" [M-left])
-(define-key input-decode-map "\e[1;3C" [M-right])
+ ("\e[1;3A" . [M-up])
+ ("\e[1;3B" . [M-down])
+ ("\e[1;3D" . [M-left])
+ ("\e[1;3C" . [M-right])
 
-(define-key input-decode-map "\e[1;4A" [S-M-up])
-(define-key input-decode-map "\e[1;4B" [S-M-down])
-(define-key input-decode-map "\e[1;4D" [S-M-left])
-(define-key input-decode-map "\e[1;4C" [S-M-right])
+ ("\e[1;4A" . [S-M-up])
+ ("\e[1;4B" . [S-M-down])
+ ("\e[1;4D" . [S-M-left])
+ ("\e[1;4C" . [S-M-right])
 
-(define-key input-decode-map "\e[1;5A" [C-up])
-(define-key input-decode-map "\e[1;5B" [C-down])
-(define-key input-decode-map "\e[1;5D" [C-left])
-(define-key input-decode-map "\e[1;5C" [C-right])
+ ("\e[1;5A" . [C-up])
+ ("\e[1;5B" . [C-down])
+ ("\e[1;5D" . [C-left])
+ ("\e[1;5C" . [C-right])
 
-(define-key input-decode-map "\e[1;6A" [C-S-up])
-(define-key input-decode-map "\e[1;6B" [C-S-down])
-(define-key input-decode-map "\e[1;6D" [C-S-left])
-(define-key input-decode-map "\e[1;6C" [C-S-right])
+ ("\e[1;6A" . [C-S-up])
+ ("\e[1;6B" . [C-S-down])
+ ("\e[1;6D" . [C-S-left])
+ ("\e[1;6C" . [C-S-right])
 
-(define-key input-decode-map "\e[1;7A" [C-M-up])
-(define-key input-decode-map "\e[1;7B" [C-M-down])
-(define-key input-decode-map "\e[1;7D" [C-M-left])
-(define-key input-decode-map "\e[1;7C" [C-M-right])
+ ("\e[1;7A" . [C-M-up])
+ ("\e[1;7B" . [C-M-down])
+ ("\e[1;7D" . [C-M-left])
+ ("\e[1;7C" . [C-M-right]))
+
 
 ;;;;; Auto-modes
 
@@ -958,6 +963,7 @@ This function is called by `org-babel-execute-src-block'."
 (put 'type-case* 'scheme-indent-function 1)
 (put 'unless 'scheme-indent-function 1)
 (put 'until 'scheme-indent-function 1)
+(put 'use-package 'lisp-indent-function 1)
 (put 'when 'scheme-indent-function 1)
 (put 'while 'scheme-indent-function 1)
 (put 'with 'scheme-indent-function 1)
@@ -1115,9 +1121,13 @@ This function is called by `org-babel-execute-src-block'."
 
 ;;; Magit
 
-(setq magit-auto-revert-mode nil)
+(use-package magit
+  :bind ("C-c g" . magit-status)
+  :init
+  (setq magit-auto-revert-mode nil)
+  (setq magit-last-seen-setup-instructions "1.4.0"))
 
-(setq magit-last-seen-setup-instructions "1.4.0")
+
 
 ;; http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
@@ -1146,7 +1156,7 @@ This function is called by `org-babel-execute-src-block'."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (better-defaults yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ clojure-mode apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
