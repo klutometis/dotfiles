@@ -6,13 +6,13 @@
 ;;;; ESK
 (require 'package)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("ELPA" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
              '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+             '("ELPA" . "http://tromey.com/elpa/") t)
 (add-to-list 'package-archives
              '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
@@ -92,15 +92,42 @@
 
 (setq use-package-always-ensure t)
 
-(use-package org
+(use-package ace-jump-mode
+  :bind  (("C-c SPC" . ace-jump-mode)
+          ("C-x SPC" . ace-jump-mode-pop-mark)) 
   :init
-  ;; Modify the MathJax path to work with https hosts.
-  (setq org-html-mathjax-options
-        '((path "//cdn.mathjax.org/mathjax/latest/MathJax.js"))))
+  ;; Let's try using the home-keys, even though the author recommends
+  ;; using more than 10.
+  ;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
-;;; Ace-window
+  :config
+  ;; Everything becomes invisible, otherwise; should we let emacs know
+  ;; that we have a dark background, somehow?
+  ;;
+  ;; E.g. (set-variable 'frame-background-mode 'dark) doesn't seem to
+  ;; work.
+  (set-face-foreground 'ace-jump-face-background "gray100"))
+
+(use-package ace-jump-zap
+  ;; As opposed to ace-jump-zap-to-char?
+  :bind ("M-z" . ace-jump-zap-up-to-char)
+  :init
+  ;; Kill the region, so that it's available for yanking, instead of
+  ;; just deleting it.
+  (setq ajz/zap-function 'kill-region)
+
+  ;; Consider this if we don't use backwards very much; practice
+  ;; backwards, though.
+  (setq ajz/forward-only nil)
+
+  ;; Sort by closest instead of the ace-default.
+  (setq ajz/sort-by-closest t)
+
+  ;; Only pick the nearest 52 characters.
+  (setq ajz/52-character-limit t))
 
 (use-package ace-window
+  :bind ("C-x o" . ace-window)
   :init
   ;; Redefine the action keys so we can select windows with the
   ;; home-row.
@@ -120,137 +147,50 @@
   ;; Otherwise, the dimming makes the screens unreadable.
   (set-face-foreground 'aw-background-face "gray100"))
 
-(use-package ace-jump-zap
-  :init
-  ;; Kill the region, so that it's available for yanking, instead of
-  ;; just deleting it.
-  (setq ajz/zap-function 'kill-region)
+(use-package apache-mode
+  :mode ("\\.conf\\'" . apache-mode))
 
-  ;; Consider this if we don't use backwards very much; practice
-  ;; backwards, though.
-  (setq ajz/forward-only nil)
-
-  ;; Sort by closest instead of the ace-default.
-  (setq ajz/sort-by-closest t)
-
-  ;; Only pick the nearest 52 characters.
-  (setq ajz/52-character-limit t))
-
-(use-package ace-jump-mode
-  :bind  ("C-c SPC" . ace-jump-mode) 
-  :init
-  ;; Let's try using the home-keys, even though the author recommends
-  ;; using more than 10.
-  ;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-
+(use-package browse-url
   :config
-  ;; Everything becomes invisible, otherwise; should we let emacs know
-  ;; that we have a dark background, somehow?
-  ;;
-  ;; E.g. (set-variable 'frame-background-mode 'dark) doesn't seem to
-  ;; work.
-  (set-face-foreground 'ace-jump-face-background "gray100"))
+  ;;; Browse links in Opera.
+  (defun browse-url-opera (url &optional new-window)
+    (setq url (browse-url-encode-url url))
+    (start-process "opera"
+                   nil
+                   "opera"
+                   "-newtab"
+                   url))
 
-(use-package helm
-  :bind (("<f1> a" . helm-apropos)
-         ("C-c C-h SPC" . helm-all-mark-rings)
-         ("C-c h o" . helm-occur))
-  :init
-  ;; Fuzzy match
-  (setq helm-M-x-fuzzy-match t
-        helm-buffers-fuzzy-matching t
-        helm-recentf-fuzzy-match t
-        helm-semantic-fuzzy-match t
-        helm-imenu-fuzzy-match t
-        helm-locate-fuzzy-match t
-        helm-apropos-fuzzy-match t)
+  (defun browse-url-elinks (url &optional new-window)
+    (setq url (browse-url-encode-url url))
+    (start-process "elinks"
+                   nil
+                   "elinks"
+                   "\"openurl("
+                   url
+                   "\", new-tab)"))
 
-  :config
-  (helm-mode 1)
-  ;; Minibuffer command-history
-  (bind-key "C-c C-l" 'helm-minibuffer-history minibuffer-local-map)
-  ;; Use ack.
-  (when (executable-find "ack-grep")
-    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
-          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
-  ;; Man-page at point
-  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
+  (defun browse-url-conkeror (url &optional new-window)
+    (setq url (browse-url-encode-url url))
+    (start-process "conkeror"
+                   nil
+                   "conkeror"
+                   url))
 
-(use-package helm-descbinds
-  :config
-  (helm-descbinds-mode))
+  (defun browse-url-chrome (url &optional new-window)
+    (setq url (browse-url-encode-url url))
+    (start-process "google-chrome"
+                   nil
+                   "google-chrome"
+                   url))
 
-(use-package helm-swoop
-  :bind ("C-c M-i" . helm-multi-swoop)
-  :init
-  ;; Helm-swoop should save file after edit.
-  (setq helm-multi-swoop-edit-save t)
+  (setq browse-url-browser-function 'browse-url-chrome)
   
-  :config
-  (bind-keys :map helm-swoop-map
-             ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
-             ("C-r" . 'helm-previous-line)
-             ("C-s" . 'helm-next-line))
-  (bind-keys :map helm-multi-swoop-map
-             ("C-r" . helm-previous-line)
-             ("C-s" . helm-next-line)))
-
-(use-package multiple-cursors
-  :bind (("C-<" . mc/mark-previous-like-this)
-         ("C->" . mc/mark-next-like-this)
-         ("C-c C-<" . mc/mark-all-like-this)
-         ("C-c C-c" . mc/edit-lines)))
-
-(use-package eshell
-  :config
-  (add-hook 'eshell-mode-hook
-    (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
-
-(use-package shell
-  :init
-  (bind-key "C-c C-l" 'helm-comint-input-ring shell-mode-map)
-  ;; So that Emacs recognizes aliases when running commands.
-  (setq shell-file-name "zsh")
-  (setq shell-command-switch "-ic")
-
-  :config
-  ;; Turn color on
-  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-  
-  ;; Also turn color on for ad-hoc commands (see
-  ;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
-  (defadvice display-message-or-buffer (before ansi-color activate)
-    "Process ANSI color codes in shell output."
-    (let ((buf (ad-get-arg 0)))
-      (and (bufferp buf)
-           (string= (buffer-name buf) "*Shell Command Output*")
-           (with-current-buffer buf
-             (ansi-color-apply-on-region (point-min) (point-max)))))))
-
-(use-package xclip
-  :if (executable-find "xclip")
-  :config
-  (turn-on-xclip))
-
-;;; Openwith; thanks, Victor Deryagin:
-;;; <http://stackoverflow.com/a/6845470>.
-(use-package openwith
-  :init
-  (setf openwith-associations
-  '(("\\.pdf\\'" "mupdf" (file))
-    ("\\.mp3\\'" "mplayer" (file))
-    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
-    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
-  :config
-  (openwith-mode t))
-
-(use-package js
-  :config
-  ;; Normal comments in Javascript, despite the fact that we use
-  ;; paredit
-  (add-hook 'js-mode-hook
-    (lambda ()
-      (bind-key "M-;" 'comment-dwim paredit-mode-map))))
+  (defun browse-lucky (start end)
+    (interactive "r")
+    (let ((q (buffer-substring-no-properties start end)))
+      (browse-url (concat "http://www.google.com/search?btnI&q="
+                          (url-hexify-string q))))))
 
 (use-package calendar
   :init
@@ -275,7 +215,590 @@
                   (calendar-discordian-print-date))
                 calendar-mode-map))))
 
-;;; Replace
+(use-package company
+  :config
+  (global-company-mode)
+  
+  ;; Make company actually visible in the terminal; thanks, nsf!
+  ;; <https://github.com/nsf/gocode/blob/master/emacs-company/README.md>.
+  (custom-set-faces
+   '(company-preview
+     ((t (:foreground "darkgray" :underline t))))
+   '(company-preview-common
+     ((t (:inherit company-preview))))
+   '(company-tooltip
+     ((t (:background "lightgray" :foreground "black"))))
+   '(company-tooltip-selection
+     ((t (:background "steelblue" :foreground "white"))))
+   '(company-tooltip-common
+     ((((type x)) (:inherit company-tooltip :weight bold))
+      (t (:inherit company-tooltip))))
+   '(company-tooltip-common-selection
+     ((((type x)) (:inherit company-tooltip-selection :weight bold))
+      (t (:inherit company-tooltip-selection)))))
+  
+  ;;; Should this be loaded under company's config?
+  (use-package helm-company
+    :config
+    (bind-key "C-:" 'helm-company company-mode-map)
+    (bind-key "C-:" 'helm-company company-active-map)))
+
+(use-package cc-mode
+  :mode ("\\.bsh\\'" . java-mode))
+
+(use-package dired+
+  :config
+  ;; Dired should reuse files when changing directories.
+  (diredp-toggle-find-file-reuse-dir 1))
+
+(use-package dot-mode
+  :config
+  ;; Get rid of the irritating eight-wide indents.
+  (setq graphviz-dot-indent-width 2)
+
+  ;; Get rid of the irritating semi-colon behavior.
+  (setq graphviz-dot-auto-indent-on-semi nil)
+
+  ;; Set an external viewer.
+  (setq graphviz-dot-view-command "display %s"))
+
+(use-package eshell
+  :config
+  (add-hook 'eshell-mode-hook
+    (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
+
+(use-package find-dired
+  :bind (("C-c f" . find-grep-dired)
+         ("C-c n" . find-name-dired))
+  :init
+  (setq find-grep-options "-q -i")
+  :config
+  ;; find-name-dired should run case-insensitively.
+  (setq read-file-name-completion-ignore-case t)
+
+  ;; Dired should grep case insensitively.
+  (add-hook 'dired-mode-hook
+    (lambda ()
+      (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
+
+(use-package flyspell
+  :disabled t)
+
+(use-package grep
+  :bind ("C-c r" . rgrep))
+
+;;; TODO: Once <https://github.com/jwiegley/use-package/issues/121> is
+;;; fixed, use :bind with :map (instead of bind-key in :config).
+(use-package helm
+  :bind (("<f1> a" . helm-apropos)
+         ("C-c C-h SPC" . helm-all-mark-rings)
+         ("C-c h o" . helm-occur)
+         ("C-x b" . helm-mini)
+         ("C-x C-f" . helm-find-files)
+         ("M-x" . helm-M-x)
+         ("M-y" . helm-show-kill-ring))
+  :bind-keymap ("C-c C-l" . helm-minibuffer-history)
+  :init
+  ;; Fuzzy match
+  (setq helm-M-x-fuzzy-match t
+        helm-buffers-fuzzy-matching t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t
+        helm-imenu-fuzzy-match t
+        helm-locate-fuzzy-match t
+        helm-apropos-fuzzy-match t)
+
+  :config
+  (helm-mode 1)
+  (bind-key "C-c C-l" 'helm-minibuffer-history minibuffer-local-map)
+  ;; Use ack.
+  (when (executable-find "ack-grep")
+    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
+          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
+  ;; Man-page at point
+  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
+
+(use-package helm-descbinds
+  :config
+  (helm-descbinds-mode))
+
+(use-package helm-swoop
+  :bind (("C-c M-i" . helm-multi-swoop)
+         ("C-x M-i" . helm-multi-swoop-all)
+         ("M-I" . helm-swoop-back-to-last-point)
+         ("M-i" . helm-swoop))
+  :init
+  ;; Helm-swoop should save file after edit.
+  (setq helm-multi-swoop-edit-save t)
+  
+  :config
+  (bind-keys :map helm-swoop-map
+             ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
+             ("C-r" . 'helm-previous-line)
+             ("C-s" . 'helm-next-line))
+  (bind-keys :map helm-multi-swoop-map
+             ("C-r" . helm-previous-line)
+             ("C-s" . helm-next-line))
+  (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map))
+
+;;; Keyfreq, for collecting keystroke statistics
+(use-package keyfreq
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
+(use-package js
+  :config
+  ;; Normal comments in Javascript, despite the fact that we use
+  ;; paredit
+  (add-hook 'js-mode-hook
+    (lambda ()
+      (bind-key "M-;" 'comment-dwim paredit-mode-map))))
+
+(use-package magit
+  :bind ("C-c g" . magit-status)
+  :config
+  (set-face-foreground 'magit-diff-add "green3")
+  (set-face-foreground 'magit-diff-del "red3")
+  (when (not window-system)
+    (set-face-background 'magit-item-highlight "white")
+    (set-face-background 'magit-tag "black"))
+  (setq magit-auto-revert-mode nil)
+  (setq magit-last-seen-setup-instructions "1.4.0"))
+
+(use-package multiple-cursors
+  :bind (("C-<" . mc/mark-previous-like-this)
+         ("C->" . mc/mark-next-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("C-c C-c" . mc/edit-lines)
+         ("M-SPC" . set-rectangular-region-anchor)))
+
+;;; Openwith; thanks, Victor Deryagin:
+;;; <http://stackoverflow.com/a/6845470>.
+(use-package openwith
+  :init
+  (setf openwith-associations
+  '(("\\.pdf\\'" "mupdf" (file))
+    ("\\.mp3\\'" "mplayer" (file))
+    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
+    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
+  :config
+  (openwith-mode t))
+
+;;; TODO: This is asymetrically long; break it up or put it somewhere
+;;; else, somehow? See e.g.
+;;; <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html>.
+(use-package org
+  :init
+  ;; Modify the MathJax path to work with https hosts.
+  (setq org-html-mathjax-options
+        '((path "//cdn.mathjax.org/mathjax/latest/MathJax.js")))
+  :config
+  ;; Make the code-export work with light backgrounds; see e.g.
+  ;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
+  (setq org-html-head "<style type=\"text/css\">
+    /* Set the colors in <pre> blocks from the Leuven theme */
+    pre                                      {background-color:#FFFFFF;}
+    pre span.org-builtin                     {color:#006FE0;font-weight:bold;}
+    pre span.org-string                      {color:#008000;}
+    pre span.org-keyword                     {color:#0000FF;}
+    pre span.org-variable-name               {color:#BA36A5;}
+    pre span.org-function-name               {color:#006699;}
+    pre span.org-type                        {color:#6434A3;}
+    pre span.org-preprocessor                {color:#808080;font-weight:bold;}
+    pre span.org-constant                    {color:#D0372D;}
+    pre span.org-comment-delimiter           {color:#8D8D84;}
+    pre span.org-comment                     {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-1            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-2            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-3            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-4            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-5            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-6            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-7            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-8            {color:#8D8D84;font-style:italic}
+    pre span.org-outshine-level-9            {color:#8D8D84;font-style:italic}
+    pre span.org-rainbow-delimiters-depth-1  {color:#707183;}
+    pre span.org-rainbow-delimiters-depth-2  {color:#7388d6;}
+    pre span.org-rainbow-delimiters-depth-3  {color:#909183;}
+    pre span.org-rainbow-delimiters-depth-4  {color:#709870;}
+    pre span.org-rainbow-delimiters-depth-5  {color:#907373;}
+    pre span.org-rainbow-delimiters-depth-6  {color:#6276ba;}
+    pre span.org-rainbow-delimiters-depth-7  {color:#858580;}
+    pre span.org-rainbow-delimiters-depth-8  {color:#80a880;}
+    pre span.org-rainbow-delimiters-depth-9  {color:#887070;}
+    pre span.org-sh-quoted-exec              {color:#FF1493;}
+  </style>")
+  
+  ;; Actually use the style defined above in org-html-head.
+  (setq org-html-htmlize-output-type 'css)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((ditaa . t)
+     (dot . t)
+     (gnuplot . t)
+     (python . t)
+     (R . t)))
+
+  (setq org-confirm-babel-evaluate nil)
+
+  ;; Thanks, Bernt Hansen: <http://doc.norang.ca/org-mode.html>.
+  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+  (add-to-list 'org-src-lang-modes '("ditaa" . artist))
+  
+  ;; See <http://orgmode.org/worg/org-issues.html> and
+  ;; <http://article.gmane.org/gmane.emacs.orgmode/33955>.
+  (defun org-babel-execute:ditaa (body params)
+    "Execute a block of Ditaa code with org-babel.
+This function is called by `org-babel-execute-src-block'."
+    (let* ((result-params (split-string (or (cdr (assoc :results params)) "")))
+           (out-file ((lambda (el)
+                        (or el
+                            (error
+                             "ditaa code block requires :file header argument")))
+                      (cdr (assoc :file params))))
+           (cmdline (cdr (assoc :cmdline params)))
+           (in-file (org-babel-temp-file "ditaa-"))
+           (cmd (concat "ditaa"
+                        " " cmdline
+                        " " (org-babel-process-file-name in-file)
+                        " " (org-babel-process-file-name out-file))))
+      (with-temp-file in-file (insert body))
+      (message cmd) (shell-command cmd)
+      nil))
+
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "|" "DONE(d)" "CANCELED(c)")))
+
+  ;; Edit source code in the current window.
+  (setq org-src-window-setup 'current-window)
+
+  ;; Alternatively, `time'.
+  (setq org-log-done 'note)
+
+  ;; Open link in browser.
+  (setq org-return-follows-link t)
+
+  ;; Activate the shortcut keys specified in org-todo-keywords.
+  (setq org-use-fast-todo-selection t)
+
+  (define-skeleton org-mode-src-skel-with-tangle
+    "Insert #+BEGIN_SRC <source>...#+END_SRC blocks with :tangle."
+    nil
+    > "#+BEGIN_SRC " (skeleton-read "Source: ")
+    (let ((tangle (skeleton-read "Tangle: ")))
+      (if (string= "" tangle)
+          ""
+        (concat " :tangle " tangle)))
+    \n
+    _
+    \n
+    "#+END_SRC"
+    > \n)
+
+  (define-skeleton org-mode-src-skel
+    "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
+    "Source: "
+    >
+    "#+BEGIN_SRC " str
+    \n
+    _
+    \n
+    "#+END_SRC"
+    > \n)
+
+  (define-skeleton org-mode-example-skel
+    "Insert #+BEGIN_EXAMPLE...#+END_EXAMPLE blocks."
+    nil
+    >
+    "#+BEGIN_EXAMPLE"
+    \n
+    _
+    \n
+    "#+END_EXAMPLE"
+    > \n)
+
+  (define-skeleton org-mode-quote-skel
+    "Insert #+BEGIN_QUOTE...#+END_QUOTE blocks."
+    nil
+    >
+    "#+BEGIN_QUOTE"
+    \n
+    _
+    \n
+    "#+END_QUOTE"
+    > \n)
+
+  (bind-keys :map org-mode-map
+             ("C-c C-x C-s" . org-mode-src-skel-with-tangle)
+             ("C-c C-x C-q" . org-mode-quote-skel)
+             ("C-c C-x C-e" . org-mode-example-skel))
+
+  ;; For LaTeX output, use no indentation but paragraph-skips by
+  ;; default.
+  ;; (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
+  
+  ;; Let's do auto-quotes, dashes, &c.; see:
+  ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
+  (use-package typopunct
+    :config
+    (typopunct-change-language 'english t)
+    (typopunct-mode 1))
+
+      ;; Wrap selected text in smart quotes.
+    (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
+      (let* ((lang (or (get-text-property (point) 'typopunct-language)
+                       typopunct-buffer-language))
+             (omark (if single
+                        (typopunct-opening-single-quotation-mark lang)
+                      (typopunct-opening-quotation-mark lang)))
+             (qmark (if single
+                        (typopunct-closing-single-quotation-mark lang)
+                      (typopunct-closing-quotation-mark lang))))
+        (cond
+         (mark-active
+          (let ((skeleton-end-newline nil)
+                (singleo (typopunct-opening-single-quotation-mark lang))
+                (singleq (typopunct-closing-single-quotation-mark lang)))
+            (if (> (point) (mark))
+                (exchange-point-and-mark))
+            (save-excursion
+              (while (re-search-forward (regexp-quote (string omark)) (mark) t)
+                (replace-match (regexp-quote (string singleo)) nil nil)))
+            (save-excursion
+              (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
+                (replace-match (regexp-quote (string singleq)) nil nil)))
+            (skeleton-insert (list nil omark '_ qmark) -1)))
+         ((looking-at (regexp-opt (list (string omark) (string qmark))))
+          (forward-char 1))
+         (t ad-do-it))))
+
+    (defun org-export-html-format-image (src par-open)
+      "Create image tag with source and attributes."
+      (save-match-data
+        (if (string-match (regexp-quote "ltxpng/") src)
+            (format "<img src=\"%s\" alt=\"%s\"/>"
+                    src (org-find-text-property-in-string 'org-latex-src src))
+          (let* ((caption (org-find-text-property-in-string 'org-caption src))
+                 (attr (org-find-text-property-in-string 'org-attributes src))
+                 (label (org-find-text-property-in-string 'org-label src)))
+            ;; (setq caption (and caption (org-html-do-expand caption)))
+            (concat
+             (if caption
+                 (format "%s<div %sclass=\"figure\"><p>"
+                         (if org-par-open "</p>\n" "")
+                         (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
+             (format "<img src=\"%s\"%s />"
+                     src
+                     (if (string-match "\\<alt=" (or attr ""))
+                         (concat " " attr )
+                       (concat " " attr " alt=\"" src "\"")))
+             (if caption
+                 (format "</p>%s</div>%s"
+                         (concat "\n<p>" caption "</p>")
+                         (if org-par-open "\n<p>" ""))))))))
+
+    (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
+
+    (setq org-latex-pdf-process
+          '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+
+(use-package paredit
+  :config
+  )
+
+(use-package python
+  :config
+  (defun python-send-buffer-and-go ()
+    "Send the buffer to the inferior Python process.
+Then switch to the process buffer."
+    (interactive)
+    (python-send-buffer)
+    (python-switch-to-python t))
+
+  (add-hook 'python-mode-hook
+    (lambda ()
+      (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+      (define-key python-mode-map (kbd "C-c z")
+        (lambda () (interactive) (python-switch-to-python t))))))
+
+(use-package scheme
+  :mode (("\\.egg-locations\\'" . scheme-mode)
+         ("\\.hy\\'" . scheme-mode)
+         ("\\.meta\\'" . scheme-mode)
+         ("\\.release-info\\'" . scheme-mode)
+         ("\\.setup\\'" . scheme-mode)
+         ("\\.shtml\\'" . scheme-mode)
+         ("\\.stex\\'" . scheme-mode)
+         ("\\.stumpwmrc\\'" . scheme-mode)
+         ("\\.sxml\\'" . scheme-mode))
+  :config
+  ;;; Evaluate whole Scheme buffer.
+  (defun scheme-send-buffer ()
+    "Just send the goddamn thing."
+    (interactive)
+    (scheme-send-region (point-min) (point-max)))
+
+  (defun scheme-send-buffer-and-go ()
+    "Send and go."
+    (interactive)
+    (scheme-send-buffer)
+    (switch-to-buffer-other-window "*scheme*"))
+
+  (setq scheme-program-name "csi -n")
+  
+  ;; Indent-functions for match, etc.
+  (put 'add-hook 'lisp-indent-function 1)
+  (put 'and-let* 'scheme-indent-function 1)
+  (put 'bind-lambda 'scheme-indent-function 1)
+  (put 'bind-let 'scheme-indent-function 1)
+  (put 'bind-let* 'scheme-indent-function 1)
+  (put 'call-with-database 'scheme-indent-function 1)
+  (put 'call-with-sqlite3-connection 'scheme-indent-function 1)
+  (put 'call-with-values 'scheme-indent-function 1)
+  (put 'dotimes 'scheme-indent-function 1)
+  (put 'for 'scheme-indent-function 1)
+  (put 'for-each 'scheme-indent-function 1)
+  (put 'handle-exceptions 'scheme-indent-function 1)
+  (put 'hash-table-walk 'scheme-indent-function 1)
+  (put 'match 'scheme-indent-function 1)
+  (put 'match-lambda 'scheme-indent-function 0)
+  (put 'match-lambda* 'scheme-indent-function 0)
+  (put 'match-let 'scheme-indent-function 1)
+  (put 'match-let* 'scheme-indent-function 1)
+  (put 'match-letrec 'scheme-indent-function 1)
+  (put 'module 'scheme-indent-function 1)
+  (put 'nwhile 'scheme-indent-function 1)
+  (put 'parameterize 'scheme-indent-function 1)
+  (put 'process-with-environment 'scheme-indent-function 1)
+  (put 'receive 'scheme-indent-function 1)
+  (put 'regex-case 'scheme-indent-function 1)
+  (put 'set-read-syntax! 'scheme-indent-function 1)
+  (put 'ssql->sql 'scheme-indent-function 1)
+  (put 'thunk 'scheme-indent-function 1)
+  (put 'type-case 'scheme-indent-function 1)
+  (put 'type-case* 'scheme-indent-function 1)
+  (put 'unless 'scheme-indent-function 1)
+  (put 'until 'scheme-indent-function 1)
+  (put 'use-package 'lisp-indent-function 1)
+  (put 'when 'scheme-indent-function 1)
+  (put 'while 'scheme-indent-function 1)
+  (put 'with 'scheme-indent-function 1)
+  (put 'with-error-output-to-port 'scheme-indent-function 1)
+  (put 'with-input-from-download 'scheme-indent-function 1)
+  (put 'with-lazy-lists 'scheme-indent-function 1)
+  (put 'with-mutex-locked 'scheme-indent-function 1)
+  (put 'with-natural-language 'scheme-indent-function 1)
+  (put 'with-output-to-mail 'scheme-indent-function 1)
+  (put 'with-output-to-pipe 'scheme-indent-function 1)
+  (put 'with-primitive-procedures 'scheme-indent-function 1)
+  (put 'with-require 'scheme-indent-function 1)
+  (put 'with-semaphore-acquired 'scheme-indent-function 1)
+  (put 'with-working-directory 'scheme-indent-function 1)
+
+  ;; mini-kanren
+  (put 'run 'scheme-indent-function 1)
+  (put 'run* 'scheme-indent-function 1)
+  (put 'fresh 'scheme-indent-function 1)
+  (put 'project 'scheme-indent-function 1)
+
+  ;; Unification (i.e. "identical to" as goal)
+  (font-lock-add-keywords
+   'scheme-mode
+   '(("(\\(==\\)\\>"
+      (0 (prog1 ()
+           (compose-region (match-beginning 1)
+                           (match-end 1)
+                           ?≡)))))))
+
+(use-package shell
+  :init
+  (bind-key "C-c C-l" 'helm-comint-input-ring shell-mode-map)
+  ;; So that Emacs recognizes aliases when running commands.
+  (setq shell-file-name "zsh")
+  (setq shell-command-switch "-ic")
+
+  :config
+  ;; Turn color on
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+  
+  ;; Also turn color on for ad-hoc commands (see
+  ;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
+  (defadvice display-message-or-buffer (before ansi-color activate)
+    "Process ANSI color codes in shell output."
+    (let ((buf (ad-get-arg 0)))
+      (and (bufferp buf)
+           (string= (buffer-name buf) "*Shell Command Output*")
+           (with-current-buffer buf
+             (ansi-color-apply-on-region (point-min) (point-max))))))
+
+  (defun sh-execute-buffer ()
+    "Just send the goddamn thing."
+    (interactive)
+    (sh-execute-region (point-min) (point-max)))
+
+  (add-hook 'sh-mode-hook
+    (lambda ()
+      (bind-key "C-c b" 'sh-execute-buffer sh-mode-map))))
+
+(use-package sh-script
+  :mode ("\\.bats\\'" . sh-mode))
+
+;;; http://www.emacswiki.org/emacs/TabCompletion#toc2
+(use-package smart-tab
+  :config (smart-tab-mode-on))
+
+(use-package sort
+  :bind ("C-c s" . sort-lines))
+
+(use-package sql
+  :config
+  (defun my-sql-save-history-hook ()
+    (let ((lval 'sql-input-ring-file-name)
+          (rval 'sql-product))
+      (if (symbol-value rval)
+          (let ((filename
+                 (concat "~/.emacs.d/sql/"
+                         (symbol-name (symbol-value rval))
+                         "-history.sql")))
+            (set (make-local-variable lval) filename))
+        (error
+         (format "SQL history will not be saved because %s is nil"
+                 (symbol-name rval))))))
+
+  (use-package sql-indent)
+  
+  (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+  (add-hook 'sql-mode-hook
+    (lambda ()
+      (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+
+  ;; The executable is osql, but osql doesn't seem to pass things to
+  ;; isql correctly.
+  (setq sql-ms-options '("--" "-w" "300" "-n")))
+
+(use-package tex-mode
+  :config
+  (setq tex-dvi-view-command "mupdf"))
+
+(use-package windmove
+  :bind (("<up>" . windmove-up)
+         ("<down>" . windmove-down)
+         ("<right>" . windmove-right)
+         ("<left>" . windmove-left))
+  :config
+  (windmove-default-keybindings)
+  (setq windmove-wrap-around t))
+
+(use-package winner
+  :config
+  (winner-mode 1))
+
+(use-package xclip
+  :if (executable-find "xclip")
+  :config
+  (turn-on-xclip))
 
 ;; Rename the occur buffer.
 (add-hook 'occur-hook
@@ -385,83 +908,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; Subword mode
 (global-subword-mode 1)
 
-;;; Keyfreq, for collecting keystroke statistics
-(use-package keyfreq
-  :config
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1))
-
-(use-package winner
-  :config
-  (winner-mode 1))
-
-(use-package windmove
-  :bind (("<up>" . windmove-up)
-         ("<down>" . windmove-down)
-         ("<right>" . windmove-right)
-         ("<left>" . windmove-left))
-  :config
-  (windmove-default-keybindings)
-  (setq windmove-wrap-around t))
-
-(use-package python
-  :config
-  (defun python-send-buffer-and-go ()
-    "Send the buffer to the inferior Python process.
-Then switch to the process buffer."
-    (interactive)
-    (python-send-buffer)
-    (python-switch-to-python t))
-
-  (add-hook 'python-mode-hook
-    (lambda ()
-      (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
-      (define-key python-mode-map (kbd "C-c z")
-        (lambda () (interactive) (python-switch-to-python t))))))
-
-(use-package sql
-  :config
-  (defun my-sql-save-history-hook ()
-    (let ((lval 'sql-input-ring-file-name)
-          (rval 'sql-product))
-      (if (symbol-value rval)
-          (let ((filename
-                 (concat "~/.emacs.d/sql/"
-                         (symbol-name (symbol-value rval))
-                         "-history.sql")))
-            (set (make-local-variable lval) filename))
-        (error
-         (format "SQL history will not be saved because %s is nil"
-                 (symbol-name rval))))))
-
-  (use-package sql-indent)
-  
-  (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
-  (add-hook 'sql-mode-hook
-    (lambda ()
-      (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
-
-  ;; The executable is osql, but osql doesn't seem to pass things to
-  ;; isql correctly.
-  (setq sql-ms-options '("--" "-w" "300" "-n")))
-
-(use-package find-dired
-  :init
-  (setq find-grep-options "-q -i")
-  :config
-  ;; Dired should grep case insensitively.
-  (add-hook 'dired-mode-hook
-    (lambda ()
-      (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
-
-;;; find-name-dired should run case-insensitively.
-(setq read-file-name-completion-ignore-case t)
-
-(use-package dired+
-  :config
-  ;; Dired should reuse files when changing directories.
-  (diredp-toggle-find-file-reuse-dir 1))
-
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
 (defun current-buffer-not-mini ()
@@ -484,10 +930,6 @@ Then switch to the process buffer."
 (setq-default tab-width 4)
 
 ;;; TODO: shell no longer tells me where we're executing.
-
-;;; http://www.emacswiki.org/emacs/TabCompletion#toc2
-(use-package smart-tab
-  :config (smart-tab-mode-on))
 
 ;;; Disable hl-line-mode in ESK; found here:
 ;;; <http://stackoverflow.com/questions/3545458/disable-hl-line-in-emacs-when-using-emacs-starter-kit>.
@@ -518,9 +960,6 @@ Then switch to the process buffer."
  ("C-c C-z u" . 'browse-url)
  ("C-c C-z v" . 'browse-url-of-file))
 
-(use-package flyspell
-  :disabled t)
-
 ;;;;; Bindings
 
 ;;; Thanks, unbound; on the other hand, see
@@ -529,6 +968,9 @@ Then switch to the process buffer."
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
+;;;
+;;; TODO: Fold these into their respective use-package, where
+;;; possible.
 (bind-keys
  :map global-map
  ("C-a" . smarter-move-beginning-of-line)
@@ -544,34 +986,15 @@ Then switch to the process buffer."
  ("C-c U" . rename-uniquely)
  ("C-c a" . list-matching-lines)
  ("C-c c" . compile)
- ("C-c f" . find-grep-dired)
  ("C-c l" . org-store-link)
- ("C-c n" . find-name-dired)
  ("C-c o" . occur)
- ("C-c r" . rgrep)
- ("C-c s" . sort-lines)
  ("C-c u" . kill-line-backward)
- ("C-c x" . copy-region-to-clipboard)
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
- ("C-x C-f" . helm-find-files)
- ("C-x C-r" . revert-buffer)
- ("C-x M-i" . helm-multi-swoop-all)
- ("C-x SPC" . ace-jump-mode-pop-mark)
+ ("C-x C-r" . revert-buffer) 
  ("C-x TAB" . indent-rigidly)
- ("C-x b" . helm-mini)
- ("C-x o" . ace-window)
  ("M-%" . query-replace-regexp)
- ("M-I" . helm-swoop-back-to-last-point)
- ("M-SPC" . set-rectangular-region-anchor)
- ("M-i" . helm-swoop)
- ("M-o" . smart-open-line)
- ("M-x" . helm-M-x)
- ("M-y" . helm-show-kill-ring)
- ;; As opposed to ace-jump-zap-to-char?
- ("M-z" . ace-jump-zap-up-to-char))
-
-(bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map)
+ ("M-o" . smart-open-line))
 
 (bind-key "M-p" 'previous-history-element minibuffer-local-map)
 
@@ -608,22 +1031,9 @@ Then switch to the process buffer."
  ("\e[1;7D" . [C-M-left])
  ("\e[1;7C" . [C-M-right]))
 
-
 ;;;;; Auto-modes
-
-(add-to-list 'auto-mode-alist '("\\.bsh\\'" . java-mode))
-(add-to-list 'auto-mode-alist '("\\.bats\\'" . sh-mode))
-(add-to-list 'auto-mode-alist '("\\.conf\\'" . apache-mode))
-(add-to-list 'auto-mode-alist '("\\.egg-locations\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.gss\\'" . css-mode))
-(add-to-list 'auto-mode-alist '("\\.hy\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.meta\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.release-info\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.setup\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.shtml\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.stex\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.stumpwmrc\\'" . scheme-mode))
-(add-to-list 'auto-mode-alist '("\\.sxml\\'" . scheme-mode))
+;;; TODO: Add these to their respective use-package, where
+;;; appropriate.
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . auto-fill-mode))
 ;;; Regex from <http://www.emacswiki.org/emacs/MuttInEmacs>.
 (add-to-list 'auto-mode-alist '("/mutt" .
@@ -634,365 +1044,9 @@ Then switch to the process buffer."
 
 (setq vc-follow-symlinks t)
 
-;;;; Language-specific things
-
-;;;;; Clojure
-
-(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
-(add-hook 'nrepl-mode-hook 'paredit-mode)
-
-;;;;; org-mode
-
-;;; Make the code-export work with light backgrounds; see e.g.
-;;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
-(setq org-html-head "<style type=\"text/css\">
-  /* Set the colors in <pre> blocks from the Leuven theme */
-  pre                                      {background-color:#FFFFFF;}
-  pre span.org-builtin                     {color:#006FE0;font-weight:bold;}
-  pre span.org-string                      {color:#008000;}
-  pre span.org-keyword                     {color:#0000FF;}
-  pre span.org-variable-name               {color:#BA36A5;}
-  pre span.org-function-name               {color:#006699;}
-  pre span.org-type                        {color:#6434A3;}
-  pre span.org-preprocessor                {color:#808080;font-weight:bold;}
-  pre span.org-constant                    {color:#D0372D;}
-  pre span.org-comment-delimiter           {color:#8D8D84;}
-  pre span.org-comment                     {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-1            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-2            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-3            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-4            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-5            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-6            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-7            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-8            {color:#8D8D84;font-style:italic}
-  pre span.org-outshine-level-9            {color:#8D8D84;font-style:italic}
-  pre span.org-rainbow-delimiters-depth-1  {color:#707183;}
-  pre span.org-rainbow-delimiters-depth-2  {color:#7388d6;}
-  pre span.org-rainbow-delimiters-depth-3  {color:#909183;}
-  pre span.org-rainbow-delimiters-depth-4  {color:#709870;}
-  pre span.org-rainbow-delimiters-depth-5  {color:#907373;}
-  pre span.org-rainbow-delimiters-depth-6  {color:#6276ba;}
-  pre span.org-rainbow-delimiters-depth-7  {color:#858580;}
-  pre span.org-rainbow-delimiters-depth-8  {color:#80a880;}
-  pre span.org-rainbow-delimiters-depth-9  {color:#887070;}
-  pre span.org-sh-quoted-exec              {color:#FF1493;}
-</style>")
-
-;;; Actually use the style defined above in org-html-head.
-(setq org-html-htmlize-output-type 'css)
-
 ;;; Stuff to publish the daybook.
 (if (file-exists-p "~/prg/org/daybook/daybook.el")
     (load "~/prg/org/daybook/daybook.el"))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((ditaa . t)
-   (dot . t)
-   (gnuplot . t)
-   (R . t)))
-
-(setq org-confirm-babel-evaluate nil)
-
-;;; Thanks, Bernt Hansen: <http://doc.norang.ca/org-mode.html>.
-(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-(add-to-list 'org-src-lang-modes '("ditaa" . artist))
-
-;;; See <http://orgmode.org/worg/org-issues.html> and
-;;; <http://article.gmane.org/gmane.emacs.orgmode/33955>.
-(defun org-babel-execute:ditaa (body params)
-  "Execute a block of Ditaa code with org-babel.
-This function is called by `org-babel-execute-src-block'."
-  (let* ((result-params (split-string (or (cdr (assoc :results params)) "")))
-         (out-file ((lambda (el)
-                      (or el
-                          (error
-                           "ditaa code block requires :file header argument")))
-                    (cdr (assoc :file params))))
-         (cmdline (cdr (assoc :cmdline params)))
-         (in-file (org-babel-temp-file "ditaa-"))
-         (cmd (concat "ditaa"
-                      " " cmdline
-                      " " (org-babel-process-file-name in-file)
-                      " " (org-babel-process-file-name out-file))))
-    (with-temp-file in-file (insert body))
-    (message cmd) (shell-command cmd)
-    nil))
-
-;;; From
-;;; <http://lists.gnu.org/archive/html/emacs-orgmode/2011-10/msg00304.html>;
-;;; avoids `Invalid function: org-called-interactively-p' when doing
-;;; `org-store-link'.
-
-;;; This doesn't work for e.g. org-tangle:
-(eval-after-load 'org-mode
-  '(progn
-     (defalias 'org-called-interactively-p 'called-interactively-p)))
-
-(defalias 'org-called-interactively-p 'called-interactively-p)
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)" "CANCELED(c)")))
-
-;;; Edit source code in the current window.
-(setq org-src-window-setup 'current-window)
-
-;;; Alternatively, `time'.
-(setq org-log-done 'note)
-
-;;; Open link in browser.
-(setq org-return-follows-link t)
-
-;;; Activate the shortcut keys specified in org-todo-keywords.
-(setq org-use-fast-todo-selection t)
-
-;;; Browse links in Opera.
-(defun browse-url-opera (url &optional new-window)
-  (setq url (browse-url-encode-url url))
-  (start-process "opera"
-                 nil
-                 "opera"
-                 "-newtab"
-                 url))
-
-(defun browse-url-elinks (url &optional new-window)
-  (setq url (browse-url-encode-url url))
-  (start-process "elinks"
-                 nil
-                 "elinks"
-                 "\"openurl("
-                 url
-                 "\", new-tab)"))
-
-(defun browse-url-conkeror (url &optional new-window)
-  (setq url (browse-url-encode-url url))
-  (start-process "conkeror"
-                 nil
-                 "conkeror"
-                 url))
-
-(defun browse-url-chrome (url &optional new-window)
-  (setq url (browse-url-encode-url url))
-  (start-process "google-chrome"
-                 nil
-                 "google-chrome"
-                 url))
-
-(setq browse-url-browser-function 'browse-url-chrome)
-
-(defun browse-lucky (start end)
-  (interactive "r")
-  (let ((q (buffer-substring-no-properties start end)))
-    (browse-url (concat "http://www.google.com/search?btnI&q="
-                        (url-hexify-string q)))))
-
-(define-skeleton org-mode-src-skel-with-tangle
-  "Insert #+BEGIN_SRC <source>...#+END_SRC blocks with :tangle."
-  nil
-  > "#+BEGIN_SRC " (skeleton-read "Source: ")
-  (let ((tangle (skeleton-read "Tangle: ")))
-    (if (string= "" tangle)
-        ""
-      (concat " :tangle " tangle)))
-  \n
-  _
-  \n
-  "#+END_SRC"
-  > \n)
-
-(define-skeleton org-mode-src-skel
-  "Insert #+BEGIN_SRC <source>...#+END_SRC blocks."
-  "Source: "
-  >
-  "#+BEGIN_SRC " str
-  \n
-  _
-  \n
-  "#+END_SRC"
-  > \n)
-
-(define-skeleton org-mode-example-skel
-  "Insert #+BEGIN_EXAMPLE...#+END_EXAMPLE blocks."
-  nil
-  >
-  "#+BEGIN_EXAMPLE"
-  \n
-  _
-  \n
-  "#+END_EXAMPLE"
-  > \n)
-
-(define-skeleton org-mode-quote-skel
-  "Insert #+BEGIN_QUOTE...#+END_QUOTE blocks."
-  nil
-  >
-  "#+BEGIN_QUOTE"
-  \n
-  _
-  \n
-  "#+END_QUOTE"
-  > \n)
-
-(add-hook
-    'org-mode-hook
-  (lambda ()
-    (define-key org-mode-map (kbd "C-c C-x C-s") 'org-mode-src-skel-with-tangle)
-    (define-key org-mode-map (kbd "C-c C-x C-q") 'org-mode-quote-skel)
-    (define-key org-mode-map (kbd "C-c C-x C-e") 'org-mode-example-skel)
-
-    ;; For LaTeX output, use no indentation but paragraph-skips by
-    ;; default.
-    ;; (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
-
-    ;; Let's do auto-quotes, dashes, &c.; see:
-    ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
-    (require 'typopunct)
-    (typopunct-change-language 'english t)
-    (typopunct-mode 1)
-
-    ;; Wrap selected text in smart quotes.
-    (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
-      (let* ((lang (or (get-text-property (point) 'typopunct-language)
-                       typopunct-buffer-language))
-             (omark (if single
-                        (typopunct-opening-single-quotation-mark lang)
-                      (typopunct-opening-quotation-mark lang)))
-             (qmark (if single
-                        (typopunct-closing-single-quotation-mark lang)
-                      (typopunct-closing-quotation-mark lang))))
-        (cond
-         (mark-active
-          (let ((skeleton-end-newline nil)
-                (singleo (typopunct-opening-single-quotation-mark lang))
-                (singleq (typopunct-closing-single-quotation-mark lang)))
-            (if (> (point) (mark))
-                (exchange-point-and-mark))
-            (save-excursion
-              (while (re-search-forward (regexp-quote (string omark)) (mark) t)
-                (replace-match (regexp-quote (string singleo)) nil nil)))
-            (save-excursion
-              (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
-                (replace-match (regexp-quote (string singleq)) nil nil)))
-            (skeleton-insert (list nil omark '_ qmark) -1)))
-         ((looking-at (regexp-opt (list (string omark) (string qmark))))
-          (forward-char 1))
-         (t ad-do-it))))
-
-    (defun org-export-html-format-image (src par-open)
-      "Create image tag with source and attributes."
-      (save-match-data
-        (if (string-match (regexp-quote "ltxpng/") src)
-            (format "<img src=\"%s\" alt=\"%s\"/>"
-                    src (org-find-text-property-in-string 'org-latex-src src))
-          (let* ((caption (org-find-text-property-in-string 'org-caption src))
-                 (attr (org-find-text-property-in-string 'org-attributes src))
-                 (label (org-find-text-property-in-string 'org-label src)))
-            ;; (setq caption (and caption (org-html-do-expand caption)))
-            (concat
-             (if caption
-                 (format "%s<div %sclass=\"figure\"><p>"
-                         (if org-par-open "</p>\n" "")
-                         (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
-             (format "<img src=\"%s\"%s />"
-                     src
-                     (if (string-match "\\<alt=" (or attr ""))
-                         (concat " " attr )
-                       (concat " " attr " alt=\"" src "\"")))
-             (if caption
-                 (format "</p>%s</div>%s"
-                         (concat "\n<p>" caption "</p>")
-                         (if org-par-open "\n<p>" ""))))))))))
-
-(add-hook
-    'org-src-mode-hook
-  (lambda ()
-    (define-key org-src-mode-map (kbd "C-x C-s") 'org-edit-src-save)))
-
-;;;;; Scheme
-
-;;; Evaluate whole Scheme buffer.
-(defun scheme-send-buffer ()
-  "Just send the goddamn thing."
-  (interactive)
-  (scheme-send-region (point-min) (point-max)))
-
-(defun sh-execute-buffer ()
-  "Just send the goddamn thing."
-  (interactive)
-  (sh-execute-region (point-min) (point-max)))
-
-(defun scheme-send-buffer-and-go ()
-  "Send and go."
-  (interactive)
-  (scheme-send-buffer)
-  (switch-to-buffer-other-window "*scheme*"))
-
-(setq scheme-program-name "csi -n")
-
-;;; Indent-functions for match
-(put 'add-hook 'lisp-indent-function 1)
-(put 'and-let* 'scheme-indent-function 1)
-(put 'bind-lambda 'scheme-indent-function 1)
-(put 'bind-let 'scheme-indent-function 1)
-(put 'bind-let* 'scheme-indent-function 1)
-(put 'call-with-database 'scheme-indent-function 1)
-(put 'call-with-sqlite3-connection 'scheme-indent-function 1)
-(put 'call-with-values 'scheme-indent-function 1)
-(put 'dotimes 'scheme-indent-function 1)
-(put 'for 'scheme-indent-function 1)
-(put 'for-each 'scheme-indent-function 1)
-(put 'handle-exceptions 'scheme-indent-function 1)
-(put 'hash-table-walk 'scheme-indent-function 1)
-(put 'match 'scheme-indent-function 1)
-(put 'match-lambda 'scheme-indent-function 0)
-(put 'match-lambda* 'scheme-indent-function 0)
-(put 'match-let 'scheme-indent-function 1)
-(put 'match-let* 'scheme-indent-function 1)
-(put 'match-letrec 'scheme-indent-function 1)
-(put 'module 'scheme-indent-function 1)
-(put 'nwhile 'scheme-indent-function 1)
-(put 'parameterize 'scheme-indent-function 1)
-(put 'process-with-environment 'scheme-indent-function 1)
-(put 'receive 'scheme-indent-function 1)
-(put 'regex-case 'scheme-indent-function 1)
-(put 'set-read-syntax! 'scheme-indent-function 1)
-(put 'ssql->sql 'scheme-indent-function 1)
-(put 'thunk 'scheme-indent-function 1)
-(put 'type-case 'scheme-indent-function 1)
-(put 'type-case* 'scheme-indent-function 1)
-(put 'unless 'scheme-indent-function 1)
-(put 'until 'scheme-indent-function 1)
-(put 'use-package 'lisp-indent-function 1)
-(put 'when 'scheme-indent-function 1)
-(put 'while 'scheme-indent-function 1)
-(put 'with 'scheme-indent-function 1)
-(put 'with-error-output-to-port 'scheme-indent-function 1)
-(put 'with-input-from-download 'scheme-indent-function 1)
-(put 'with-lazy-lists 'scheme-indent-function 1)
-(put 'with-mutex-locked 'scheme-indent-function 1)
-(put 'with-natural-language 'scheme-indent-function 1)
-(put 'with-output-to-mail 'scheme-indent-function 1)
-(put 'with-output-to-pipe 'scheme-indent-function 1)
-(put 'with-primitive-procedures 'scheme-indent-function 1)
-(put 'with-require 'scheme-indent-function 1)
-(put 'with-semaphore-acquired 'scheme-indent-function 1)
-(put 'with-working-directory 'scheme-indent-function 1)
-
-;;;;;; mini-kanren
-(put 'run 'scheme-indent-function 1)
-(put 'run* 'scheme-indent-function 1)
-(put 'fresh 'scheme-indent-function 1)
-(put 'project 'scheme-indent-function 1)
-
-;;; Unification (i.e. "identical to" as goal)
-(font-lock-add-keywords
- 'scheme-mode
- '(("(\\(==\\)\\>"
-    (0 (prog1 ()
-         (compose-region (match-beginning 1)
-                         (match-end 1)
-                         ?≡))))))
 
 ;;;;; Paredit
 
@@ -1056,59 +1110,6 @@ This function is called by `org-babel-execute-src-block'."
 (add-hook 'slime-repl-mode-hook 'paredit-plus-one)
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
-(add-hook 'sh-mode-hook
-  (lambda ()
-    (define-key sh-mode-map (kbd "C-c b") 'sh-execute-buffer)))
-
-;;;;; Latex
-
-(setq tex-dvi-view-command "mupdf")
-(setq org-latex-pdf-process
-      '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
-
-;;;;; Graphviz
-
-;;; Get rid of the irritating eight-wide indents.
-(setq graphviz-dot-indent-width 2)
-
-;;; Get rid of the irritating semi-colon behavior.
-(setq graphviz-dot-auto-indent-on-semi nil)
-
-;;; Set an external viewer.
-(setq graphviz-dot-view-command "display %s")
-
-;;;;; Clojure
-
-;;; Indentation for λ (should we suffice with Emacs changing the
-;;; face?)
-(put 'defλ 'clojure-doc-string-elt 2)
-(put 'defλ 'clojure-indent-function 'defun)
-(put 'λ 'clojure-indent-function 'defun)
-(put 'lambda 'clojure-indent-function 'defun)
-(put 'let-macro-characters 'clojure-backtracking-indent '((2) 2))
-
-;;; Face-support for λ; TODO: make a package for this?
-(add-hook
-    'clojure-mode-hook
-  (lambda ()
-    (font-lock-add-keywords
-     nil
-     `((,(concat "(\\(?:lambda.core/\\)?\\(defλ\\)\\>"
-                 ;; Any whitespace
-                 "[ \r\n\t]*"
-                 ;; Possibly type or metadata
-                 "\\(?:#?^\\(?:{[^}]*}\\|\\sw+\\)[ \r\n\t]*\\)*"
-                 "\\(\\sw+\\)?")
-        (1 font-lock-keyword-face)
-        (2 font-lock-function-name-face nil t))
-       (,(concat "(\\(?:lambda.core/\\)?"
-                 (regexp-opt '("defλ"
-                               "λ"
-                               "lambda") t)
-                 "\\>"
-                 )
-        1 font-lock-builtin-face)))))
-
 ;;;;; Slime
 
 (add-hook
@@ -1118,16 +1119,6 @@ This function is called by `org-babel-execute-src-block'."
     (slime-setup '(slime-repl))
     (add-to-list 'slime-lisp-implementations
                  '(sbcl ("/usr/local/bin/sbcl --noinform")))))
-
-;;; Magit
-
-(use-package magit
-  :bind ("C-c g" . magit-status)
-  :init
-  (setq magit-auto-revert-mode nil)
-  (setq magit-last-seen-setup-instructions "1.4.0"))
-
-
 
 ;; http://steve.yegge.googlepages.com/my-dot-emacs-file
 (defun rename-file-and-buffer (new-name)
@@ -1156,12 +1147,17 @@ This function is called by `org-babel-execute-src-block'."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (dot-mode dot graphviz-dot graphviz tex lisp-mode lisp org-src-mode org-src ox-html vc-hooks elisp--witness--lisp helm-multi-match company helm-company sh-mode sh java-mode java helm-command rectangular-region-mode helm-misc indent files simple ob-C cling inferior-cling gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(company-preview ((t (:foreground "darkgray" :underline t))))
+ '(company-preview-common ((t (:inherit company-preview))))
+ '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
+ '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
+ '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
 (put 'upcase-region 'disabled nil)
