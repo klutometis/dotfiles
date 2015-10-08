@@ -1,8 +1,3 @@
-;; Fix for Emacs 24.3.50.1; see
-;; <https://github.com/eschulte/emacs24-starter-kit/issues/30> and
-;; <https://github.com/technomancy/emacs-starter-kit/issues/151>.
-(require 'hippie-exp)
-
 ;;;; ESK
 (require 'package)
 (add-to-list 'package-archives
@@ -149,6 +144,11 @@
 
 (use-package apache-mode
   :mode ("\\.conf\\'" . apache-mode))
+
+(use-package auto-package-update
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "03:00"))
 
 (use-package browse-url
   :config
@@ -340,6 +340,8 @@
              ("C-r" . helm-previous-line)
              ("C-s" . helm-next-line))
   (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map))
+
+(use-package hippie-exp)
 
 ;;; Keyfreq, for collecting keystroke statistics
 (use-package keyfreq
@@ -1147,7 +1149,7 @@ point reaches the beginning or end of the buffer, stop there."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (dot-mode dot graphviz-dot graphviz tex lisp-mode lisp org-src-mode org-src ox-html vc-hooks elisp--witness--lisp helm-multi-match company helm-company sh-mode sh java-mode java helm-command rectangular-region-mode helm-misc indent files simple ob-C cling inferior-cling gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (auto-package-update dot-mode dot graphviz-dot graphviz tex lisp-mode lisp org-src-mode org-src ox-html vc-hooks elisp--witness--lisp helm-multi-match company helm-company sh-mode sh java-mode java helm-command rectangular-region-mode helm-misc indent files simple ob-C cling inferior-cling gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
