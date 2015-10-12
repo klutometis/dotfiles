@@ -267,7 +267,9 @@
   (add-hook 'eshell-mode-hook
     (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
 
-(use-package ess)
+(use-package ess
+  :config
+  (use-package julia-mode))
 
 (use-package find-dired
   :bind (("C-c f" . find-grep-dired)
