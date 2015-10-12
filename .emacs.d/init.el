@@ -267,7 +267,9 @@
   (add-hook 'eshell-mode-hook
     (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
 
-(use-package ess)
+(use-package ess
+  :config
+  (use-package julia-mode))
 
 (use-package find-dired
   :bind (("C-c f" . find-grep-dired)
@@ -364,7 +366,7 @@
   :config
   (set-face-foreground 'magit-diff-add "green3")
   (set-face-foreground 'magit-diff-del "red3")
-  (when (not window-system)
+  (unless window-system
     (set-face-background 'magit-item-highlight "white")
     (set-face-background 'magit-tag "black"))
   (setq magit-auto-revert-mode nil)
@@ -392,7 +394,7 @@
 ;;; TODO: This is asymetrically long; break it up or put it somewhere
 ;;; else, somehow? See e.g.
 ;;; <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html>.
-(use-package org
+(use-package org-plus-contrib
   :init
   ;; Modify the MathJax path to work with https hosts.
   (setq org-html-mathjax-options
