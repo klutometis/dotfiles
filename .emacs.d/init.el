@@ -394,7 +394,7 @@
 ;;; TODO: This is asymetrically long; break it up or put it somewhere
 ;;; else, somehow? See e.g.
 ;;; <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html>.
-(use-package org
+(use-package org-plus-contrib
   :init
   ;; Modify the MathJax path to work with https hosts.
   (setq org-html-mathjax-options
