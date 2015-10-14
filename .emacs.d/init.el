@@ -329,10 +329,8 @@
   (helm-descbinds-mode))
 
 (use-package helm-swoop
-  :bind (("C-c M-i" . helm-multi-swoop)
-         ("C-x M-i" . helm-multi-swoop-all)
-         ("M-I" . helm-swoop-back-to-last-point)
-         ("M-i" . helm-swoop))
+  :bind (("M-i" . helm-multi-swoop-all)
+         ("M-I" . helm-swoop-back-to-last-point))
   :init
   ;; Helm-swoop should save file after edit.
   (setq helm-multi-swoop-edit-save t)
