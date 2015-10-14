@@ -441,7 +441,8 @@
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((ditaa . t)
+   '((C . t)
+     (ditaa . t)
      (dot . t)
      (gnuplot . t)
      (python . t)
