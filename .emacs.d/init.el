@@ -275,12 +275,14 @@
   :bind (("C-c f" . find-grep-dired)
          ("C-c n" . find-name-dired))
   :init
+  ;; Grep case-insensitively.
   (setq find-grep-options "-q -i")
+  ;; Allow find to follow links.
+  (setq find-program "find -L")
   :config
-  ;; find-name-dired should run case-insensitively.
+  ;; Find-name-dired should run case-insensitively.
   (setq read-file-name-completion-ignore-case t)
 
-  ;; Dired should grep case insensitively.
   (add-hook 'dired-mode-hook
     (lambda ()
       (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
