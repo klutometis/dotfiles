@@ -8,14 +8,17 @@
 (define-key *root-map* (kbd "c") "sr-code-search")
 (define-key *root-map* (kbd "C") "sr-sel-code-search")
 
-(define-key *root-map* (kbd "d") "sr-chicken-regex")
-(define-key *root-map* (kbd "D") "sr-sel-chicken-regex")
+(define-key *root-map* (kbd "d") "sr-drive-search")
+(define-key *root-map* (kbd "D") "sr-sel-drive-search")
 
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
 
 (define-key *root-map* (kbd "g") "sr-google")
 (define-key *root-map* (kbd "G") "sr-sel-google")
+
+(define-key *root-map* (kbd "h") "sr-chicken-regex")
+(define-key *root-map* (kbd "H") "sr-sel-chicken-regex")
 
 (define-key *root-map* (kbd "l") "exec xscreensaver-command -lock")
 (define-key *root-map* (kbd "C-l") "exec xscreensaver-command -lock")
