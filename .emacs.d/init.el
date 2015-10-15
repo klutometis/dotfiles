@@ -23,9 +23,6 @@
 (eval-when-compile
   (require 'use-package))
 
-;;; Don't flash on bell.
-(setq visible-bell nil)
-
 ;;; Typed text replaces selection.
 (delete-selection-mode t)
 
@@ -107,7 +104,10 @@
   (auto-package-update-maybe)
   (auto-package-update-at-time "03:00"))
 
-(use-package better-defaults)
+(use-package better-defaults
+  :config
+  ;;; Don't flash on bell, after all.
+  (setq visible-bell nil))
 
 (use-package browse-url
   :config
