@@ -1,4 +1,3 @@
-;;;; ESK
 (require 'package)
 (add-to-list 'package-archives
              '("org" . "http://orgmode.org/elpa/") t)
@@ -15,77 +14,35 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;;; Missing: css-mode, bc, ess, fp, lilypond, maxima, php-repl,
-;;; wikipedia-mode, xml-lite
-;;;
-;;; TODO: Transition these all to use-package?
-(defvar my-packages '(
-                      ace-jump-buffer
-                      ace-jump-helm-line
-                      ace-jump-mode
-                      ace-jump-zap
-                      ace-window
-                      apache-mode
-                      better-defaults
-                      clojure-mode
-                      dired+
-                      discord
-                      dsvn
-                      ess
-                      full-ack
-                      gnuplot
-                      go-mode
-                      graphviz-dot-mode
-                      haskell-mode
-                      helm
-                      helm-descbinds
-                      helm-swoop
-                      htmlize
-                      keyfreq
-                      lua-mode
-                      magit
-                      markdown-mode
-                      mediawiki
-                      multiple-cursors
-                      openwith
-                      org-plus-contrib
-                      paredit
-                      php-mode
-                      prolog
-                      python-mode
-                      slime
-                      slime-repl
-                      smart-tab
-                      sql-indent
-                      typopunct
-                      unbound
-                      undo-tree
-                      use-package
-                      xclip
-                      yaml-mode
-                      )
-  "A list of packages to ensure are installed at launch.")
+;;; Bootstrap use-package.
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+;;; Use-package is not needed at runtime, apparently; see
+;;; <https://github.com/jwiegley/use-package>.
+(eval-when-compile
+  (require 'use-package))
 
+;;; Don't flash on bell.
 (setq visible-bell nil)
+
+;;; Typed text replaces selection.
 (delete-selection-mode t)
+
+;;; Show the column-number in addition to the row-number in the
+;;; status-bar.
 (setq column-number-mode t)
 
 ;;; For ``Delete excess backup versions of /home/peter/.recentf?''
 (setq delete-old-versions t)
 
-;;;; Miscellaneous
-
-;;; TODO: Transition to use-package.
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
-
+;;; Use-package should always download the packages, if they don't
+;;; exist.
 (setq use-package-always-ensure t)
+
+(use-package ace-jump-helm-line)
+
+(use-package ace-jump-buffer)
 
 (use-package ace-jump-mode
   :bind  (("C-c SPC" . ace-jump-mode)
@@ -149,6 +106,8 @@
   :config
   (auto-package-update-maybe)
   (auto-package-update-at-time "03:00"))
+
+(use-package better-defaults)
 
 (use-package browse-url
   :config
@@ -215,6 +174,8 @@
                   (calendar-discordian-print-date))
                 calendar-mode-map))))
 
+(use-package clojure-mode)
+
 (use-package company
   :config
   (global-company-mode)
@@ -251,16 +212,7 @@
   ;; Dired should reuse files when changing directories.
   (diredp-toggle-find-file-reuse-dir 1))
 
-(use-package dot-mode
-  :config
-  ;; Get rid of the irritating eight-wide indents.
-  (setq graphviz-dot-indent-width 2)
-
-  ;; Get rid of the irritating semi-colon behavior.
-  (setq graphviz-dot-auto-indent-on-semi nil)
-
-  ;; Set an external viewer.
-  (setq graphviz-dot-view-command "display %s"))
+(use-package discord)
 
 (use-package eshell
   :config
@@ -290,8 +242,25 @@
 (use-package flyspell
   :disabled t)
 
+(use-package full-ack)
+
+(use-package gnuplot)
+
+(use-package dot-mode
+  :config
+  ;; Get rid of the irritating eight-wide indents.
+  (setq graphviz-dot-indent-width 2)
+
+  ;; Get rid of the irritating semi-colon behavior.
+  (setq graphviz-dot-auto-indent-on-semi nil)
+
+  ;; Set an external viewer.
+  (setq graphviz-dot-view-command "display %s"))
+
 (use-package grep
   :bind ("C-c r" . rgrep))
+
+(use-package haskell-mode)
 
 ;;; TODO: Once <https://github.com/jwiegley/use-package/issues/121> is
 ;;; fixed, use :bind with :map (instead of bind-key in :config).
@@ -347,6 +316,8 @@
 
 (use-package hippie-exp)
 
+(use-package htmlize)
+
 ;;; Keyfreq, for collecting keystroke statistics
 (use-package keyfreq
   :config
@@ -361,6 +332,8 @@
     (lambda ()
       (bind-key "M-;" 'comment-dwim paredit-mode-map))))
 
+(use-package lua-mode)
+
 (use-package magit
   :bind ("C-c g" . magit-status)
   :config
@@ -371,6 +344,18 @@
     (set-face-background 'magit-tag "black"))
   (setq magit-auto-revert-mode nil)
   (setq magit-last-seen-setup-instructions "1.4.0"))
+
+(use-package markdown-mode)
+
+(use-package mediawiki)
+
+;;; Local package for everything that can't be done with use-package.
+;;; 
+;;; TODO: consider calling it bootstrap and placing towards the
+;;; beginning?
+(use-package miscellenea
+  :load-path "lisp/"
+  :ensure nil)
 
 (use-package multiple-cursors
   :bind (("C-<" . mc/mark-previous-like-this)
@@ -394,7 +379,8 @@
 ;;; TODO: This is asymetrically long; break it up or put it somewhere
 ;;; else, somehow? See e.g.
 ;;; <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html>.
-(use-package org-plus-contrib
+(use-package org
+  :ensure org-plus-contrib
   :init
   ;; Modify the MathJax path to work with https hosts.
   (setq org-html-mathjax-options
@@ -446,11 +432,17 @@
      (dot . t)
      (gnuplot . t)
      (python . t)
-     (R . t)))
+     ;; This has been failing with "Invalid function:
+     ;; org-babel-header-args-safe-fn", for some reason.
+     ;; (R . t)
+     ))
 
   (setq org-confirm-babel-evaluate nil)
 
-  ;; Thanks, Bernt Hansen: <http://doc.norang.ca/org-mode.html>.
+  ;; Thanks, Bernt Hansen: <http://doc.norang.ca/org-mode.html>;
+  ;; adding a few redundant aliases, too, because of case-sensitivity.
+  (add-to-list 'org-src-lang-modes '("c" . c++))
+  (add-to-list 'org-src-lang-modes '("c++" . c++))
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
   (add-to-list 'org-src-lang-modes '("ditaa" . artist))
   
@@ -613,7 +605,12 @@ This function is called by `org-babel-execute-src-block'."
 
 (use-package paredit
   :config
-  )
+  ;; Rescue Taylor's more reasonable defaults.
+  (bind-keys :map paredit-mode-map
+             ("M-(" . paredit-wrap-round)
+             ("M-)" . paredit-clone-round-and-newline)))
+
+(use-package php-mode)
 
 (use-package python
   :config
@@ -641,7 +638,11 @@ Then switch to the process buffer."
          ("\\.stumpwmrc\\'" . scheme-mode)
          ("\\.sxml\\'" . scheme-mode))
   :config
-  ;;; Evaluate whole Scheme buffer.
+  (paredit-mode +1)
+  
+  (setq scheme-program-name "csi -n")
+  
+  ;; Evaluate whole Scheme buffer.
   (defun scheme-send-buffer ()
     "Just send the goddamn thing."
     (interactive)
@@ -653,10 +654,11 @@ Then switch to the process buffer."
     (scheme-send-buffer)
     (switch-to-buffer-other-window "*scheme*"))
 
-  (setq scheme-program-name "csi -n")
+  (bind-keys :map scheme-mode-map
+             ("C-c b" . scheme-send-buffer)
+             ("C-c B" . scheme-send-buffer-and-go))
   
   ;; Indent-functions for match, etc.
-  (put 'add-hook 'lisp-indent-function 1)
   (put 'and-let* 'scheme-indent-function 1)
   (put 'bind-lambda 'scheme-indent-function 1)
   (put 'bind-let 'scheme-indent-function 1)
@@ -688,7 +690,6 @@ Then switch to the process buffer."
   (put 'type-case* 'scheme-indent-function 1)
   (put 'unless 'scheme-indent-function 1)
   (put 'until 'scheme-indent-function 1)
-  (put 'use-package 'lisp-indent-function 1)
   (put 'when 'scheme-indent-function 1)
   (put 'while 'scheme-indent-function 1)
   (put 'with 'scheme-indent-function 1)
@@ -752,6 +753,15 @@ Then switch to the process buffer."
 (use-package sh-script
   :mode ("\\.bats\\'" . sh-mode))
 
+(use-package slime
+  :config
+  (add-hook
+   'slime-mode-hook
+   (lambda ()
+     (setq slime-protocol-version 'ignore)
+     (add-to-list 'slime-lisp-implementations
+                  '(sbcl ("/usr/local/bin/sbcl --noinform"))))))
+
 ;;; http://www.emacswiki.org/emacs/TabCompletion#toc2
 (use-package smart-tab
   :config (smart-tab-mode-on))
@@ -789,6 +799,14 @@ Then switch to the process buffer."
   :config
   (setq tex-dvi-view-command "mupdf"))
 
+(use-package typopunct)
+
+(use-package unbound)
+
+(use-package undo-tree)
+
+(use-package use-package)
+
 (use-package windmove
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
@@ -807,15 +825,30 @@ Then switch to the process buffer."
   :config
   (turn-on-xclip))
 
-;; Rename the occur buffer.
+(use-package yaml-mode)
+
+;;;; Miscellanea
+;;;;
+;;;; TODO: Find some mechanism to store these in an auxiliary package;
+;;;; see
+;;;; e.g. <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html#“local”-packages>.
+
+(put 'add-hook 'lisp-indent-function 1)
+(put 'use-package 'lisp-indent-function 1)
+
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-mode-hook 'enable-paredit-mode)
+
+;;; Rename the occur buffer.
 (add-hook 'occur-hook
   (lambda ()
     ;; Follows automatically in the buffer.
     (next-error-follow-minor-mode)
     (occur-rename-buffer)))
 
-;; Thanks,
-;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
+;;; Thanks,
+;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
 (defun get-buffers-matching-mode (mode)
   "Returns a list of buffers where their major-mode is equal to MODE"
   (let ((buffer-mode-matches '()))
@@ -832,8 +865,8 @@ Then switch to the process buffer."
    (get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 
-;; Convert an occur search into a multi-occur search from within
-;; occur.
+;;; Convert an occur search into a multi-occur search from within
+;;; occur.
 (defun occur-multi-occur ()
   "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
   (interactive)
@@ -932,12 +965,6 @@ point reaches the beginning or end of the buffer, stop there."
 (setq tab-width 4)
 (setq-default tab-width 4)
 
-;;; TODO: shell no longer tells me where we're executing.
-
-;;; Disable hl-line-mode in ESK; found here:
-;;; <http://stackoverflow.com/questions/3545458/disable-hl-line-in-emacs-when-using-emacs-starter-kit>.
-(remove-hook 'prog-mode-hook 'esk-turn-on-hl-line-mode)
-
 (setq version-control t)
 (setq kept-new-versions 100)
 (setq kept-old-versions 100)
@@ -963,17 +990,12 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c C-z u" . 'browse-url)
  ("C-c C-z v" . 'browse-url-of-file))
 
-;;;;; Bindings
-
 ;;; Thanks, unbound; on the other hand, see
 ;;; <http://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html>:
 ;;; "Don't define C-c letter as a key in Lisp programs. Sequences
 ;;; consisting of C-c and a letter (either upper or lower case) are
 ;;; reserved for users; they are the only sequences reserved for
 ;;; users, so do not block them."
-;;;
-;;; TODO: Fold these into their respective use-package, where
-;;; possible.
 (bind-keys
  :map global-map
  ("C-a" . smarter-move-beginning-of-line)
@@ -1034,9 +1056,6 @@ point reaches the beginning or end of the buffer, stop there."
  ("\e[1;7D" . [C-M-left])
  ("\e[1;7C" . [C-M-right]))
 
-;;;;; Auto-modes
-;;; TODO: Add these to their respective use-package, where
-;;; appropriate.
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . auto-fill-mode))
 ;;; Regex from <http://www.emacswiki.org/emacs/MuttInEmacs>.
 (add-to-list 'auto-mode-alist '("/mutt" .
@@ -1051,79 +1070,7 @@ point reaches the beginning or end of the buffer, stop there."
 (if (file-exists-p "~/prg/org/daybook/daybook.el")
     (load "~/prg/org/daybook/daybook.el"))
 
-;;;;; Paredit
-
-;; Stop SLIME's REPL from grabbing DEL, which is annoying when
-;; backspacing over a '('; from
-;; <http://www.emacswiki.org/emacs/ParEdit#toc3>.
-(defun override-slime-repl-bindings-with-paredit ()
-  (define-key slime-repl-mode-map
-    (read-kbd-macro paredit-backward-delete-key) nil))
-
-(defun paredit-plus-one ()
-  (paredit-mode +1)
-  ;; Rescue Taylor's more reasonable defaults from the starter-kit's
-  ;; bindings.
-  (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
-  (define-key paredit-mode-map (kbd "M-)") 'paredit-close-round-and-newline))
-
-(defun setup-lisp-like (mode-map eval-buffer)
-  (paredit-plus-one)
-  (define-key mode-map (kbd "C-c b") eval-buffer)
-  (define-key mode-map (kbd "C-c B") 'scheme-send-buffer-and-go)
-
-  ;; From <http://mumble.net/~campbell/scheme/style.txt>: "Not only
-  ;; does this clarify the organization of the code, but readers of the
-  ;; code can then navigate the code's structure with Outline Mode
-  ;; commands such as `C-c C-f', `C-c C-b', `C-c C-u', and `C-c C-d'
-  ;; (forward, backward, up, down, respectively, headings)."
-  ;;
-  ;; Doesn't seem to work, though.
-  (setq outline-regexp "\f\n;;;;+ ")
-
-  (outline-minor-mode)
-  (define-key mode-map (kbd "C-c C-n") 'outline-next-visible-heading)
-  (define-key mode-map (kbd "C-c C-p") 'outline-previous-visible-heading)
-  (define-key mode-map (kbd "C-c C-f") 'outline-forward-same-level)
-  (define-key mode-map (kbd "C-c C-b") 'outline-backward-same-level)
-  (define-key mode-map (kbd "C-c C-u") 'outline-up-heading))
-
-(defun setup-scheme ()
-  (setup-lisp-like scheme-mode-map 'scheme-send-buffer))
-
-(defun setup-clojure ()
-  (setup-lisp-like clojure-mode-map 'scheme-send-buffer))
-
-(defun setup-slime ()
-  (setup-lisp-like slime-mode-map 'slime-eval-buffer))
-
-(defun setup-emacs-lisp ()
-  (setup-lisp-like emacs-lisp-mode-map 'scheme-eval-buffer))
-
-(defun setup-lisp ()
-  (setup-lisp-like lisp-mode-map 'slime-eval-buffer))
-
-(add-hook 'scheme-mode-hook 'setup-scheme)
-(add-hook 'inferior-scheme-mode-hook 'paredit-plus-one)
-(add-hook 'clojure-mode-hook 'setup-clojure)
-(add-hook 'lisp-mode-hook 'setup-lisp)
-(add-hook 'emacs-lisp-mode-hook 'setup-emacs-lisp)
-(add-hook 'inferior-lisp-mode-hook 'paredit-plus-one)
-(add-hook 'slime-mode-hook 'setup-slime)
-(add-hook 'slime-repl-mode-hook 'paredit-plus-one)
-(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
-
-;;;;; Slime
-
-(add-hook
-    'slime-mode-hook
-  (lambda ()
-    (setq slime-protocol-version 'ignore)
-    (slime-setup '(slime-repl))
-    (add-to-list 'slime-lisp-implementations
-                 '(sbcl ("/usr/local/bin/sbcl --noinform")))))
-
-;; http://steve.yegge.googlepages.com/my-dot-emacs-file
+;;; From <http://steve.yegge.googlepages.com/my-dot-emacs-file>.
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -1139,6 +1086,7 @@ point reaches the beginning or end of the buffer, stop there."
           (set-visited-file-name new-name)
                     (set-buffer-modified-p nil))))))
 
+;;; Load a host-specific file, if one exists.
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (if (file-exists-p host-file)
       (load host-file)))
@@ -1150,7 +1098,7 @@ point reaches the beginning or end of the buffer, stop there."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (julia-mode auto-package-update dot-mode dot graphviz-dot graphviz tex lisp-mode lisp org-src-mode org-src ox-html vc-hooks elisp--witness--lisp helm-multi-match company helm-company sh-mode sh java-mode java helm-command rectangular-region-mode helm-misc indent files simple ob-C cling inferior-cling gcomplete google-autoloads gtags google-cc-extras google-logo google3 compilation-colorization p4-google magit-git5 soy-mode soy helm-ring mc-mark-more helm-apropos comint-mode subr comint-exec comint ess-site dired isearch isearch-occur replace occur-mode occur helm-multi helm-multi-swoop minibuffer org-html yaml-mode xclip window-number web-completion-data use-package undo-tree unbound typopunct starter-kit-lisp starter-kit-js starter-kit-bindings sql-indent smart-tab slime-repl python-mode php-mode p4 org-plus-contrib openwith multiple-cursors mediawiki markdown-mode lua-mode keyfreq htmlize helm-swoop helm-descbinds haskell-mode graphviz-dot-mode google go-mode gnuplot full-ack ess dsvn discord dired+ color-theme clojure-mode better-defaults apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (miscellenea yaml-mode xclip use-package undo-tree unbound typopunct sql-indent smart-tab slime php-mode paredit org-plus-contrib openwith multiple-cursors mediawiki markdown-mode magit lua-mode keyfreq htmlize helm-swoop helm-descbinds helm-company haskell-mode gtags google gnuplot full-ack ess dot-mode discord dired+ clojure-mode better-defaults auto-package-update apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
