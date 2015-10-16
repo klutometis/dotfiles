@@ -833,6 +833,8 @@ Then switch to the process buffer."
 ;;;; see
 ;;;; e.g. <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html#“local”-packages>.
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 (put 'add-hook 'lisp-indent-function 1)
 (put 'use-package 'lisp-indent-function 1)
 
