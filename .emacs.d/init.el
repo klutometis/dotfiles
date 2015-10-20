@@ -638,7 +638,7 @@ Then switch to the process buffer."
          ("\\.stumpwmrc\\'" . scheme-mode)
          ("\\.sxml\\'" . scheme-mode))
   :config
-  (paredit-mode +1)
+  (add-hook 'scheme-mode-hook 'enable-paredit-mode)
   
   (setq scheme-program-name "csi -n")
   
