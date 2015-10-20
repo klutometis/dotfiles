@@ -176,6 +176,7 @@
 
 (use-package clojure-mode)
 
+;;; TODO: Think about binding something tab-like to company-complete.
 (use-package company
   :config
   (global-company-mode)
@@ -198,7 +199,6 @@
      ((((type x)) (:inherit company-tooltip-selection :weight bold))
       (t (:inherit company-tooltip-selection)))))
   
-  ;;; Should this be loaded under company's config?
   (use-package helm-company
     :config
     (bind-key "C-:" 'helm-company company-mode-map)
