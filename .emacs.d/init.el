@@ -268,7 +268,20 @@
   :bind (("<f1> a" . helm-apropos)
          ("C-c C-h SPC" . helm-all-mark-rings)
          ("C-c h o" . helm-occur)
-         ("C-x b" . helm-mini)
+         ;; Can't stand this, for some reason; let's head back to
+         ;; ido. Helm-buffers-list can take a second or more with a
+         ;; lot of buffers
+         ;;
+         ;; Actually, we'll bind it to C-x C-b; and keep
+         ;; e.g. switch-to-buffer or ido-switch-buffers at C-x b.
+         ;;
+         ;; Third thought, we'll keep it vanilla switch-to-buffer;
+         ;; which gets helmized.
+         ;;
+         ;; Other people have experienced this, too, with tramp:
+         ;; <https://github.com/emacs-helm/helm/issues/749>.
+         ;; 
+         ;; ("C-x b" . switch-to-buffer)
          ("C-x C-f" . helm-find-files)
          ("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring))
@@ -318,11 +331,11 @@
 
 (use-package htmlize)
 
-;;; Keyfreq, for collecting keystroke statistics
-(use-package keyfreq
-  :config
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1))
+(use-package ido
+  :bind
+  ;; Helm-buffers-list (i.e. helm-mini) was driving me fucking crazy
+  ;; with remote files; let's go back to good old ido.
+  ("C-x b" . ido-switch-buffer))
 
 (use-package js
   :config
@@ -331,6 +344,12 @@
   (add-hook 'js-mode-hook
     (lambda ()
       (bind-key "M-;" 'comment-dwim paredit-mode-map))))
+
+;;; Keyfreq, for collecting keystroke statistics
+(use-package keyfreq
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
 
 (use-package lua-mode)
 
