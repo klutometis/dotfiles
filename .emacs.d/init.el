@@ -774,8 +774,6 @@ Then switch to the process buffer."
          (format "SQL history will not be saved because %s is nil"
                  (symbol-name rval))))))
 
-  (use-package sql-indent)
-  
   (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
   (add-hook 'sql-mode-hook
     (lambda ()
@@ -791,7 +789,37 @@ Then switch to the process buffer."
   :config
   (setq tex-dvi-view-command "mupdf"))
 
-(use-package typopunct)
+;; Let's do auto-quotes, dashes, &c.; see:
+;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
+(use-package typopunct
+  :config
+  ;; Wrap selected text in smart quotes.
+  (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
+    (let* ((lang (or (get-text-property (point) 'typopunct-language)
+                     typopunct-buffer-language))
+           (omark (if single
+                      (typopunct-opening-single-quotation-mark lang)
+                    (typopunct-opening-quotation-mark lang)))
+           (qmark (if single
+                      (typopunct-closing-single-quotation-mark lang)
+                    (typopunct-closing-quotation-mark lang))))
+      (cond
+       (mark-active
+        (let ((skeleton-end-newline nil)
+              (singleo (typopunct-opening-single-quotation-mark lang))
+              (singleq (typopunct-closing-single-quotation-mark lang)))
+          (if (> (point) (mark))
+              (exchange-point-and-mark))
+          (save-excursion
+            (while (re-search-forward (regexp-quote (string omark)) (mark) t)
+              (replace-match (regexp-quote (string singleo)) nil nil)))
+          (save-excursion
+            (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
+              (replace-match (regexp-quote (string singleq)) nil nil)))
+          (skeleton-insert (list nil omark '_ qmark) -1)))
+       ((looking-at (regexp-opt (list (string omark) (string qmark))))
+        (forward-char 1))
+       (t ad-do-it)))))
 
 (use-package unbound)
 
