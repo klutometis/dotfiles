@@ -282,7 +282,11 @@
          ;; <https://github.com/emacs-helm/helm/issues/749>.
          ;; 
          ;; ("C-x b" . switch-to-buffer)
-         ("C-x C-f" . helm-find-files)
+         ;; 
+         ;; You know what? I can't fucking stand helm-find-files,
+         ;; either; let's go back to ido!
+         ;; 
+         ;; ("C-x C-f" . helm-find-files)
          ("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring))
   :bind-keymap ("C-c C-l" . helm-minibuffer-history)
@@ -335,7 +339,8 @@
   :bind
   ;; Helm-buffers-list (i.e. helm-mini) was driving me fucking crazy
   ;; with remote files; let's go back to good old ido.
-  ("C-x b" . ido-switch-buffer))
+  (("C-x b" . ido-switch-buffer)
+   ("C-x C-f" . ido-find-file)))
 
 (use-package js
   :config
