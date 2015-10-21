@@ -785,6 +785,8 @@ Then switch to the process buffer."
   ;; isql correctly.
   (setq sql-ms-options '("--" "-w" "300" "-n")))
 
+(use-package sql-indent)
+  
 (use-package tex-mode
   :config
   (setq tex-dvi-view-command "mupdf"))
