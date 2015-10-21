@@ -405,6 +405,12 @@
   (setq org-html-mathjax-options
         '((path "//cdn.mathjax.org/mathjax/latest/MathJax.js")))
   :config
+  (add-hook 'org-mode-hook
+    (lambda ()
+      (auto-fill-mode)
+      (typopunct-change-language 'english t)
+      (typopunct-mode 1)))
+  
   ;; Make the code-export work with light backgrounds; see e.g.
   ;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
   (setq org-html-head "<style type=\"text/css\">
