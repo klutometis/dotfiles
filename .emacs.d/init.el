@@ -563,65 +563,30 @@ This function is called by `org-babel-execute-src-block'."
   ;; default.
   ;; (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
   
-  ;; Let's do auto-quotes, dashes, &c.; see:
-  ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
-  (use-package typopunct
-    :config
-    (typopunct-change-language 'english t)
-    (typopunct-mode 1))
-
-      ;; Wrap selected text in smart quotes.
-    (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
-      (let* ((lang (or (get-text-property (point) 'typopunct-language)
-                       typopunct-buffer-language))
-             (omark (if single
-                        (typopunct-opening-single-quotation-mark lang)
-                      (typopunct-opening-quotation-mark lang)))
-             (qmark (if single
-                        (typopunct-closing-single-quotation-mark lang)
-                      (typopunct-closing-quotation-mark lang))))
-        (cond
-         (mark-active
-          (let ((skeleton-end-newline nil)
-                (singleo (typopunct-opening-single-quotation-mark lang))
-                (singleq (typopunct-closing-single-quotation-mark lang)))
-            (if (> (point) (mark))
-                (exchange-point-and-mark))
-            (save-excursion
-              (while (re-search-forward (regexp-quote (string omark)) (mark) t)
-                (replace-match (regexp-quote (string singleo)) nil nil)))
-            (save-excursion
-              (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
-                (replace-match (regexp-quote (string singleq)) nil nil)))
-            (skeleton-insert (list nil omark '_ qmark) -1)))
-         ((looking-at (regexp-opt (list (string omark) (string qmark))))
-          (forward-char 1))
-         (t ad-do-it))))
-
-    (defun org-export-html-format-image (src par-open)
-      "Create image tag with source and attributes."
-      (save-match-data
-        (if (string-match (regexp-quote "ltxpng/") src)
-            (format "<img src=\"%s\" alt=\"%s\"/>"
-                    src (org-find-text-property-in-string 'org-latex-src src))
-          (let* ((caption (org-find-text-property-in-string 'org-caption src))
-                 (attr (org-find-text-property-in-string 'org-attributes src))
-                 (label (org-find-text-property-in-string 'org-label src)))
-            ;; (setq caption (and caption (org-html-do-expand caption)))
-            (concat
-             (if caption
-                 (format "%s<div %sclass=\"figure\"><p>"
-                         (if org-par-open "</p>\n" "")
-                         (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
-             (format "<img src=\"%s\"%s />"
-                     src
-                     (if (string-match "\\<alt=" (or attr ""))
-                         (concat " " attr )
-                       (concat " " attr " alt=\"" src "\"")))
-             (if caption
-                 (format "</p>%s</div>%s"
-                         (concat "\n<p>" caption "</p>")
-                         (if org-par-open "\n<p>" ""))))))))
+  (defun org-export-html-format-image (src par-open)
+    "Create image tag with source and attributes."
+    (save-match-data
+      (if (string-match (regexp-quote "ltxpng/") src)
+          (format "<img src=\"%s\" alt=\"%s\"/>"
+                  src (org-find-text-property-in-string 'org-latex-src src))
+        (let* ((caption (org-find-text-property-in-string 'org-caption src))
+               (attr (org-find-text-property-in-string 'org-attributes src))
+               (label (org-find-text-property-in-string 'org-label src)))
+          ;; (setq caption (and caption (org-html-do-expand caption)))
+          (concat
+           (if caption
+               (format "%s<div %sclass=\"figure\"><p>"
+                       (if org-par-open "</p>\n" "")
+                       (if label (format "id=\"%s\" " (org-solidify-link-text label)) "")))
+           (format "<img src=\"%s\"%s />"
+                   src
+                   (if (string-match "\\<alt=" (or attr ""))
+                       (concat " " attr )
+                     (concat " " attr " alt=\"" src "\"")))
+           (if caption
+               (format "</p>%s</div>%s"
+                       (concat "\n<p>" caption "</p>")
+                       (if org-par-open "\n<p>" ""))))))))
 
     (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
 
