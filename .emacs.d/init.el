@@ -1115,7 +1115,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; From <http://steve.yegge.googlepages.com/my-dot-emacs-file>.
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
+  (interactive "fNew name: ")
   (let ((name (buffer-name))
         (filename (buffer-file-name)))
     (if (not filename)
