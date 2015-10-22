@@ -792,6 +792,15 @@ Then switch to the process buffer."
 
 (use-package sql-indent)
   
+(use-package surfraw
+  :load-path "lisp/"
+  :ensure nil
+  :config
+  (surfraw-init)
+  (bind-keys :map global-map
+             ("C-c C-s g" . surfraw-google)
+             ("C-c C-s G" . surfraw-google-region)))
+
 (use-package tex-mode
   :config
   (setq tex-dvi-view-command "mupdf"))
