@@ -50,7 +50,7 @@ point."
           `(defun ,(intern (format "surfraw-%s-region" elvis)) ()
              (interactive)
              (,(intern (format "surfraw-%s" elvis))
-              (tap-region-or-non-nil-symbol-name-nearest-point))))
+              (funcall surfraw-region))))
         (surfraw-elvi))))
 
 (defun surfraw-init ()
