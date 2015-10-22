@@ -53,6 +53,26 @@ point."
               (funcall surfraw-region))))
         (surfraw-elvi))))
 
+(defun surfraw-bookmark (terms)
+  "Invoke the surfraw bookmark function."
+  (interactive "ssurfraw bookmark: ")
+  (apply 'start-process `("surfraw" nil "surfraw" ,@(split-string-and-unquote terms))))
+
+(defun surfraw-bookmark-region ()
+  "Invoke the surfraw bookmark function on region."
+  (interactive)
+  (surfraw-bookmark (funcall surfraw-region)))
+
+;;; TODO: This doesn't work when invoking via bind-keys, for some
+;;; reason; still gives "Wrong type argument: commandp," despite
+;;; having (interactive).
+(defun surfraw-make-bookmark (name)
+  "Make an invokable bookmark; this would be useful for keybinding,
+but it doesn't work."
+  (lambda ()
+    (interactive)
+    (surfraw-bookmark name)))
+
 (defun surfraw-init ()
   "Initialize the surfraw-elvi and surfraw-region-elvi
 functions."
