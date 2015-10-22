@@ -174,6 +174,8 @@
                   (calendar-discordian-print-date))
                 calendar-mode-map))))
 
+(use-package cl)
+
 (use-package clojure-mode)
 
 ;;; TODO: Think about binding something tab-like to company-complete.
