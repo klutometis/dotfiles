@@ -11,6 +11,11 @@
 (require 'cl-lib)
 (require 'thingatpt+)
 
+(defvar surfraw-region
+  #'tap-region-or-non-nil-symbol-name-nearest-point
+  "Function that describes how surfraw extracts the current
+  region")
+
 (defun surfraw-elvi ()
   "Extract a list of current elvi."
   (cl-mapcar
