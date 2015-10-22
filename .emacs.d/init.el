@@ -1040,13 +1040,15 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c c" . compile)
  ("C-c l" . org-store-link)
  ("C-c o" . occur)
+ ("C-c p" . pwd)
  ("C-c u" . kill-line-backward)
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
  ("C-x C-r" . revert-buffer) 
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
- ("M-o" . smart-open-line))
+ ("M-o" . smart-open-line)
+ )
 
 (bind-key "M-p" 'previous-history-element minibuffer-local-map)
 
