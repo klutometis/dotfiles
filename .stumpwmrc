@@ -8,8 +8,8 @@
 (define-key *root-map* (kbd "c") "sr-code-search")
 (define-key *root-map* (kbd "C") "sr-sel-code-search")
 
-(define-key *root-map* (kbd "d") "sr-drive-search")
-(define-key *root-map* (kbd "D") "sr-sel-drive-search")
+(define-key *root-map* (kbd "d") "sr-drive")
+(define-key *root-map* (kbd "D") "sr-sel-drive")
 
 (define-key *root-map* (kbd "e") "sr-oed")
 (define-key *root-map* (kbd "E") "sr-sel-oed")
