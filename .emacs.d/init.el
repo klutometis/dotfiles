@@ -797,28 +797,30 @@ Then switch to the process buffer."
   :ensure nil
   :config
   (surfraw-init)
-  (bind-keys :map global-map
-             ("C-c C-s c" . surfraw-code-search)
-             ("C-c C-s C" . surfraw-code-search-region)
-             ("C-c C-s d" . surfraw-drive)
-             ("C-c C-s D" . surfraw-drive-region)
-             ("C-c C-s e" . surfraw-oed-region)
-             ("C-c C-s E" . surfraw-oed-region)
-             ("C-c C-s g" . surfraw-google)
-             ("C-c C-s G" . surfraw-google-region)
-             ("C-c C-s h" . surfraw-chicken-regex)
-             ("C-c C-s H" . surfraw-chicken-regex-region)
-             ("C-c C-s m" . surfraw-gmail)
-             ("C-c C-s M" . surfraw-gmail-region)
-             ("C-c C-s r" . surfraw-groups)
-             ("C-c C-s R" . surfraw-groups-region)
-             ("C-c C-s w" . surfraw-W)
-             ("C-c C-s W" . surfraw-W-region)
-             
-             ("C-c C-s a" .
-              (lambda () (interactive) (surfraw-bookmark "calendar")))
-             ("C-c C-s q" .
-              (lambda () (interactive) (surfraw-bookmark "critique")))))
+  (bind-keys* :map global-map
+              :prefix-map surfraw-prefix-map
+              :prefix "C-c C-s"
+              ("c" . surfraw-code-search)
+              ("C" . surfraw-code-search-region)
+              ("d" . surfraw-drive)
+              ("D" . surfraw-drive-region)
+              ("e" . surfraw-oed-region)
+              ("E" . surfraw-oed-region)
+              ("g" . surfraw-google)
+              ("G" . surfraw-google-region)
+              ("h" . surfraw-chicken-regex)
+              ("H" . surfraw-chicken-regex-region)
+              ("m" . surfraw-gmail)
+              ("M" . surfraw-gmail-region)
+              ("r" . surfraw-groups)
+              ("R" . surfraw-groups-region)
+              ("w" . surfraw-W)
+              ("W" . surfraw-W-region)
+              
+              ("a" .
+               (lambda () (interactive) (surfraw-bookmark "calendar")))
+              ("q" .
+               (lambda () (interactive) (surfraw-bookmark "critique")))))
 
 (use-package tex-mode
   :config
