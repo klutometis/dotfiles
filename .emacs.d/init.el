@@ -180,6 +180,7 @@
 
 ;;; TODO: Think about binding something tab-like to company-complete.
 (use-package company
+  :bind ("C-TAB" . company-complete)
   :config
   (global-company-mode)
   
