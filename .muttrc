@@ -1,0 +1,53 @@
+# Source the mailboxes from offlineimap.
+source ~/.mutt/mailboxes
+
+# Source the SMTP information.
+source ~/.mutt/smtp
+
+# Send with UTF-8.
+set send_charset="UTF-8"
+
+# By convention, we use INBOX; these are Gmail folders.
+set spoolfile = "=INBOX"
+set trash = "=Trash"
+set postponed = "=Drafts"
+
+# Leave read messages in the inbox.
+unset mbox
+
+# Don't ask whether to purge messages, just purge them.
+set delete = yes
+
+# Don't ask whether to append messages, just append them.
+unset confirmappend
+
+# See <http://blog.tshirtman.fr/tags/nottoomuch>; use notmuch as an
+# address book.
+set query_command="nottoomuch-addresses.sh %s"
+bind editor <Tab> complete-query
+
+# Sort threads by received descending.
+set sort=threads
+set sort_aux=reverse-last-date-received
+
+# Compose with Emacs.
+send-hook ~A 'set editor=emacs-wait'
+
+# Search with notmuch.
+macro browser <F8> "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --prompt search<enter><change-dir>../.cache/<enter><search>mutt_results<enter><enter>" "search mail (using notmuch)"
+macro index <F9> "<enter-command>unset wait_key<enter><pipe-message>~/bin/notmuch-mutt thread<enter><change-folder-readonly>~/.cache/mutt_results<enter><enter-command>set wait_key<enter>" "search and reconstruct owning thread (using notmuch)"
+
+# Miscellaneous navigation macros, etc.
+macro index o "<sync-mailbox><shell-escape>offlineimap<enter>"
+macro index,pager i "<save-message>=Saved<enter>" "Save"
+macro index,pager I "<tag-thread><tag-prefix><save-message>=Saved<enter>" "Save thread"
+macro index,pager d "<save-message>=Trash<enter>" "Trash"
+macro index,pager D "<tag-thread><tag-prefix><save-message>=Trash<enter>" "Trash thread"
+macro index,pager 1 "<save-message>=Snooze-1<enter>" "Snooze 1 day"
+macro index,pager 7 "<save-message>=Snooze-7<enter>" "Snooze 7 days"
+macro index ga "<change-folder>=Saved<enter>" "Go to saved messages"
+macro index gd "<change-folder>=Drafts<enter>" "Go to drafts"
+macro index gg "<change-folder>=Groups<enter>" "Go to saved messages"
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index gt "<change-folder>=Sent Mail<enter>" "Go to sent  messages"
+macro index gr "<change-folder>=Trash<enter>" "Go to sent  messages"
