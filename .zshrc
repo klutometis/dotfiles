@@ -47,6 +47,7 @@ path+=$HOME/src/stumpwm/contrib
 path+=$HOME/lib/go/bin
 path+=$HOME/google-cloud-sdk/bin
 path+=$HOME/google_appengine
+path+=$HOME/go_appengine
 path+=/usr/local/sbin
 path+=/usr/sbin
 path+=/sbin
