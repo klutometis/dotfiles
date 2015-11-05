@@ -169,3 +169,7 @@ XTerm*charClass: 33-126:48,10:48
 !
 ! Get this to work for e.g. Googling, too!
 *VT100*translations: #override Shift <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY)
+
+XTerm.VT100.translations: #override \
+Meta <Key> minus: smaller-vt-font() \n\
+Meta <Key> plus: larger-vt-font() \n
