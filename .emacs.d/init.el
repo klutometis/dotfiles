@@ -42,14 +42,14 @@
 (use-package ace-jump-buffer)
 
 (use-package ace-jump-mode
-  :bind  (("C-c SPC" . ace-jump-mode)
-          ("C-x SPC" . ace-jump-mode-pop-mark)) 
-  :init
+  :bind*  (("C-c SPC" . ace-jump-mode)
+           ("C-x SPC" . ace-jump-mode-pop-mark))
+  :config
   ;; Let's try using the home-keys, even though the author recommends
   ;; using more than 10.
+  ;; 
   ;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-
-  :config
+  
   ;; Everything becomes invisible, otherwise; should we let emacs know
   ;; that we have a dark background, somehow?
   ;;
