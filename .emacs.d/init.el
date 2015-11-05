@@ -1068,6 +1068,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c C-z r" . browse-url-of-region)
  ("C-c C-z u" . browse-url)
  ("C-c C-z v" . browse-url-of-file)
+ ("C-c h" . help-command)
  ("C-c O" . multi-occur-in-this-mode)
  ("C-c R" . recompile)
  ("C-c U" . rename-uniquely)
