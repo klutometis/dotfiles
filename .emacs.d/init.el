@@ -1181,6 +1181,18 @@ point reaches the beginning or end of the buffer, stop there."
   (kill-append "\n" nil)
   (beginning-of-line (or (and arg (1+ arg)) 2))
   (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+ ;;; Load a host-specific file, if one exists.
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (if (file-exists-p host-file)
       (load host-file)))
