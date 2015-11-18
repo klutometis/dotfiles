@@ -58,8 +58,7 @@
   (set-face-foreground 'ace-jump-face-background "gray100"))
 
 (use-package ace-jump-zap
-  ;; As opposed to ace-jump-zap-to-char?
-  :bind ("M-z" . ace-jump-zap-up-to-char)
+  :bind* ("M-z" . ace-jump-zap-to-char)
   :init
   ;; Kill the region, so that it's available for yanking, instead of
   ;; just deleting it.
