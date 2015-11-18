@@ -1182,6 +1182,7 @@ point reaches the beginning or end of the buffer, stop there."
   (beginning-of-line (or (and arg (1+ arg)) 2))
   (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
 
+;;; Thanks, Bozhidar; see <http://stackoverflow.com/a/9414763>.
 (defun copy-file-name-to-clipboard ()
   "Copy the current buffer file name to the clipboard."
   (interactive)
