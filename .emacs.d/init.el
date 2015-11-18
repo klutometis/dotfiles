@@ -1204,7 +1204,7 @@ point reaches the beginning or end of the buffer, stop there."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (thingatpt+ surfraw miscellenea yaml-mode xclip use-package undo-tree unbound typopunct sql-indent smart-tab slime php-mode paredit org-plus-contrib openwith multiple-cursors mediawiki markdown-mode magit lua-mode keyfreq htmlize helm-swoop helm-descbinds helm-company haskell-mode gtags google gnuplot full-ack ess dot-mode discord dired+ clojure-mode better-defaults auto-package-update apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
+    (buffer-extension dired-subtree srefactor thingatpt+ surfraw miscellenea yaml-mode xclip use-package undo-tree unbound typopunct sql-indent smart-tab slime php-mode paredit org-plus-contrib openwith multiple-cursors mediawiki markdown-mode magit lua-mode keyfreq htmlize helm-swoop helm-descbinds helm-company haskell-mode gtags google gnuplot full-ack ess dot-mode discord dired+ clojure-mode better-defaults auto-package-update apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
