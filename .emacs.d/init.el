@@ -214,6 +214,12 @@
   ;; Dired should reuse files when changing directories.
   (diredp-toggle-find-file-reuse-dir 1))
 
+(use-package dired-subtree
+  :config
+  (bind-keys :map dired-mode-map
+             ("i" . dired-subtree-insert)
+             (";" . dired-subtree-remove)))
+
 (use-package discord)
 
 (use-package eshell
