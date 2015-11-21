@@ -1208,6 +1208,22 @@ point reaches the beginning or end of the buffer, stop there."
   (if (file-exists-p host-file)
       (load host-file)))
 
+;;; Thanks, Jason Viers;
+;;; <http://programmers.stackexchange.com/a/19683>; should we modify
+;;; it to also go to the next line with (next-line) à la
+;;; <http://stackoverflow.com/a/9697222>?
+(defun comment-dwim-line (&optional arg)
+  "Replacement for the comment-dwim command. If no region is
+selected and current line is not blank and we are not at the end
+of the line, then comment current line.  Replaces default
+behaviour of comment-dwim, when it inserts comment at the end of
+the line."
+  (interactive "*P")
+  (comment-normalize-vars)
+  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+    (comment-dwim arg)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
