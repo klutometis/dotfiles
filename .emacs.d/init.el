@@ -209,6 +209,16 @@
 (use-package cc-mode
   :mode ("\\.bsh\\'" . java-mode))
 
+;;; Let's try this, even though it's pretty aggressive.
+(use-package column-enforce-mode
+  :config
+  (global-column-enforce-mode 1))
+
+(use-package desktop
+  :config
+  (desktop-save-mode 1)
+  (add-to-list 'desktop-globals-to-save 'kill-ring))
+
 (use-package dired+
   :config
   ;; Dired should reuse files when changing directories.
