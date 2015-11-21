@@ -1076,6 +1076,7 @@ point reaches the beginning or end of the buffer, stop there."
  :map global-map
  ("C-a" . smarter-move-beginning-of-line)
  ("C-c ;" . comment-or-uncomment-region)
+ ("C-c C-h" . help-command)
  ("C-c C-k" . copy-line)
  ;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>
  ("C-c C-z ." . browse-url-at-point)
