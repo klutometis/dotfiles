@@ -208,7 +208,9 @@
     (bind-key "C-:" 'helm-company company-active-map)))
 
 (use-package cc-mode
-  :mode ("\\.bsh\\'" . java-mode))
+  :mode ("\\.bsh\\'" . java-mode)
+  :config
+  (setq fill-column 80))
 
 ;;; Let's try this, even though it's pretty aggressive.
 (use-package column-enforce-mode
