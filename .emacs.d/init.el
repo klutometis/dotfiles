@@ -380,14 +380,20 @@
 
 (use-package magit
   :bind ("C-c g" . magit-status)
+  :init
+  (setq magit-last-seen-setup-instructions "1.4.0")
   :config
-  (set-face-foreground 'magit-diff-add "green3")
-  (set-face-foreground 'magit-diff-del "red3")
+  ;; These doesn't appear to be valid anymore; maybe magit-diff-added
+  ;; and magit-diff-removed?
+  ;; 
+  ;; (set-face-foreground 'magit-diff-add "green3")
+  ;; (set-face-foreground 'magit-diff-del "red3")
   (unless window-system
-    (set-face-background 'magit-item-highlight "white")
-    (set-face-background 'magit-tag "black"))
-  (setq magit-auto-revert-mode nil)
-  (setq magit-last-seen-setup-instructions "1.4.0"))
+    ;; Maybe magit-section-highlight
+    ;; (set-face-background 'magit-item-highlight "white")
+    ;; (set-face-background 'magit-tag "black")
+    )
+  (setq magit-auto-revert-mode nil))
 
 (use-package markdown-mode)
 
