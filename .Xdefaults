@@ -1,6 +1,6 @@
 #include ".Xdefaults-font"
 
-XTerm*modifyOtherKeys: 1
+! XTerm*modifyOtherKeys: 1
 
 ! An example for trying to modify backspace; from
 ! <http://www.in-ulm.de/~mascheck/X11/XTerm>:
