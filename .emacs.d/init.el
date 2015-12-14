@@ -287,7 +287,6 @@
 ;;; fixed, use :bind with :map (instead of bind-key in :config).
 (use-package helm
   :bind (("<f1> a" . helm-apropos)
-         ("C-c C-h SPC" . helm-all-mark-rings)
          ("C-c h o" . helm-occur)
          ;; Can't stand this, for some reason; let's head back to
          ;; ido. Helm-buffers-list can take a second or more with a
