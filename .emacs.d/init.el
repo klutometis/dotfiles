@@ -916,6 +916,10 @@ Then switch to the process buffer."
 ;;;; see
 ;;;; e.g. <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html#“local”-packages>.
 
+;;; TODO: Do we need to set this in specific modes (e.g. cc-mode), or
+;;; does it suffice to set it globally here?
+(setq fill-column 80)
+
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (put 'add-hook 'lisp-indent-function 1)
