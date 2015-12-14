@@ -1,6 +1,6 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="lambda"
-plugins=(battery common-aliases git git-flow github heroku lein lol pass ssh-agent sudo yum zsh-syntax-highlighting)
+plugins=(battery common-aliases git git-flow github heroku lein lol pass sudo yum zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
