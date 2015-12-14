@@ -46,16 +46,16 @@ macro index O "<sync-mailbox><shell-escape>offlineimap<enter>"
 macro index o "<sync-mailbox><shell-escape>offlineimap -qf INBOX<enter>"
 
 # Save messages.
-macro index,pager i "<save-message>=Saved<enter>" "Save"
-macro index,pager I "<tag-thread><tag-prefix><save-message>=Saved<enter>" "Save thread"
+macro index,pager i "<tag-thread><tag-prefix><save-message>=Saved<enter>" "Save thread"
+macro index,pager I "<save-message>=Saved<enter>" "Save"
 
 # Delete messages.
-macro index,pager d "<save-message>=Trash<enter>" "Trash"
-macro index,pager D "<tag-thread><tag-prefix><save-message>=Trash<enter>" "Trash thread"
+macro index,pager d "<tag-thread><tag-prefix><save-message>=Trash<enter>" "Trash thread"
+macro index,pager D "<save-message>=Trash<enter>" "Trash"
 
 # Snooze messages.
-macro index,pager 1 "<save-message>=Snooze-1<enter>" "Snooze 1 day"
-macro index,pager 7 "<save-message>=Snooze-7<enter>" "Snooze 7 days"
+macro index,pager 1 "<tag-thread><tag-prefix><save-message>=Snooze-1<enter>" "Snooze 1 day"
+macro index,pager 7 "<tag-thread><tag-prefix><save-message>=Snooze-7<enter>" "Snooze 7 days"
 
 # Change folders.
 macro index ga "<change-folder>=Saved<enter>" "Go to saved messages"
