@@ -101,7 +101,8 @@
 (use-package auto-package-update
   :config
   (auto-package-update-maybe)
-  (auto-package-update-at-time "03:00"))
+  (auto-package-update-at-time "03:00")
+  (setq auto-package-update-delete-old-versions t))
 
 (use-package better-defaults
   :config
