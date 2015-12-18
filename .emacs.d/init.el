@@ -396,7 +396,11 @@
     )
   (setq magit-auto-revert-mode nil))
 
-(use-package markdown-mode)
+(use-package markdown-mode
+  :config
+  (add-hook 'markdown-mode-hook
+    (lambda ()
+      (typopunct-mode 1))))
 
 (use-package mediawiki)
 
