@@ -62,8 +62,8 @@ macro index ga "<change-folder>=Saved<enter>" "Go to saved messages"
 macro index gd "<change-folder>=Drafts<enter>" "Go to drafts"
 macro index gg "<change-folder>=Groups<enter>" "Go to saved messages"
 macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
-macro index gt "<change-folder>=Sent Mail<enter>" "Go to sent  messages"
-macro index gr "<change-folder>=Trash<enter>" "Go to sent  messages"
+macro index gt "<change-folder>=Sent Mail<enter>" "Go to sent messages"
+macro index gr "<change-folder>=Trash<enter>" "Go to sent messages"
 
 # Thanks, Mike Swieton:
 # <http://spin.atomicobject.com/2014/02/11/connect-mutt-gmail/>.
