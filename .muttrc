@@ -50,7 +50,8 @@ macro index,pager I "<save-message>=Saved<enter>" "Save"
 
 # Delete messages.
 macro index,pager d "<tag-thread><tag-prefix><save-message>=Trash<enter>" "Trash thread"
-macro index,pager D "<save-message>=Trash<enter>" "Trash"
+macro index,pager D "<save-message>=Trash<enter>" "Trash message"
+macro index \cd "<tag-pattern>~s.*<enter><tag-prefix><save-message>=Trash<enter>" "Trash all"
 
 # Snooze messages.
 macro index,pager 1 "<tag-thread><tag-prefix><save-message>=Snooze-1<enter>" "Snooze 1 day"
