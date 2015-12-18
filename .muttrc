@@ -34,8 +34,7 @@ set sort_aux=reverse-last-date-received
 send-hook ~A 'set editor=emacs-wait'
 
 # Search with notmuch.
-macro browser <F8> "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --prompt search<enter><change-dir>../.cache/<enter><search>mutt_results<enter><enter>" "search mail (using notmuch)"
-macro index <F9> "<enter-command>unset wait_key<enter><pipe-message>~/bin/notmuch-mutt thread<enter><change-folder-readonly>~/.cache/mutt_results<enter><enter-command>set wait_key<enter>" "search and reconstruct owning thread (using notmuch)"
+macro browser <F8> "<enter-command>unset wait_key<enter><shell-escape>mutt-notmuch --prompt search<enter><change-dir>../.cache/<enter><search>mutt_results<enter><enter><enter-command>set wait_key<enter>" "search mail (using notmuch)"
 
 ## Miscellaneous navigation macros, etc.
 
