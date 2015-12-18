@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+message_id=$(formail -XMessage-ID: | \
+                  sed -r 's/Message-ID: <([^>]+)>/\1/')
+google-chrome "mail.google.com/mail/u/0/#search/rfc822msgid%3A${message_id}"

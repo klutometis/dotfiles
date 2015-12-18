@@ -235,17 +235,6 @@
 
 (use-package discord)
 
-(use-package dot-mode
-  :config
-  ;; Get rid of the irritating eight-wide indents.
-  (setq graphviz-dot-indent-width 2)
-
-  ;; Get rid of the irritating semi-colon behavior.
-  (setq graphviz-dot-auto-indent-on-semi nil)
-
-  ;; Set an external viewer.
-  (setq graphviz-dot-view-command "display %s"))
-
 (use-package eshell
   :config
   (add-hook 'eshell-mode-hook
@@ -277,6 +266,18 @@
 (use-package full-ack)
 
 (use-package gnuplot)
+
+(use-package graphviz-dot-mode
+  :mode "\\.dot\\'"
+  :config
+  ;; Get rid of the irritating eight-wide indents.
+  (setq graphviz-dot-indent-width 2)
+
+  ;; Get rid of the irritating semi-colon behavior.
+  (setq graphviz-dot-auto-indent-on-semi nil)
+
+  ;; Set an external viewer.
+  (setq graphviz-dot-view-command "display %s"))
 
 (use-package grep
   :bind ("C-c r" . rgrep))
