@@ -1249,24 +1249,8 @@ the line."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (graphviz-dot-mode c++-mode git-commit gtags google yaml-mode xclip undo-tree unbound typopunct use-package thingatpt+ sql-indent smart-tab slime php-mode paredit org-plus-contrib openwith multiple-cursors mediawiki markdown-mode magit lua-mode keyfreq htmlize helm-swoop helm-descbinds helm-company haskell-mode gnuplot full-ack ess dot-mode discord dired-subtree dired+ column-enforce-mode clojure-mode better-defaults auto-package-update apache-mode ace-window ace-jump-zap ace-jump-helm-line ace-jump-buffer))))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-preview ((t (:foreground "darkgray" :underline t))))
- '(company-preview-common ((t (:inherit company-preview))))
- '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
- '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
- '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
- '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
-(put 'upcase-region 'disabled nil)
+;; Thanks, Ryan McGeary! See <http://goo.gl/nZQE70>; see also
+;; <http://goo.gl/F07DiO>.
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file 'noerror)
