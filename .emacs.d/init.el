@@ -400,7 +400,9 @@
   :config
   (add-hook 'markdown-mode-hook
     (lambda ()
-      (typopunct-mode 1))))
+      (typopunct-change-language 'english t)
+      (typopunct-mode 1)
+      (auto-fill-mode 1))))
 
 (use-package mediawiki)
 
