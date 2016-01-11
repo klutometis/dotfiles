@@ -1167,7 +1167,9 @@ point reaches the beginning or end of the buffer, stop there."
                                 (lambda ()
                                   (footnote-mode)
                                   (auto-fill-mode 0)
-                                  (turn-on-orgtbl))))
+                                  (turn-on-orgtbl)
+                                  (typopunct-change-language 'english t)
+                                  (typopunct-mode 1))))
 
 (setq vc-follow-symlinks t)
 
