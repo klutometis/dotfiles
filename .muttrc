@@ -65,6 +65,38 @@ macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
 macro index gt "<change-folder>=Sent Mail<enter>" "Go to sent messages"
 macro index gr "<change-folder>=Trash<enter>" "Go to sent messages"
 
-# Thanks, Mike Swieton:
-# <http://spin.atomicobject.com/2014/02/11/connect-mutt-gmail/>.
+# Let's make reply-all the default, since we rebound g to
+# change-folders.
+bind index,pager r group-reply
+
+# Thanks, Mike Swieton: <http://goo.gl/lcoEk3>; this opens the mesage
+# in Gmail, which is occasionally handy for complex HTML.
 macro index,pager V "<enter-command>unset wait_key<enter><pipe-message>~/bin/mutt-gmail<enter><enter-command>set wait_key<enter>" "Open in Gmail"
+
+# Confuse them; alternatively (for least surprise), "On `ddate . . .`,
+# %n wrote:"?
+# set attribution="Quoth %n on `ddate +'%{%A, the %e of %B%}'`:"
+
+# The awkward thing about this is that they're both indications of
+# date, although the second is more precise than the first:
+# set attribution="On `ddate +'%{%A, the %e of %B%}'` at %{!%s seconds since the Epoch}, %n wrote:"
+
+# Less precise, less useful and more absurd?
+set attribution="On `ddate +'%{%A, the %e of %B%}'` at about `printf "%e" $(date +%s)` s since the Epoch, %n wrote:"
+
+# Don't abort on no subject.
+unset abort_nosubject
+
+# Don't abort unmodified messages.
+unset abort_unmodified
+
+# Don't use the plus-symbol on line-wrap (too bad we can't copy and
+# paste the whole thing as one: screen?
+unset markers
+
+# If the message is contained in the subject, don't bother going to
+# the editor.
+send-hook '~s (eom)' 'set editor=true'
+
+# For old times' sake
+my_hdr X-Fnord: I have seen the fnords.
