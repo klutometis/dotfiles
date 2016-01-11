@@ -640,6 +640,9 @@ This function is called by `org-babel-execute-src-block'."
 
 (use-package php-mode)
 
+(use-package protobuf-mode
+  :mode (("\\\\.proto\\\\'" . protobuf-mode)))
+
 (use-package python
   :config
   (defun python-send-buffer-and-go ()
