@@ -1231,7 +1231,7 @@ point reaches the beginning or end of the buffer, stop there."
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 
- ;;; Load a host-specific file, if one exists.
+;;; Load a host-specific file, if one exists.
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (if (file-exists-p host-file)
       (load host-file)))
@@ -1251,7 +1251,6 @@ the line."
   (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
-
 
 ;; Thanks, Ryan McGeary! See <http://goo.gl/nZQE70>; see also
 ;; <http://goo.gl/F07DiO>.
