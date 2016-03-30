@@ -225,7 +225,8 @@
 (use-package dired+
   :config
   ;; Dired should reuse files when changing directories.
-  (diredp-toggle-find-file-reuse-dir 1))
+  (diredp-toggle-find-file-reuse-dir 1)
+  (setq diredp-hide-details-initially-flag nil))
 
 (use-package dired-subtree
   :config
