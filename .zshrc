@@ -84,6 +84,7 @@ export HADOOP_HDFS_HOME=$HADOOP_PREFIX
 export HADOOP_MAPRED_HOME=$HADOOP_PREFIX
 export HADOOP_YARN_HOME=$HADOOP_PREFIX
 export HADOOP_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
+export HISTSIZE=100000
 export YARN_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
 # export JAVA_HOME=/usr/local/java
 # For compatibility with IPv4.
