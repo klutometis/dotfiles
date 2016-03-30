@@ -82,7 +82,7 @@ macro index,pager V "<enter-command>unset wait_key<enter><pipe-message>~/bin/mut
 # set attribution="On `ddate +'%{%A, the %e of %B%}'` at %{!%s seconds since the Epoch}, %n wrote:"
 
 # Less precise, less useful and more absurd?
-set attribution="On `ddate +'%{%A, the %e of %B%}'` at about `printf "%e" $(date +%s)` s since the Epoch, %n wrote:"
+# set attribution="On `ddate +'%{%A, the %e of %B%}'` at about `printf "%e" $(date +%s)` s since the Epoch, %n wrote:"
 
 # Don't abort on no subject.
 unset abort_nosubject
