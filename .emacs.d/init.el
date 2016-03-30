@@ -847,6 +847,8 @@ Then switch to the process buffer."
               ("H" . surfraw-chicken-regex-region)
               ("m" . surfraw-gmail)
               ("M" . surfraw-gmail-region)
+              ("o" . surfraw-moma)
+              ("O" . surfraw-moma-region)
               ("r" . surfraw-groups)
               ("R" . surfraw-groups-region)
               ("w" . surfraw-W)
