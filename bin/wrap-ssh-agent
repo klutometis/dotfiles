@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+eval `ssh-agent`
+"$@"
+trap "kill ${SSH_AGENT_PID}" EXIT
