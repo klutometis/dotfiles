@@ -28,6 +28,7 @@ bind editor <Tab> complete-query
 
 # Sort threads by received descending.
 set sort=threads
+set sort_browser=reverse-date
 set sort_aux=reverse-last-date-received
 
 # Compose with Emacs.
@@ -100,3 +101,7 @@ send-hook '~s (eom)' 'set editor=true'
 
 # For old times' sake
 my_hdr X-Fnord: I have seen the fnords.
+
+# From <https://heipei.net/2009/09/10/mutt-threading-like-a-pro/>
+bind index - collapse-thread
+bind index _ collapse-all
