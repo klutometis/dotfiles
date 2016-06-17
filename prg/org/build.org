@@ -138,3 +138,17 @@
   #+BEGIN_SRC sh
     convert google-new.gif -coalesce /tmp/google-new/%03d.gif
   #+END_SRC
+* Converting wmv to mp3 for BBC Shakespeare
+  #+BEGIN_SRC sh :tangle bbc-shakespeare
+    find . -name '*.wmv' -print0 | \
+        while read -r -d $'\0' file; do
+          mplayer -noconsolecontrols \
+                  -ao pcm:fast:file=/tmp/shakespeare.wav \
+                  -benchmark \
+                  -vc null \
+                  -vo null \
+                  "${file}" && \
+              lame -h /tmp/shakespeare.wav \
+                   "${HOME}/doc/snd/shakespeare/${$(basename ${file})%.wmv}.mp3";
+        done
+  #+END_SRC
