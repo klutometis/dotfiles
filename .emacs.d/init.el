@@ -236,6 +236,8 @@
 
 (use-package discord)
 
+(use-package edit-server)
+
 (use-package eshell
   :config
   (add-hook 'eshell-mode-hook
