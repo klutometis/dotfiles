@@ -7,7 +7,7 @@ w3_usage_hook () {
     cat <<EOF
 Usage: $w3_argv0 [options] [search words]...
 Description:
-  Surfraw search code search (cs.corp.google.com)
+  Surfraw search groups (groups.google.com)
 EOF
     w3_global_usage
 }
