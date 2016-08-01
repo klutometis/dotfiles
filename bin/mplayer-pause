@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Toggles pause on mplayer.
+
+echo pause > "$(mplayer-fifo)"
