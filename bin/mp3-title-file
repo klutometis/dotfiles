@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Returns the file to be used for mp3-title commands (creating it, if
+# necessary); either uses the environment variable MP3_TITLE_FILE or defaults to
+# ~/var/mp3-title.
+
+readonly FILE=~/var/mp3-title
+
+file="${MP3_TITLE_FILE:-$FILE}"
+[[ -f "${file}" ]] || touch "${file}"
+echo "${file}"
