@@ -2,4 +2,4 @@
 #
 # Pauses mplayer whether or not it was already playing.
 
-echo pausing_keep_force pause > "$(mplayer-fifo)"
+mplayer-command pausing_keep_force pause
