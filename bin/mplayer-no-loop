@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Turns off looping.
+
+mplayer-command loop -1
