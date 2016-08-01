@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#
+# Lock xscreensaver and pause mplayer unconditionally.
+
+mplayer-pause-unconditionally
+xscreensaver-command -lock
