@@ -25,8 +25,8 @@
 (define-key *root-map* (kbd "l") "exec xscreensaver-lock")
 (define-key *root-map* (kbd "C-l") "exec xscreensaver-lock")
 
-(define-key *root-map* (kbd "L") "exec xscreensaver-lock")
-(define-key *root-map* (kbd "C-L") "exec xscreensaver-lock")
+(define-key *root-map* (kbd "L") "exec mplayer-loop")
+(define-key *root-map* (kbd "C-L") "exec mplayer-no-loop")
 
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
