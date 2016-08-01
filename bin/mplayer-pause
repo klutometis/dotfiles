@@ -2,4 +2,4 @@
 #
 # Toggles pause on mplayer.
 
-echo pause > "$(mplayer-fifo)"
+mplayer-command pause
