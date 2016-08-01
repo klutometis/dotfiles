@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Returns whether the QUEUE exists and is non-empty:
+#
+#   queue-empty QUEUE
+
+queue="${1:?'Must specify a queue'}"
+
+[[ -s "${queue}" ]]
