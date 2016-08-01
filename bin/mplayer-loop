@@ -2,4 +2,4 @@
 #
 # Loops forever.
 
-mplayer-command loop 0
+mplayer-command loop 0 1
