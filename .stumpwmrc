@@ -20,12 +20,13 @@
 (define-key *root-map* (kbd "h") "sr-chicken-regex")
 (define-key *root-map* (kbd "H") "sr-sel-chicken-regex")
 
-(define-key *root-map* (kbd "l") "exec xscreensaver-command -lock")
-(define-key *root-map* (kbd "C-l") "exec xscreensaver-command -lock")
+;; Use the xscreensaver-lock wrapping which also happens to unconditionally
+;; pause mplayer.
+(define-key *root-map* (kbd "l") "exec xscreensaver-lock")
+(define-key *root-map* (kbd "C-l") "exec xscreensaver-lock")
 
-;;; Caps, too, just in case.
-(define-key *root-map* (kbd "L") "exec xscreensaver-command -lock")
-(define-key *root-map* (kbd "C-L") "exec xscreensaver-command -lock")
+(define-key *root-map* (kbd "L") "exec xscreensaver-lock")
+(define-key *root-map* (kbd "C-L") "exec xscreensaver-lock")
 
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
