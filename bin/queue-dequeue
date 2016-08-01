@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Returns the first element of the queue and, if the queue is non-empty, removes
+# the first element.
+
+queue="${1:?'Must specify a queue'}"
+
+queue-non-empty "${queue}" && {
+  # Using ed instead of sed because of difficulties using sed
+  # in-place on S3; and, since ed operates on the file directly, it
+  # plays nicely with links.
+  ed -s "${queue}" <<EOF
+1d
+w
+q
+EOF
+}
