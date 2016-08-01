@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# Peeks at the first element of QUEUE:
+#
+#   queue-peek QUEUE
+
+queue="${1:?'Must specify a queue'}"
+
+queue-non-empty "${queue}" && head -n 1 "${queue}"
