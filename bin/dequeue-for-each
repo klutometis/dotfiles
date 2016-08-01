@@ -19,15 +19,20 @@ exec 3<> "${fifo}"
 # encounters a spurious EOF, reading and sleeping prematurely: read
 # would otherwise return 1 and the while loop would end.
 {
-    trap continue SIGCONT
-    while dequeue "${queue}" >&3; do
-        kill -s SIGSTOP $BASHPID
-    done
-    # This kills the parent with a non-zero exit code (see below).
-    kill $$
+  # Is this necessary? Seems redundant.
+  trap continue SIGCONT
+  while queue-peek "${queue}" >&3; do
+    kill -s SIGSTOP $BASHPID
+  done
+  # This kills the parent with a non-zero exit code (see below).
+  kill $$
 } &
 
 dequeuer=$!
+
+# This is too general, unfortunately, and seems to cover INT (if the user issues
+# C-c) as well as exhausting the queue.
+trap "exit 0" TERM
 
 # Let's deal with the minor annoyance of this thing not closing on
 # end-of-queue; maybe it's even a feature in the sense that it will
@@ -36,6 +41,7 @@ dequeuer=$!
 # No, this doesn't work: read hangs; let the dequeuer commit
 # parenticide (see above).
 while read -u 3 element; do
-    ${command} "${element}"
-    kill -s SIGCONT $dequeuer
+  # Exit immediately (without dequeuing) if the command fails.
+  ${command} "${element}" || exit $? && queue-dequeue "${queue}"
+  kill -s SIGCONT $dequeuer
 done
