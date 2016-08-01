@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Returns the fifo to be used for mplayer-commands (creating it, if necessary);
+# either uses the environment variable MPLAYER_FIFO or defaults to
+# ~/var/mplayer-fifo.
+
+readonly FIFO=~/var/mplayer-fifo
+
+fifo="${MPLAYER_FIFO:-$FIFO}"
+[[ -p "${fifo}" ]] || mkfifo "${fifo}"
+echo "${fifo}"
