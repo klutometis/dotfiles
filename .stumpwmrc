@@ -3,6 +3,9 @@
 (load-module "surfraw")
 (setf *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
 
+(define-key *root-map* (kbd "+") "exec mplayer-volume-up")
+(define-key *root-map* (kbd "-") "exec mplayer-volume-down")
+
 (define-key *root-map* (kbd "a") "sr-bookmark calendar")
 
 (define-key *root-map* (kbd "c") "sr-code-search")
