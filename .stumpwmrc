@@ -33,6 +33,8 @@
 (define-key *root-map* (kbd "o") "sr-moma")
 (define-key *root-map* (kbd "O") "sr-sel-moma")
 
+(define-key *root-map* (kbd "p") "exec mplayer-pause")
+
 (define-key *root-map* (kbd "q") "sr-bookmark critique")
 
 (define-key *root-map* (kbd "r") "sr-groups")
