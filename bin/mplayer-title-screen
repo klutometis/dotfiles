@@ -3,5 +3,5 @@
 # TODO: Override ~/var/mp3-title with an environment variable plus default.
 
 mp3-title-screen $1 || echo Unknown > ~/var/mp3-title
-mplayer "$@"
 trap "truncate -s 0 ~/var/mp3-title" EXIT
+mplayer "$@"
