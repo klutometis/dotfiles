@@ -2,4 +2,4 @@
 #
 # Turns off looping.
 
-mplayer-command loop -1
+mplayer-command loop -1 1
