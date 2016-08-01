@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Starts mplayer in slave-mode for receiving commands on the mplayer-fifo.
+
+mplayer -slave -input file="$(mplayer-fifo)" "$@"
