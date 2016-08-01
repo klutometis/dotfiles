@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#
+# Issues a commend to mplayer (see e.g. <http://goo.gl/utG3u> for commands):
+#
+#   mplayer-command COMMAND
+
+echo "$@" > "$(mplayer-fifo)"
