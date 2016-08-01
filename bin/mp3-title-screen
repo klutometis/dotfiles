@@ -1,2 +1,7 @@
 #!/usr/bin/env bash
-mp3-title $1 > ~/var/mp3-title
+#
+# Writes the MP3-title of FILE to MP3-title-file:
+#
+#   mp3-title-screen FILE
+
+mp3-title $1 > "$(mp3-title-file)"
