@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-cat ~/var/mp3-title
+cat "$(mp3-title-file)"
