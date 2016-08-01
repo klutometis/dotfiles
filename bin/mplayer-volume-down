@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Turns down volume.
+
+mplayer-command volume -1
