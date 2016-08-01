@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Pauses mplayer whether or not it was already playing.
+
+echo pausing_keep_force pause > "$(mplayer-fifo)"
