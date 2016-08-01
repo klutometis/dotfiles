@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 #
-# TODO: Override ~/var/mp3-title with an environment variable plus default.
+# Writes the MP3-title to MP3-title-file and starts mplayer in slave mode.
 
-mp3-title-screen $1 || echo Unknown > ~/var/mp3-title
-trap "truncate -s 0 ~/var/mp3-title" EXIT
-mplayer "$@"
+file="$(mp3-title-file)"
+
+mp3-title-screen $1 || echo Unknown > "${file}"
+trap "truncate -s 0 ${file}" EXIT
+mplayer-slave "$@"

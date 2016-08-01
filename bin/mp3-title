@@ -1,2 +1,7 @@
 #!/usr/bin/env bash
+#
+# Extracts the title of the MP3-file:
+#
+#   mp3-title FILE
+
 id3v2 -R $1 | grep -oP 'TIT2: \K(.*)'
