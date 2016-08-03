@@ -1,4 +1,18 @@
 #!/usr/bin/env sh
-message_id=$(formail -XMessage-ID: | \
-                  sed -r 's/Message-ID: <([^>]+)>/\1/')
+#
+# Extracts the Message-ID and opens Gmail in Chrome with a search for that
+# Message-ID.
+#
+# TODO: Would be nice to be able to navigate directly to the first message in
+# search.
+
+# Brilliant hack by josch; see <http://goo.gl/EWtv3W>. Let's URL-encode all the
+# things!
+url_encode() {
+  xxd -plain | tr -d '\n' | sed -r 's/(..)/%\1/g'
+}
+
+message_id=$(formail -XMessage-ID: \
+                 | sed -r 's/Message-ID: <([^>]+)>/\1/' \
+                 | url_encode)
 google-chrome "mail.google.com/mail/u/0/#search/rfc822msgid%3A${message_id}"
