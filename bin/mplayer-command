@@ -4,4 +4,4 @@
 #
 #   mplayer-command COMMAND
 
-echo "$@" > "$(mplayer-fifo)"
+timeout 1 bash -c "echo \"$@\" > \"$(mplayer-fifo)\""
