@@ -970,6 +970,23 @@ Then switch to the process buffer."
    (get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 
+(defun get-buffers-matching-extension (extension)
+  (let ((matching-buffers '()))
+    (dolist (buffer (buffer-list) matching-buffers)
+      (let ((file-name (buffer-file-name buffer)))
+        (if (and file-name
+                 (string= (file-name-extension file-name)
+                          extension))
+            (add-to-list 'matching-buffers buffer))))))
+
+(defun multi-occur-with-this-extension ()
+  "Show all lines matching REGEXP in buffers whose filenames have
+this extension."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-extension (file-name-extension buffer-file-name))
+   (car (occur-read-primary-args))))
+
 ;;; Convert an occur search into a multi-occur search from within
 ;;; occur.
 (defun occur-multi-occur ()
@@ -1105,6 +1122,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-a" . smarter-move-beginning-of-line)
  ("C-c ;" . comment-or-uncomment-region)
  ("C-c C-h" . help-command)
+ ("C-c C-o" . multi-occur-in-matching-buffers)
  ("C-c C-k" . copy-line)
  ;; <https://lists.gnu.org/archive/html/help-gnu-emacs/2006-08/msg00528.html>
  ("C-c C-z ." . browse-url-at-point)
@@ -1112,7 +1130,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c C-z r" . browse-url-of-region)
  ("C-c C-z u" . browse-url)
  ("C-c C-z v" . browse-url-of-file)
- ("C-c O" . multi-occur-in-this-mode)
+ ("C-c O" . multi-occur-with-this-extension)
  ("C-c P" . copy-file-name-to-clipboard)
  ("C-c R" . recompile)
  ("C-c U" . rename-uniquely)
