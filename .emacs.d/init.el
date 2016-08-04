@@ -949,8 +949,7 @@ Then switch to the process buffer."
 (add-hook 'occur-hook
   (lambda ()
     ;; Follows automatically in the buffer.
-    (next-error-follow-minor-mode)
-    (occur-rename-buffer)))
+    (next-error-follow-minor-mode)))
 
 ;;; Thanks,
 ;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
