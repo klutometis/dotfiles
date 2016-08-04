@@ -945,12 +945,6 @@ Then switch to the process buffer."
 (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
 
-;;; Rename the occur buffer.
-(add-hook 'occur-hook
-  (lambda ()
-    ;; Follows automatically in the buffer.
-    (next-error-follow-minor-mode)))
-
 ;;; Thanks,
 ;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
 (defun get-buffers-matching-mode (mode)
