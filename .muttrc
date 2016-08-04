@@ -59,12 +59,12 @@ macro index,pager 1 "<tag-thread><tag-prefix><save-message>=Snooze-1<enter>" "Sn
 macro index,pager 7 "<tag-thread><tag-prefix><save-message>=Snooze-7<enter>" "Snooze 7 days"
 
 # Change folders.
-macro index ga "<change-folder>=Saved<enter>" "Go to saved messages"
 macro index gd "<change-folder>=Drafts<enter>" "Go to drafts"
-macro index gg "<change-folder>=Groups<enter>" "Go to saved messages"
+macro index gg "<change-folder>=Groups<enter>" "Go to groups"
 macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
-macro index gt "<change-folder>=Sent<enter>" "Go to sent messages"
-macro index gr "<change-folder>=Trash<enter>" "Go to sent messages"
+macro index gr "<change-folder>=Trash<enter>" "Go to trash"
+macro index gs "<change-folder>=Saved<enter>" "Go to saved"
+macro index gt "<change-folder>=Sent<enter>" "Go to sent"
 
 # Let's make reply-all the default, since we rebound g to
 # change-folders.
