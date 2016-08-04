@@ -208,6 +208,7 @@
     (bind-key "C-:" 'helm-company company-active-map)))
 
 (use-package cc-mode
+  :bind ("C-c C-o" . multi-occur-in-matching-buffers)
   :mode ("\\.bsh\\'" . java-mode)
   :config
   (setq fill-column 80))
