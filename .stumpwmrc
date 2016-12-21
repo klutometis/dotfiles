@@ -23,13 +23,14 @@
 (define-key *root-map* (kbd "h") "sr-chicken-regex")
 (define-key *root-map* (kbd "H") "sr-sel-chicken-regex")
 
+;; Mnemonic is: infinite and negation of infinite.
+(define-key *root-map* (kbd "i") "exec mplayer-loop")
+(define-key *root-map* (kbd "I") "exec mplayer-no-loop")
+
 ;; Use the xscreensaver-lock wrapping which also happens to unconditionally
 ;; pause mplayer.
 (define-key *root-map* (kbd "l") "exec xscreensaver-lock")
 (define-key *root-map* (kbd "C-l") "exec xscreensaver-lock")
-
-(define-key *root-map* (kbd "L") "exec mplayer-loop")
-(define-key *root-map* (kbd "C-L") "exec mplayer-no-loop")
 
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
