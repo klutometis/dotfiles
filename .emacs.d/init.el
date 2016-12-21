@@ -11,6 +11,8 @@
              '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
 
+(setq package-check-signature nil)
+
 (unless package-archive-contents
   (package-refresh-contents t))
 
