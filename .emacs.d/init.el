@@ -1266,6 +1266,9 @@ the line."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
+;; Make `lambda' → `λ', etc.
+(global-prettify-symbols-mode)
+
 ;; Thanks, Ryan McGeary! See <http://goo.gl/nZQE70>; see also
 ;; <http://goo.gl/F07DiO>.
 (setq custom-file "~/.emacs.d/custom.el")
