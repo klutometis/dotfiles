@@ -105,3 +105,6 @@ my_hdr X-Fnord: I have seen the fnords.
 # From <https://heipei.net/2009/09/10/mutt-threading-like-a-pro/>
 bind index - collapse-thread
 bind index _ collapse-all
+
+# Don't ask about resurrecting postponed messages.
+unset recall
