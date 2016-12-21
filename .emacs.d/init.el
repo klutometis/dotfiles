@@ -1084,7 +1084,8 @@ point reaches the beginning or end of the buffer, stop there."
 (setq kept-new-versions 100)
 (setq kept-old-versions 100)
 
-(setq compilation-scroll-output 'first-error)
+;; Let's scroll to the bottom instead of first-error.
+(setq compilation-scroll-output t)
 
 (setq user-mail-address "pcd@roxygen.org")
 
