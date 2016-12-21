@@ -12,7 +12,7 @@
 (package-initialize)
 
 (unless package-archive-contents
-  (package-refresh-contents))
+  (package-refresh-contents t))
 
 ;;; Bootstrap use-package.
 (unless (package-installed-p 'use-package)
