@@ -339,22 +339,22 @@
   :config
   (helm-descbinds-mode))
 
-(use-package helm-swoop
-  :bind (("M-i" . helm-multi-swoop-all)
-         ("M-I" . helm-swoop-back-to-last-point))
-  :init
-  ;; Helm-swoop should save file after edit.
-  (setq helm-multi-swoop-edit-save t)
+;; (use-package helm-swoop
+;;   :bind (("M-i" . helm-multi-swoop-all)
+;;          ("M-I" . helm-swoop-back-to-last-point))
+;;   :init
+;;   ;; Helm-swoop should save file after edit.
+;;   (setq helm-multi-swoop-edit-save t)
   
-  :config
-  (bind-keys :map helm-swoop-map
-             ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
-             ("C-r" . 'helm-previous-line)
-             ("C-s" . 'helm-next-line))
-  (bind-keys :map helm-multi-swoop-map
-             ("C-r" . helm-previous-line)
-             ("C-s" . helm-next-line))
-  (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map))
+;;   :config
+;;   (bind-keys :map helm-swoop-map
+;;              ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
+;;              ("C-r" . 'helm-previous-line)
+;;              ("C-s" . 'helm-next-line))
+;;   (bind-keys :map helm-multi-swoop-map
+;;              ("C-r" . helm-previous-line)
+;;              ("C-s" . helm-next-line))
+;;   (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map))
 
 (use-package hippie-exp)
 
@@ -788,14 +788,14 @@ Then switch to the process buffer."
 (use-package sh-script
   :mode ("\\.bats\\'" . sh-mode))
 
-(use-package slime
-  :config
-  (add-hook
-   'slime-mode-hook
-   (lambda ()
-     (setq slime-protocol-version 'ignore)
-     (add-to-list 'slime-lisp-implementations
-                  '(sbcl ("/usr/local/bin/sbcl --noinform"))))))
+;; (use-package slime
+;;   :config
+;;   (add-hook
+;;    'slime-mode-hook
+;;    (lambda ()
+;;      (setq slime-protocol-version 'ignore)
+;;      (add-to-list 'slime-lisp-implementations
+;;                   '(sbcl ("/usr/local/bin/sbcl --noinform"))))))
 
 ;;; http://www.emacswiki.org/emacs/TabCompletion#toc2
 (use-package smart-tab
