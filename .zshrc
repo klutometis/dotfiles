@@ -156,6 +156,7 @@ alias rm='rm -v'
 # sudo.
 alias s='sudo'
 alias sac0='sudo alsamixer -c 0'
+alias sac1='sudo alsamixer -c 1'
 alias sai='sudo apt-get install'
 alias sas='sudo apt-cache search'
 alias sls='screen -ls'
