@@ -1,4 +1,27 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env sh
+* Setting default keyoard-layout in console
+  In Debian-likes, modify [[file:/etc/default/keyboard][/etc/default/keyboard]], setting:
+
+  #+BEGIN_SRC sh
+    XKBVARIANT="dvorak"
+    XKBOPTIONS="terminate:ctrl_alt_bksp"
+  #+END_SRC
+* Booting to runlevel 3
+  In Debian-likes, modify [[file:/etc/default/grub][/etc/default/grub]], setting:
+  
+  #+BEGIN_SRC sh
+    GRUB_CMDLINE_LINUX_DEFAULT="text"
+  #+END_SRC
+  
+  Also issue this to prevent it from being modified on update:
+
+  #+BEGIN_SRC sh
+    sudo chattr +i /etc/default/grub
+  #+END_SRC
+* “X: user not authorized to run the X server, aborting.”
+  Edit [[file:/etc/X11/Xwrapper.config][/etc/X11/Xwrapper.config]], setting
+  =allowed_users= to =anybody=; or run =dpkg-reconfigure x11-common= in
+  Debian-likes.
 * Building stumpwm
   To install surfraw, etc.; do:
 
