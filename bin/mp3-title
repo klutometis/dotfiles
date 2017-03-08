@@ -4,4 +4,10 @@
 #
 #   mp3-title FILE
 
-id3v2 -R $1 | grep -oP 'TIT2: \K(.*)'
+case $(file -i -b "$1") in
+  audio/x-flac*)
+    metaflac --list --block-type=VORBIS_COMMENT "$1" | \
+      grep -oP '.*TITLE=\K(.*)';;
+  audio/mpeg*)
+    id3v2 -R "$1" | grep -oP 'TIT2: \K(.*)';;
+esac
