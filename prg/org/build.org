@@ -42,6 +42,8 @@
   Incidentally, see [[https://bitbucket.org/EionRobb/purple-hangouts][purple-hangouts]] for non-XMPP Hangouts support (including
   group chats and SMS via Voice); also [[https://github.com/tdryer/hangups][hangups]], which is the basis for
   [[https://github.com/ZeWaren/jabber-hangouts-transport][jabber-hangouts-transport]].
+
+  There is [[https://bitbucket.org/EionRobb/purple-hangouts/wiki/Bitlbee_FAQ][some mention]] of bitlbee in the purple-hangouts wiki.
 * Building xscreensaver
   For getting all the hacks, try e.g.:
   
