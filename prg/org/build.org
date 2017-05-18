@@ -29,11 +29,19 @@
     make install-modules
   #+END_SRC
 * Building bitlbee
-  See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]; for using full names:
-
+  See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]:
+  
   #+BEGIN_EXAMPLE
-    account gtalk set nick_format %full_name
+    acc add jabber ...@gmail.com
+    acc jabber set nick_format %full_name
+    acc jabber set oauth on
+    acc jabber set server talk.google.com
+    acc jabber on
   #+END_EXAMPLE
+
+  Incidentally, see [[https://bitbucket.org/EionRobb/purple-hangouts][purple-hangouts]] for non-XMPP Hangouts support (including
+  group chats and SMS via Voice); also [[https://github.com/tdryer/hangups][hangups]], which is the basis for
+  [[https://github.com/ZeWaren/jabber-hangouts-transport][jabber-hangouts-transport]].
 * Building xscreensaver
   For getting all the hacks, try e.g.:
   
