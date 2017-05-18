@@ -88,6 +88,17 @@
   #+BEGIN_SRC sh :tangle emacs-configure
     ./configure --without-x
   #+END_SRC
+** Protobuf errors
+   Seeing errors such as:
+
+   #+BEGIN_EXAMPLE
+     Error during redisplay: (jit-lock-function 1) signaled (wrong-type-argument stringp nil)
+   #+END_EXAMPLE
+   
+   Cf. e.g. [[https://github.com/google/protobuf/issues/2787][this issue]], in which someone enabled =(toggle-debug-on-error)=;
+   apparently, recompiling the package helped.
+
+   This didn’t help us, though! Let’s try recompiling emacs itself.
 * Changing the console keybord-layout
   In [[http://askubuntu.com/a/158895][Ubuntu]], try:
 
