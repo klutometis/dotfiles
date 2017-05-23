@@ -29,11 +29,61 @@
     make install-modules
   #+END_SRC
 * Building bitlbee
-  See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]; for using full names:
-
+  See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]:
+  
   #+BEGIN_EXAMPLE
-    account gtalk set nick_format %full_name
+    acc add jabber ...@gmail.com
+    acc jabber set nick_format %full_name
+    acc jabber set oauth on
+    acc jabber set server talk.google.com
+    acc jabber on
   #+END_EXAMPLE
+
+  Incidentally, see [[https://bitbucket.org/EionRobb/purple-hangouts][purple-hangouts]] for non-XMPP Hangouts support (including
+  group chats and SMS via Voice); also [[https://github.com/tdryer/hangups][hangups]], which is the basis for
+  [[https://github.com/ZeWaren/jabber-hangouts-transport][jabber-hangouts-transport]].
+
+  There is [[https://bitbucket.org/EionRobb/purple-hangouts/wiki/Bitlbee_FAQ][some mention]] of bitlbee in the purple-hangouts wiki; also, [[https://github.com/jaredbranum/voicegate][this
+  Voice-to-XMPP]] never got working.
+
+  Someone got [[https://demu.red/blog/2016/12/setting-up-sms-in-irc-via-bitlbee-with-purple-hangouts/][bitlbee working with purple-hangouts]], but this depends on the
+  deprecated support for SMS within hangouts.
+
+  There’s this [[https://github.com/bentglasstube/bitlbee-gvoice][Voice-plugin]] for bitlbee; how does it work?
+
+  [[https://www.reddit.com/r/commandline/comments/mjd1l/has_anyone_figured_out_how_to_google_voice_sms/][This post]] mentions [[https://code.google.com/archive/p/pygooglevoice/][pygooglevoice]], which is defunct, and a “google voice to
+  gtalk trick;” not sure what that is, though.
+
+  Actually, [[https://support.google.com/voice/answer/6023920?co=GENIE.Platform%253DDesktop&hl=en][this help page]] doesn’t say anything about Google Voice SMS in
+  Hangouts being deprecated; it does say this, though:
+
+  #+BEGIN_QUOTE
+  Important: Soon, text messaging (SMS) will only be available in Hangouts if
+  you have a Google Voice or Project Fi number.
+  #+END_QUOTE
+
+  and [[https://support.google.com/hangouts/answer/3441321][this page]] clarifies:
+
+  #+BEGIN_QUOTE
+  Soon, text messaging (SMS & MMS) with your cell phone service’s number will no
+  longer work on Hangouts.
+
+  If you use Hangouts as your text messaging app (SMS & MMS), you will need to
+  switch to another text messaging app to continue sending and receiving text
+  messages (SMS & MMS).  You will get a reminder to switch to another text
+  messaging app before the Hangouts text messaging feature goes away.
+
+  You’ll still be able to text on Hangouts through Google Voice and Project Fi.
+  #+END_QUOTE
+  
+  So, looks like we still have to build something propr . . . on the other hand,
+  this [[https://github.com/pettazz/pygooglevoice][pygooglevoice]] seems to be under development and claims to have fixed the
+  problem.
+
+  These guys seem to have developed an [[https://github.com/twbarber/irc-sms-bot/tree/master/pygooglevoice][IRC-SMS bot]].
+
+  [[http://blog.jwcxz.com/?p=883][JWC thought about building something for Voice and bitlbee]]; claims [[https://weechat.org/][WeeChat]] is
+  superior to irssi, by the way!
 * Building xscreensaver
   For getting all the hacks, try e.g.:
   
@@ -80,6 +130,17 @@
   #+BEGIN_SRC sh :tangle emacs-configure
     ./configure --without-x
   #+END_SRC
+** Protobuf errors
+   Seeing errors such as:
+
+   #+BEGIN_EXAMPLE
+     Error during redisplay: (jit-lock-function 1) signaled (wrong-type-argument stringp nil)
+   #+END_EXAMPLE
+   
+   Cf. e.g. [[https://github.com/google/protobuf/issues/2787][this issue]], in which someone enabled =(toggle-debug-on-error)=;
+   apparently, recompiling the package helped.
+
+   This didn’t help us, though! Let’s try recompiling emacs itself.
 * Changing the console keybord-layout
   In [[http://askubuntu.com/a/158895][Ubuntu]], try:
 

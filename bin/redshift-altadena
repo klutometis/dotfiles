@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+redshift -l 34.188611:-118.134722
