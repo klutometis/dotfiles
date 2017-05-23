@@ -630,7 +630,23 @@ This function is called by `org-babel-execute-src-block'."
     (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
 
     (setq org-latex-pdf-process
-          '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+          '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+
+    (setq org-latex-default-packages-alist
+          '(("AUTO" "inputenc"  t)
+            ;; ("T1"   "fontenc"   t)
+            (""     "fixltx2e"  nil)
+            (""     "graphicx"  t)
+            (""     "grffile"   t)
+            (""     "longtable" nil)
+            ;; (""     "wrapfig"   nil)
+            (""     "rotating"  nil)
+            ("normalem" "ulem"  t)
+            (""     "amsmath"   t)
+            (""     "textcomp"  t)
+            (""     "amssymb"   t)
+            ;; (""     "capt-of"   nil)
+            (""     "hyperref"  nil))))
 
 (use-package paredit
   :config

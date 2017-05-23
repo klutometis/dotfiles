@@ -1,0 +1,171 @@
+#+TITLE: From Characters to Words to in Between: Do We Capture Morphology?
+#+SUBTITLE: by Clara Vania and Adam Lopez
+#+AUTHOR: Peter Danenberg (danenberg@)
+#+OPTIONS: toc:nil
+#+LATEX_HEADER: \usepackage{bm}
+
+* An update on mobile-first
+  [[./beamer.jpg]]
+* TL;DR
+
+  1. Character-level models are better than word-level models, but not as good as
+     morphological ones.
+  2. Good morphology is expensive!
+
+* Let’s build a case for morphology.
+
+  Word-level embeddings might discover analogies like /cat/ \to /cats/ \cong
+  /dog/ \to /dogs/, but not for out-of-vocabulary things like /sloth/ \to
+  /sloths/.
+
+* Morphology is only as good as its segmentizer, though.
+
+  Modeling /cats/ as e.g. /cat/ and /-s/ is potentially useful but expensive.
+
+  # The best analyzers are human; but grad-students need to eat.
+  
+* Character-based models are pretty good, too.
+
+  - They can capture related orthographic mutations (e.g. /-s/ and /-es/ in
+    /finches/).
+  - They're cheap!
+
+* Let's compare!
+
+  Let's compare language models on the same datasets while varying the following
+  parameters:
+
+  1. Subword unit
+  2. Composition function
+  3. Morphological typology
+
+* Results are in.
+  
+  - Character-level embeddings outperform word-level ones.
+  - Bi-LSTMs and CNNs are more effective than addition.
+  - Character-level embeddings aren't as good as morphological ones.
+  - Character-level embeddings are limited by orthography.
+
+# * Character-level embeddings outperform word-level ones.
+# 
+#   More specifically, character trigrams with bi-LSTMs perform best.
+# 
+# * Bi-LSTMs and CNNs are more effective than addition.
+# 
+#   [Probably because most languages don't combine morphemes additively;
+#   exception: agglutinative languages like Turkish.]
+# 
+# * Character-level embeddings aren't as good as morphological ones.
+# 
+#   Loss of information.
+# 
+# * Character-level embeddings are limited by orthography.
+# 
+#   It turns out that predicting /octopus/ \to /octopodes/ is difficult.
+
+* Segmentation is different than analysis.
+
+  | word      | /tries/                      |
+  | morphemes | /try/ + /s/                  |
+  | morphs    | /tri/ + /es/                 |
+  | analysis  | /try/ + VB + 3rd + SG + Pres |
+
+# * Morphological typology describes composing morphemes.
+
+#   Languages are concatenative vs. non-concatenative.
+
+* Fusional languages combine features in one morpheme (English).
+
+  \begin{align*}
+  wanted &\to want + ed \\
+  &\to want + VB + 1st + SG + Past
+  \end{align*}
+
+* Agglutinative languages have one feature per morpheme (Turkish).
+
+  \begin{align*}
+  okursam &\to oku + r + sa + m \\
+  &\to \text{``}read\text{''} + AOR + COND + 1SG
+  \end{align*}
+
+* Root and pattern languages modify roots (Arabic).
+
+  $$ktb\ \text{(``write'')} \to katab\ \text{(``wrote'')}$$
+
+* Reduplicative languages duplicate (Indonesian).
+
+  $$anak\ \text{(``child'')} \to \text{\emph{anak-anak}}\
+  \text{(``children'')}$$
+
+* Language models are differentiated by subword-generation and composition.
+
+  $$\bm{w} = f(\bm{W}_s, \sigma(w))$$
+
+  where $\sigma$ returns subword units; $\bm{W}_s$ is a parameter matrix; and $f$
+  is a composition function.
+
+* Subword units are four types.
+
+  - Character
+  - Character trigram
+  - Morfessor
+  - Byte-pair encoding
+
+  # \note{Morfessor is a segmenter, not an analyzer; BPE is a form of
+  # segmentation.}
+
+* Composition functions are three types.
+
+  - Addition
+  - Bi-LSTM
+  - CNN
+
+  # \note{Addition only really works for strictly agglutinative languages like
+  # Turkish.}
+  
+* Language models are comparable using perplexity.
+
+  [[./lstm-lm.png]]
+
+  # \note{There is no smoothing, for instance, to account for out-of-vocabulary
+  # words.}
+
+* Results tend to favor trigram bi-LSTMs.
+
+  [[./results.png]]
+
+  # \note{- Czech and Russian are morphologically richer than English.
+  # - Turkish morphemes are short.
+  # - Japanese only has modest improvements.
+  # - Unvocalized data minimizes non-concatenative effects in Arabic and Hebrew.
+  # - Indonesian and Malay are only moderately inflected.}
+
+* How about with hand-annotated morphology?
+
+  [[./morphology.png]]
+
+* What if we increase the amount of unannotated data?
+
+  [[./unannotated.png]]
+
+* What about automatic annotation?
+
+  Using MADAMIRA for Arabic, the perplexity of bi-LSTMs is still $42.85$
+  vs. $39.87$ with character trigrams.
+
+* Lastly, what if we restrict ourselves to nouns and verbs?
+
+  [[./nouns-and-verbs.png]]
+
+  # Restricting to classes of words where segmentation is unambiguous.
+
+* Character-level models lose the meaning of root morphemes.
+
+  [[./qualitative.png]]
+
+  # Nearest-neighbor analysis of semantically and syntactically similar words.
+
+* Conclusion
+
+  - Might be some utility in semi-supervised learning from partially annotated
+    data.
