@@ -11,7 +11,7 @@ zmodload zsh/mathfunc
 # time is energy_now/power_now.
 
 float full=$(cat /sys/class/power_supply/BAT0/energy_full)
-float remaining=$(cat /sys/class/power_supply/BAT0/energy_now)
+float now=$(cat /sys/class/power_supply/BAT0/energy_now)
 float power=$(cat /sys/class/power_supply/BAT0/power_now)
 
 # These calculations seem to overestimate the remaining battery.
@@ -19,8 +19,28 @@ float power=$(cat /sys/class/power_supply/BAT0/power_now)
 # float rate=$(( power * voltage / 1e7 ))
 rate=$power
 
-# TODO: Icon for state, e.g. charging: ⌁?
+# I really wanted to use electric plug (🔌) and battery (🔋), but they aren't
+# supported by my terminal font; even alternating (⏦) and direct current (⎓)
+# would have sufficed, but they're similarly unsupported.
+#
+# High voltage (⚡️) and bullseye (◎) had to suffice, since the latter looks like
+# the top of an e.g. AA-battery.
+#
+# Haven't found a good symbol to express charged, but maybe charging suffices?
+declare -A STATES
+STATES=(Charging ⚡️
+        Discharging ◎           # This is a poor substitute for battery; maybe
+                                # have nothing at all?
+        Unknown ▮)              # Charged
+
 state=$(cat /sys/class/power_supply/BAT0/status)
+
+# Distinguish between charging and 
+if [ state = "Charging" ] || [ state = "Unknown" ]; then
+    remaining=$(( full - now ))
+else
+    remaining=$now
+fi
 
 # In order to do minutes correctly, we should probably average-dampen
 # the rate.
@@ -51,4 +71,4 @@ integer remaining=$(( remaining / 1000.0 ))
 # Convert to mW.
 integer rate=$(( rate / 1000.0 ))
 
-echo "(${state}) ${time} | ${percentage}% | ${remaining} mWh | ${rate} mW"
+echo "${STATES[$state]} ${time} | ${percentage}% | ${remaining} mWh | ${rate} mW"
