@@ -30,7 +30,7 @@ STATES=(Charging ⚡️
 state=$(cat /sys/class/power_supply/BAT0/status)
 
 # Distinguish between charging and 
-if [ state = "Charging" ] || [ state = "Unknown" ]; then
+if [ $state = "Charging" ] || [ $state = "Unknown" ]; then
     remaining=$(( full - now ))
 else
     remaining=$now
