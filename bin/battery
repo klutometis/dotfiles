@@ -57,12 +57,12 @@ else
 fi
 
 # Convert to percentage.
-percentage=$(printf "%.1f" $(( 100.0 * remaining / full )))
+percentage=$(printf "%.1f" $(( 100.0 * now / full )))
 
 # Convert to mWh.
-integer remaining=$(( remaining / 1000.0 ))
+integer now=$(( now / 1000.0 ))
 
 # Convert to mW.
 integer rate=$(( rate / 1000.0 ))
 
-echo "${STATES[$state]} ${time} | ${percentage}% | ${remaining} mWh | ${rate} mW"
+echo "${STATES[$state]} ${time} | ${percentage}% | ${now} mWh | ${rate} mW"
