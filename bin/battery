@@ -22,16 +22,10 @@ rate=$power
 # I really wanted to use electric plug (🔌) and battery (🔋), but they aren't
 # supported by my terminal font; even alternating (⏦) and direct current (⎓)
 # would have sufficed, but they're similarly unsupported.
-#
-# High voltage (⚡️) and bullseye (◎) had to suffice, since the latter looks like
-# the top of an e.g. AA-battery.
-#
-# Haven't found a good symbol to express charged, but maybe charging suffices?
 declare -A STATES
 STATES=(Charging ⚡️
-        Discharging ◎           # This is a poor substitute for battery; maybe
-                                # have nothing at all?
-        Unknown ▮)              # Charged
+        Discharging ""
+        Unknown ⚡️)              # Charged
 
 state=$(cat /sys/class/power_supply/BAT0/status)
 
