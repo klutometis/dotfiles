@@ -29,7 +29,8 @@ STATES=(Charging ⚡️
 
 state=$(cat /sys/class/power_supply/BAT0/status)
 
-# Distinguish between charging and 
+# Distinguish between charging and discharging with respect to remaining:
+# remaining during charge is full; discharge, empty.
 if [ $state = "Charging" ] || [ $state = "Unknown" ]; then
     remaining=$(( full - now ))
 else
