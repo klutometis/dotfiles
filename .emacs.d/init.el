@@ -935,7 +935,7 @@ Then switch to the process buffer."
 (use-package xclip
   :if (executable-find "xclip")
   :config
-  (turn-on-xclip))
+  (xclip-mode 1))
 
 (use-package yaml-mode)
 
