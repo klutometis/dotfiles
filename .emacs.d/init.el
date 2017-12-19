@@ -1153,7 +1153,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-x C-r" . revert-buffer) 
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
- ("M-;" . comment-dwim-line)
+ ("M-;" . comment-dwim)
  ("M-o" . smart-open-line)
  )
 
