@@ -208,7 +208,8 @@
   :bind ("C-c C-o" . multi-occur-in-matching-buffers)
   :mode ("\\.bsh\\'" . java-mode)
   :config
-  (setq fill-column 80))
+  (setq fill-column 80)
+  (unbind-key "C-c C-s" c++-mode-map))
 
 ;;; Let's try this, even though it's pretty aggressive.
 (use-package column-enforce-mode
