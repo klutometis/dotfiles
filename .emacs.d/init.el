@@ -235,6 +235,11 @@
              ("i" . dired-subtree-insert)
              (";" . dired-subtree-remove)))
 
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow)))
+
 (use-package discord)
 
 (use-package edit-server)
