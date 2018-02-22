@@ -9,10 +9,10 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'thingatpt+)
+(require 'thingatpt)
 
 (defvar surfraw-region
-  #'tap-region-or-non-nil-symbol-name-nearest-point
+  (lambda () (symbol-name (symbol-at-point)))
   "Function that describes how surfraw extracts the current
   region")
 
