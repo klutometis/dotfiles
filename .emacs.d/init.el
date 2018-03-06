@@ -223,14 +223,6 @@
   (desktop-save-mode 1)
   (add-to-list 'desktop-globals-to-save 'kill-ring))
 
-(use-package dired+
-  :config
-  ;; Dired should reuse files when changing directories.
-  (diredp-toggle-find-file-reuse-dir 1)
-  (setq diredp-hide-details-initially-flag nil)
-  ;; This binding messes with the arrow keys, for some reason.
-  (unbind-key "M-O" dired-mode-map))
-
 (use-package dired-subtree
   :config
   (bind-keys :map dired-mode-map
