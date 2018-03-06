@@ -99,6 +99,7 @@
   :config
   (auto-package-update-maybe)
   (auto-package-update-at-time "03:00")
+  (setq auto-package-update-interval 1)
   (setq auto-package-update-delete-old-versions t))
 
 (use-package better-defaults
