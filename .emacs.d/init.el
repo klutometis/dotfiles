@@ -680,7 +680,8 @@ Then switch to the process buffer."
     (lambda ()
       (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
       (define-key python-mode-map (kbd "C-c z")
-        (lambda () (interactive) (python-switch-to-python t))))))
+        (lambda () (interactive) (python-switch-to-python t)))
+      (push '("not" . ?¬) prettify-symbols-alist))))
 
 (use-package scheme
   :mode (("\\.egg-locations\\'" . scheme-mode)
