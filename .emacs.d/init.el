@@ -3,7 +3,7 @@
       '(("org" . "http://orgmode.org/elpa/")
         ("melpa" . "http://melpa.org/packages/")
         ("marmalade" . "http://marmalade-repo.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+	    ("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
 (setq package-check-signature nil)
