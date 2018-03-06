@@ -210,7 +210,8 @@
   :mode ("\\.bsh\\'" . java-mode)
   :config
   (setq fill-column 80)
-  (unbind-key "C-c C-s" c++-mode-map))
+  (unbind-key "C-c C-s" c++-mode-map)
+  (unbind-key "C-c C-s" awk-mode-map))
 
 ;;; Let's try this, even though it's pretty aggressive.
 (use-package column-enforce-mode
