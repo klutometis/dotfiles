@@ -353,8 +353,6 @@
 ;;              ("C-s" . helm-next-line))
 ;;   (bind-key "M-i" 'helm-swoop-from-isearch isearch-mode-map))
 
-(use-package help-fns+)
-
 (use-package hippie-exp)
 
 (use-package htmlize)
