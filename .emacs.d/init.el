@@ -388,7 +388,12 @@
     ;; (set-face-background 'magit-item-highlight "white")
     ;; (set-face-background 'magit-tag "black")
     )
-  (setq magit-auto-revert-mode nil))
+  (setq magit-auto-revert-mode nil)
+  
+  ;; Make this slightly more permissive such that the terminal question-mark or
+  ;; colon are optional.
+  (setq magit-process-yes-or-no-prompt-regexp
+        " [\[(]\\([Yy]\\(?:es\\)?\\)[/|]\\([Nn]o?\\)[\])] ?[?:]? ?$"))
 
 (use-package markdown-mode
   :config
