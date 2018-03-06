@@ -776,6 +776,10 @@ Then switch to the process buffer."
                            (match-end 1)
                            ?≡)))))))
 
+(use-package sgml-mode
+  :config
+  (unbind-key "C-c C-s" sgml-mode-map))
+
 (use-package shell
   :init
   (bind-key "C-c C-l" 'helm-comint-input-ring shell-mode-map)
