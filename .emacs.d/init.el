@@ -929,6 +929,18 @@ Then switch to the process buffer."
 
 (use-package use-package)
 
+(use-package web-mode
+  :mode (("\\.html\\'" . web-mode)
+         ("\\.jhtml\\'" . web-mode))
+  :config
+  ;; See e.g. <http://web-mode.org/assets/theme.el> for faces.
+  (set-face-attribute 'web-mode-html-tag-face nil :weight 'bold :foreground "blue")
+  (set-face-attribute 'web-mode-html-attr-name-face nil :foreground "yellow")
+  (set-face-attribute 'web-mode-html-attr-value-face nil :foreground "green")
+  (setq web-mode-markup-indent-offset 2)
+  (unbind-key "C-c C-h" web-mode-map)
+  (unbind-key "C-c C-s" web-mode-map))
+
 (use-package windmove
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
