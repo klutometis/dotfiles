@@ -357,6 +357,7 @@
    ("C-x C-f" . ido-find-file)))
 
 (use-package js
+  :mode ("\\.jhtml\\'" . javascript-mode)
   :config
   ;; Normal comments in Javascript, despite the fact that we use
   ;; paredit
