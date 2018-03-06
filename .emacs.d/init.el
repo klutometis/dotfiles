@@ -637,9 +637,10 @@ This function is called by `org-babel-execute-src-block'."
           '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
     (setq org-latex-default-packages-alist
-          '(("AUTO" "inputenc"  t)
+          '(;; ("AUTO" "inputenc"  t)
             ;; ("T1"   "fontenc"   t)
             (""     "fixltx2e"  nil)
+            (""     "fontspec"  nil)
             (""     "graphicx"  t)
             (""     "grffile"   t)
             (""     "longtable" nil)
