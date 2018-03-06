@@ -891,8 +891,6 @@ Then switch to the process buffer."
   :config
   (setq tex-dvi-view-command "mupdf"))
 
-(use-package thingatpt+)
-
 ;; Let's do auto-quotes, dashes, &c.; see:
 ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
 (use-package typopunct
