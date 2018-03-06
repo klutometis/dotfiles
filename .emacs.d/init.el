@@ -431,7 +431,7 @@
 (use-package openwith
   :init
   (setf openwith-associations
-  '(("\\.pdf\\'" "mupdf" (file))
+  '(("\\.pdf\\'" "mupdf-gl" (file))
     ("\\.mp3\\'" "mplayer" (file))
     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
     ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
