@@ -405,7 +405,11 @@
       (auto-fill-mode 1)
       (unbind-key "C-c C-s" markdown-mode-map))))
 
-(use-package mediawiki)
+(use-package midnight
+  :config
+  (midnight-delay-set 'midnight-delay 0))
+
+;; (use-package mediawiki)
 
 ;;; Local package for everything that can't be done with use-package.
 ;;; 
