@@ -396,12 +396,14 @@
         " [\[(]\\([Yy]\\(?:es\\)?\\)[/|]\\([Nn]o?\\)[\])] ?[?:]? ?$"))
 
 (use-package markdown-mode
+  ;; :bind (:map markdown-mode-map ("C-c '" . ))
   :config
   (add-hook 'markdown-mode-hook
     (lambda ()
       (typopunct-change-language 'english t)
       (typopunct-mode 1)
-      (auto-fill-mode 1))))
+      (auto-fill-mode 1)
+      (unbind-key "C-c C-s" markdown-mode-map))))
 
 (use-package mediawiki)
 
