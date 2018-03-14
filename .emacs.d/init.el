@@ -3,7 +3,7 @@
       '(("org" . "http://orgmode.org/elpa/")
         ("melpa" . "http://melpa.org/packages/")
         ("marmalade" . "http://marmalade-repo.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+	    ("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
 (setq package-check-signature nil)
@@ -99,6 +99,7 @@
   :config
   (auto-package-update-maybe)
   (auto-package-update-at-time "03:00")
+  (setq auto-package-update-interval 1)
   (setq auto-package-update-delete-old-versions t))
 
 (use-package better-defaults
@@ -208,7 +209,9 @@
   :bind ("C-c C-o" . multi-occur-in-matching-buffers)
   :mode ("\\.bsh\\'" . java-mode)
   :config
-  (setq fill-column 80))
+  (setq fill-column 80)
+  (unbind-key "C-c C-s" c++-mode-map)
+  (unbind-key "C-c C-s" awk-mode-map))
 
 ;;; Let's try this, even though it's pretty aggressive.
 (use-package column-enforce-mode
@@ -220,19 +223,20 @@
   (desktop-save-mode 1)
   (add-to-list 'desktop-globals-to-save 'kill-ring))
 
-(use-package dired+
-  :config
-  ;; Dired should reuse files when changing directories.
-  (diredp-toggle-find-file-reuse-dir 1)
-  (setq diredp-hide-details-initially-flag nil))
-
 (use-package dired-subtree
   :config
   (bind-keys :map dired-mode-map
              ("i" . dired-subtree-insert)
              (";" . dired-subtree-remove)))
 
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow)))
+
 (use-package discord)
+
+(use-package dot-mode :mode "\\.dot\\'")
 
 (use-package edit-server)
 
@@ -267,18 +271,6 @@
 (use-package full-ack)
 
 (use-package gnuplot)
-
-(use-package graphviz-dot-mode
-  :mode "\\.dot\\'"
-  :config
-  ;; Get rid of the irritating eight-wide indents.
-  (setq graphviz-dot-indent-width 2)
-
-  ;; Get rid of the irritating semi-colon behavior.
-  (setq graphviz-dot-auto-indent-on-semi nil)
-
-  ;; Set an external viewer.
-  (setq graphviz-dot-view-command "display %s"))
 
 (use-package grep
   :bind ("C-c r" . rgrep))
@@ -365,6 +357,7 @@
    ("C-x C-f" . ido-find-file)))
 
 (use-package js
+  :mode ("\\.jhtml\\'" . javascript-mode)
   :config
   ;; Normal comments in Javascript, despite the fact that we use
   ;; paredit
@@ -395,17 +388,28 @@
     ;; (set-face-background 'magit-item-highlight "white")
     ;; (set-face-background 'magit-tag "black")
     )
-  (setq magit-auto-revert-mode nil))
+  (setq magit-auto-revert-mode nil)
+  
+  ;; Make this slightly more permissive such that the terminal question-mark or
+  ;; colon are optional.
+  (setq magit-process-yes-or-no-prompt-regexp
+        " [\[(]\\([Yy]\\(?:es\\)?\\)[/|]\\([Nn]o?\\)[\])] ?[?:]? ?$"))
 
 (use-package markdown-mode
+  ;; :bind (:map markdown-mode-map ("C-c '" . ))
   :config
   (add-hook 'markdown-mode-hook
     (lambda ()
       (typopunct-change-language 'english t)
       (typopunct-mode 1)
-      (auto-fill-mode 1))))
+      (auto-fill-mode 1)
+      (unbind-key "C-c C-s" markdown-mode-map))))
 
-(use-package mediawiki)
+(use-package midnight
+  :config
+  (midnight-delay-set 'midnight-delay 0))
+
+;; (use-package mediawiki)
 
 ;;; Local package for everything that can't be done with use-package.
 ;;; 
@@ -427,7 +431,7 @@
 (use-package openwith
   :init
   (setf openwith-associations
-  '(("\\.pdf\\'" "mupdf" (file))
+  '(("\\.pdf\\'" "mupdf-gl" (file))
     ("\\.mp3\\'" "mplayer" (file))
     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
     ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
@@ -633,9 +637,10 @@ This function is called by `org-babel-execute-src-block'."
           '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
     (setq org-latex-default-packages-alist
-          '(("AUTO" "inputenc"  t)
+          '(;; ("AUTO" "inputenc"  t)
             ;; ("T1"   "fontenc"   t)
             (""     "fixltx2e"  nil)
+            (""     "fontspec"  nil)
             (""     "graphicx"  t)
             (""     "grffile"   t)
             (""     "longtable" nil)
@@ -658,7 +663,9 @@ This function is called by `org-babel-execute-src-block'."
 (use-package php-mode)
 
 (use-package protobuf-mode
-  :mode (("\\\\.proto\\\\'" . protobuf-mode)))
+  :mode (("\\\\.proto\\\\'" . protobuf-mode))
+  :init
+  (setq c-basic-offset 2))
 
 (use-package python
   :config
@@ -673,7 +680,8 @@ Then switch to the process buffer."
     (lambda ()
       (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
       (define-key python-mode-map (kbd "C-c z")
-        (lambda () (interactive) (python-switch-to-python t))))))
+        (lambda () (interactive) (python-switch-to-python t)))
+      (push '("not" . ?¬) prettify-symbols-alist))))
 
 (use-package scheme
   :mode (("\\.egg-locations\\'" . scheme-mode)
@@ -767,6 +775,10 @@ Then switch to the process buffer."
            (compose-region (match-beginning 1)
                            (match-end 1)
                            ?≡)))))))
+
+(use-package sgml-mode
+  :config
+  (unbind-key "C-c C-s" sgml-mode-map))
 
 (use-package shell
   :init
@@ -879,8 +891,6 @@ Then switch to the process buffer."
   :config
   (setq tex-dvi-view-command "mupdf"))
 
-(use-package thingatpt+)
-
 ;; Let's do auto-quotes, dashes, &c.; see:
 ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
 (use-package typopunct
@@ -919,6 +929,18 @@ Then switch to the process buffer."
 
 (use-package use-package)
 
+(use-package web-mode
+  :mode (("\\.html\\'" . web-mode)
+         ("\\.jhtml\\'" . web-mode))
+  :config
+  ;; See e.g. <http://web-mode.org/assets/theme.el> for faces.
+  (set-face-attribute 'web-mode-html-tag-face nil :weight 'bold :foreground "blue")
+  (set-face-attribute 'web-mode-html-attr-name-face nil :foreground "yellow")
+  (set-face-attribute 'web-mode-html-attr-value-face nil :foreground "green")
+  (setq web-mode-markup-indent-offset 2)
+  (unbind-key "C-c C-h" web-mode-map)
+  (unbind-key "C-c C-s" web-mode-map))
+
 (use-package windmove
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
@@ -935,7 +957,7 @@ Then switch to the process buffer."
 (use-package xclip
   :if (executable-find "xclip")
   :config
-  (turn-on-xclip))
+  (xclip-mode 1))
 
 (use-package yaml-mode)
 
@@ -1153,7 +1175,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-x C-r" . revert-buffer) 
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
- ("M-;" . comment-dwim-line)
+ ("M-;" . comment-dwim)
  ("M-o" . smart-open-line)
  )
 

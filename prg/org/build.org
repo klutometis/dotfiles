@@ -242,3 +242,16 @@
   #+BEGIN_SRC sh
     dictd -c etc/dictd.conf --debug nodetach
   #+END_SRC
+* Converting MIDI to wav
+  Try e.g.
+
+  #+BEGIN_SRC sh
+    timidity <midi-file>
+  #+END_SRC
+
+  or:
+
+  #+BEGIN_SRC sh
+    fluidsynth -F <wav-file> -a alsa -m alsa_seq \
+      /usr/share/sounds/sf2/FluidR3_GM.sf2 <midi-file>
+  #+END_SRC
