@@ -407,6 +407,7 @@
 
 (use-package midnight
   :config
+  (setq clean-buffer-list-delay-general 7)
   (midnight-delay-set 'midnight-delay 0))
 
 ;; (use-package mediawiki)
