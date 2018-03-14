@@ -9,12 +9,16 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'thingatpt+)
+(require 'thingatpt)
 
 (defvar surfraw-region
-  #'tap-region-or-non-nil-symbol-name-nearest-point
+  (lambda () (symbol-name (symbol-at-point)))
   "Function that describes how surfraw extracts the current
-  region")
+  region by default")
+
+(defvar surfraw-regions
+  `((W . ,#'thing-at-point-url-at-point))
+  "Elvi which diverge from surfraw-region")
 
 (defun surfraw-elvi ()
   "Extract a list of current elvi."
@@ -50,7 +54,9 @@ point."
           `(defun ,(intern (format "surfraw-%s-region" elvis)) ()
              (interactive)
              (,(intern (format "surfraw-%s" elvis))
-              (funcall surfraw-region))))
+              (funcall (alist-get ',(intern elvis)
+                                  surfraw-regions
+                                  surfraw-region)))))
         (surfraw-elvi))))
 
 (defun surfraw-bookmark (terms)
