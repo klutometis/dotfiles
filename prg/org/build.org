@@ -236,3 +236,9 @@
                    "${HOME}/doc/snd/shakespeare/${$(basename ${file})%.wmv}.mp3";
         done
   #+END_SRC
+* Dictd
+  OED, etc.:
+
+  #+BEGIN_SRC sh
+    dictd -c etc/dictd.conf --debug nodetach
+  #+END_SRC
