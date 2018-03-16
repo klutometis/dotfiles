@@ -1,11 +1,11 @@
 (in-package :stumpwm)
 
 (load-module "surfraw")
-(setf *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
+(defvar *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
 
 ;; Equals is weird, but less manually awkward than plus.
-(define-key *root-map* (kbd "=") "exec mplayer-volume-up")
-(define-key *root-map* (kbd "-") "exec mplayer-volume-down")
+(define-key *root-map* (kbd "=") "exec ~/bin/mplayer-volume-up")
+(define-key *root-map* (kbd "-") "exec ~/bin/mplayer-volume-down")
 
 (define-key *root-map* (kbd "a") "sr-bookmark calendar")
 
@@ -25,13 +25,13 @@
 (define-key *root-map* (kbd "H") "sr-sel-chicken-regex")
 
 ;; Mnemonic is: infinite and negation of infinite.
-(define-key *root-map* (kbd "i") "exec mplayer-loop")
-(define-key *root-map* (kbd "I") "exec mplayer-no-loop")
+(define-key *root-map* (kbd "i") "exec ~/bin/mplayer-loop")
+(define-key *root-map* (kbd "I") "exec ~/bin/mplayer-no-loop")
 
 ;; Use the xscreensaver-lock wrapping which also happens to unconditionally
 ;; pause mplayer.
-(define-key *root-map* (kbd "l") "exec xscreensaver-lock")
-(define-key *root-map* (kbd "C-l") "exec xscreensaver-lock")
+(define-key *root-map* (kbd "l") "exec ~/bin/xscreensaver-lock")
+(define-key *root-map* (kbd "C-l") "exec ~/bin/xscreensaver-lock")
 
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
@@ -39,7 +39,7 @@
 (define-key *root-map* (kbd "o") "sr-moma")
 (define-key *root-map* (kbd "O") "sr-sel-moma")
 
-(define-key *root-map* (kbd "p") "exec mplayer-pause")
+(define-key *root-map* (kbd "p") "exec ~/bin/mplayer-pause")
 
 (define-key *root-map* (kbd "q") "sr-bookmark critique")
 
@@ -49,8 +49,8 @@
 (define-key *root-map* (kbd "w") "sr-w")
 (define-key *root-map* (kbd "W") "sr-sel-w")
 
-(define-key *root-map* (kbd "x") "exec xterm -ls")
-(define-key *root-map* (kbd "C-x") "exec xterm -ls")
+(define-key *root-map* (kbd "x") "exec /usr/bin/xterm -ls")
+(define-key *root-map* (kbd "C-x") "exec /usr/bin/xterm -ls")
 
 ;;; Turn on mode-line; thanks, Prael:
 ;;; <http://prael.wordpress.com/stumpwmrc/>.

@@ -1,6 +1,6 @@
 #!/bin/sh
 # $Id$
-# elvis: moma	-- Search Moma (drive.google.com)
+# elvis: drive	-- Search Drive (drive.google.com)
 . surfraw || exit 1
 
 w3_usage_hook () {
