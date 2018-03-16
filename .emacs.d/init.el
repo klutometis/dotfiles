@@ -416,9 +416,9 @@
 ;;; 
 ;;; TODO: consider calling it bootstrap and placing towards the
 ;;; beginning?
-(use-package miscellenea
-  :load-path "lisp/"
-  :ensure nil)
+;; (use-package miscellenea
+;;   :load-path "lisp/"
+;;   :ensure nil)
 
 (use-package multiple-cursors
   :bind (("C-<" . mc/mark-previous-like-this)
@@ -432,7 +432,7 @@
 (use-package openwith
   :init
   (setf openwith-associations
-  '(("\\.pdf\\'" "mupdf-gl" (file))
+  '(("\\.pdf\\'" "google-chrome" (file))
     ("\\.mp3\\'" "mplayer" (file))
     ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
     ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
@@ -634,25 +634,28 @@ This function is called by `org-babel-execute-src-block'."
 
     (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
 
+    ;; (setq org-latex-pdf-process
+    ;;       '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+
     (setq org-latex-pdf-process
-          '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+          '("latexmk -pdflatex=lualatex -latex=lualatex -pdf -f %f"))
 
     (setq org-latex-default-packages-alist
           '(;; ("AUTO" "inputenc"  t)
             ;; ("T1"   "fontenc"   t)
-            (""     "fixltx2e"  nil)
-            (""     "fontspec"  nil)
-            (""     "graphicx"  t)
-            (""     "grffile"   t)
-            (""     "longtable" nil)
+            ;; (""     "fixltx2e"  nil)
+            ;; (""     "graphicx"  t)
+            ;; (""     "grffile"   t)
+            ;; (""     "longtable" nil)
             ;; (""     "wrapfig"   nil)
-            (""     "rotating"  nil)
-            ("normalem" "ulem"  t)
+            ;; (""     "rotating"  nil)
+            ;; ("normalem" "ulem"  t)
             (""     "amsmath"   t)
-            (""     "textcomp"  t)
+            ;; (""     "textcomp"  t)
             (""     "amssymb"   t)
             ;; (""     "capt-of"   nil)
-            (""     "hyperref"  nil))))
+            ("colorlinks=true,urlcolor=blue"     "hyperref"  nil)
+            ("" "fontspec" t))))
 
 (use-package paredit
   :config

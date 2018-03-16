@@ -1,10 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 xset s blank
 xset s 600
 xset dpms 1200 1800 2400
 xsetroot -solid black
 setxkbmap dvorak
+# [ -f ~/.zshrc ] && . ~/.zshrc
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
-xscreensaver -nosplash &
-redshift-mountain-view &
+/usr/bin/xscreensaver -nosplash &
+~/bin/redshift-mountain-view &
