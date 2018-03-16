@@ -255,3 +255,5 @@
     fluidsynth -F <wav-file> -a alsa -m alsa_seq \
       /usr/share/sounds/sf2/FluidR3_GM.sf2 <midi-file>
   #+END_SRC
+* Repairing truncated mp4s
+  Try https://github.com/ponchio/untrunc; had to build libav locally.
