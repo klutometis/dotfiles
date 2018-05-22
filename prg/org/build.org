@@ -257,3 +257,20 @@
   #+END_SRC
 * Repairing truncated mp4s
   Try https://github.com/ponchio/untrunc; had to build libav locally.
+* Audio
+  Mount Android:
+
+  #+BEGIN_SRC sh
+    sudo jmtpfs -o allow_other ~/mnt/usb
+  #+END_SRC
+
+
+  Make a video with one frame:
+
+  #+BEGIN_SRC sh
+    ffmpeg -loop 1 \
+           -i quartet-small.jpg \
+           -i fuga-a-die-iræ-quartet-live.wav \
+           -shortest \
+           fuga-a-die-iræ-quartet-live.mp4
+  #+END_SRC
