@@ -1,4 +1,10 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env sh
+* Solving “could not find function .ess.eval”
+  For some reason, =ess-etc-directory= seems to be misconfigured after
+  elpa-refresh; had to do e.g. =(setq ess-etc-directory
+  "~/.emacs.d/elpa/ess-20180808.852/etc")= manually.
+
+  Maybe =M-x load-library RET ess-site RET= would have sufficed?
 * Setting default keyoard-layout in console
   In Debian-likes, modify [[file:/etc/default/keyboard][/etc/default/keyboard]], setting:
 
