@@ -408,7 +408,10 @@
 (use-package midnight
   :config
   (setq clean-buffer-list-delay-general 7)
-  (midnight-delay-set 'midnight-delay 0))
+  (midnight-delay-set 'midnight-delay 0)
+  (add-hook 'midnight-hook
+    (lambda () (interactive)
+      (desktop-save desktop-dirname))))
 
 ;; (use-package mediawiki)
 
