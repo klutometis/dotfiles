@@ -408,7 +408,10 @@
 (use-package midnight
   :config
   (setq clean-buffer-list-delay-general 7)
-  (midnight-delay-set 'midnight-delay 0))
+  (midnight-delay-set 'midnight-delay 0)
+  (add-hook 'midnight-hook
+    (lambda () (interactive)
+      (desktop-save desktop-dirname))))
 
 ;; (use-package mediawiki)
 
@@ -666,10 +669,10 @@ This function is called by `org-babel-execute-src-block'."
 
 (use-package php-mode)
 
-(use-package protobuf-mode
-  :mode (("\\\\.proto\\\\'" . protobuf-mode))
-  :init
-  (setq c-basic-offset 2))
+;; (use-package protobuf-mode
+;;   :mode (("\\\\.proto\\\\'" . protobuf-mode))
+;;   :init
+;;   (setq c-basic-offset 2))
 
 (use-package python
   :config

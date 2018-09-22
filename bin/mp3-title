@@ -5,7 +5,7 @@
 #   mp3-title FILE
 
 case $(file -i -b "$1") in
-  audio/x-flac*)
+  audio/x-flac* | audio/flac*)
     metaflac --list --block-type=VORBIS_COMMENT "$1" | \
       grep -oP '.*TITLE=\K(.*)';;
   audio/mpeg*)
