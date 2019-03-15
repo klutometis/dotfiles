@@ -3,9 +3,10 @@
 (load-module "surfraw")
 (defvar *surfraw-bookmark-file* "~/.config/surfraw/bookmarks")
 
-;; Equals is weird, but less manually awkward than plus.
-(define-key *root-map* (kbd "=") "exec ~/bin/mplayer-volume-up")
-(define-key *root-map* (kbd "-") "exec ~/bin/mplayer-volume-down")
+;; Equals is weird, but less manually awkward than plus; also, let's add ctrl to
+;; make it more fluid.
+(define-key *root-map* (kbd "C-=") "exec ~/bin/mplayer-volume-up")
+(define-key *root-map* (kbd "C--") "exec ~/bin/mplayer-volume-down")
 
 (define-key *root-map* (kbd "a") "sr-bookmark calendar")
 
