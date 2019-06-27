@@ -1309,6 +1309,10 @@ the line."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
+;;; This doesn't seem to work in the ESS package, for some reason.
+(add-hook 'R-mode-hook
+  (lambda () (push '("<-" . ?←) prettify-symbols-alist)))
+
 ;; Make `lambda' → `λ', etc.
 (global-prettify-symbols-mode)
 
