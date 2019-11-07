@@ -23,9 +23,9 @@ rate=$power
 # supported by my terminal font; even alternating (⏦) and direct current (⎓)
 # would have sufficed, but they're similarly unsupported.
 declare -A STATES
-STATES=(Charging ⚡️
+STATES=(Charging "(C)"
         Discharging ""
-        Unknown ⚡️)              # Charged
+        Unknown "(C)")
 
 state=$(cat /sys/class/power_supply/BAT0/status)
 
