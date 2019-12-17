@@ -40,7 +40,7 @@ fi
 # In order to do minutes correctly, we should probably average-dampen
 # the rate.
 if (( rate == 0 )); then
-    time=∞
+    time=Inf
 else
     # Do minutes, seconds; if you want to.
     # minutes=$(printf "%.0f" $(( $remaining / $rate )))
