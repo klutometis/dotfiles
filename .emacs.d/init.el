@@ -218,6 +218,10 @@
   :config
   (global-column-enforce-mode 1))
 
+(use-package crosshairs)
+
+(use-package col-highlight)
+
 (use-package desktop
   :config
   (desktop-save-mode 1)
@@ -302,8 +306,9 @@
          ;; 
          ;; ("C-x C-f" . helm-find-files)
          ("M-x" . helm-M-x)
-         ("M-y" . helm-show-kill-ring))
-  :bind-keymap ("C-c C-l" . helm-minibuffer-history)
+         ("M-y" . helm-show-kill-ring)
+         ("C-x b" . helm-buffers-list)
+         ("C-c C-l" . helm-minibuffer-history))
   :init
   ;; Fuzzy match
   (setq helm-M-x-fuzzy-match t
@@ -674,6 +679,12 @@ This function is called by `org-babel-execute-src-block'."
 ;;   :init
 ;;   (setq c-basic-offset 2))
 
+(use-package polymode)
+
+(use-package poly-markdown)
+
+(use-package poly-R)
+
 (use-package python
   :config
   (defun python-send-buffer-and-go ()
@@ -689,6 +700,14 @@ Then switch to the process buffer."
       (define-key python-mode-map (kbd "C-c z")
         (lambda () (interactive) (python-switch-to-python t)))
       (push '("not" . ?¬) prettify-symbols-alist))))
+
+(use-package savehist
+  :config
+  (setq savehist-save-minibuffer-history 1)
+  (setq savehist-additional-variables
+        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring)
+        savehist-file "~/.emacs.d/savehist")
+  (savehist-mode t))
 
 (use-package scheme
   :mode (("\\.egg-locations\\'" . scheme-mode)
@@ -782,6 +801,10 @@ Then switch to the process buffer."
            (compose-region (match-beginning 1)
                            (match-end 1)
                            ?≡)))))))
+
+(use-package scroll-lock
+  :bind (("C-S-n" . scroll-lock-next-line)
+         ("C-S-p" . scroll-lock-previous-line)))
 
 (use-package sgml-mode
   :config
