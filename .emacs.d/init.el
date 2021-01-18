@@ -105,9 +105,7 @@
 (use-package bazel-mode
   :config
   (add-hook 'bazel-mode-hook
-    (function (lambda ()
-                (add-hook 'before-save-hook
-                  'bazel-mode-buildifier)))))
+    (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier))))
 
 (use-package better-defaults
   :config
@@ -691,6 +689,10 @@ This function is called by `org-babel-execute-src-block'."
 (use-package poly-markdown)
 
 (use-package poly-R)
+
+(use-package py-autopep8
+  :config
+  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 
 (use-package python
   :config
