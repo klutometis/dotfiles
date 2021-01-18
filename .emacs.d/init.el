@@ -102,6 +102,13 @@
   (setq auto-package-update-interval 1)
   (setq auto-package-update-delete-old-versions t))
 
+(use-package bazel-mode
+  :config
+  (add-hook 'bazel-mode-hook
+    (function (lambda ()
+                (add-hook 'before-save-hook
+                  'bazel-mode-buildifier)))))
+
 (use-package better-defaults
   :config
   ;;; Don't flash on bell, after all.
