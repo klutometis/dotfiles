@@ -2,7 +2,7 @@
 (setq package-archives
       '(("org" . "http://orgmode.org/elpa/")
         ("melpa" . "http://melpa.org/packages/")
-        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ;; ("marmalade" . "http://marmalade-repo.org/packages/")
 	    ("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
