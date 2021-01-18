@@ -692,6 +692,7 @@ This function is called by `org-babel-execute-src-block'."
 
 (use-package py-autopep8
   :config
+  (setq py-autopep8-options '("--aggressive" "--experimental"))
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
 
 (use-package python
