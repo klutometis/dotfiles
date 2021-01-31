@@ -1,4 +1,6 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env sh
+* Installing redshift with randr
+  Requires =sudo apt-get install libxcb-randr0*= first.
 * Solving “could not find function .ess.eval”
   For some reason, =ess-etc-directory= seems to be misconfigured after
   elpa-refresh; had to do e.g. =(setq ess-etc-directory
@@ -11,6 +13,8 @@
   #+BEGIN_SRC sh
     XKBVARIANT="dvorak"
     XKBOPTIONS="terminate:ctrl_alt_bksp"
+
+  and then see [[https://askubuntu.com/a/930440][this]]: =sudo update-initramfs -u=.
   #+END_SRC
 * Booting to runlevel 3
   In Debian-likes, modify [[file:/etc/default/grub][/etc/default/grub]], setting:
