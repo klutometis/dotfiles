@@ -1,4 +1,10 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env sh
+* ffmpeg for gif
+  =obs= for screen-capture; then something like [[https://engineering.giphy.com/how-to-make-gifs-with-ffmpeg/][this]]:
+
+  #+BEGIN_SRC sh
+    yes | ffmpeg -ss 0.8 -t 7.35 -i 2021-11-29\ 22-58-01.mkv -f gif -filter_complex "[0:v] setpts=0.2*PTS,scale=176:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" infinite-roll.gif
+  #+END_SRC
 * Installing redshift with randr
   Requires =sudo apt-get install libxcb-randr0*= first.
 * Solving “could not find function .ess.eval”
@@ -13,9 +19,9 @@
   #+BEGIN_SRC sh
     XKBVARIANT="dvorak"
     XKBOPTIONS="terminate:ctrl_alt_bksp"
+  #+END_SRC
 
   and then see [[https://askubuntu.com/a/930440][this]]: =sudo update-initramfs -u=.
-  #+END_SRC
 * Booting to runlevel 3
   In Debian-likes, modify [[file:/etc/default/grub][/etc/default/grub]], setting:
   
@@ -284,3 +290,19 @@
            -shortest \
            fuga-a-die-iræ-quartet-live.mp4
   #+END_SRC
+* Preventing gnome-settings-daemon from changing keyboard
+  See [[https://blog.shadura.me/2018/02/23/gnome-settings-daemon-keyboard-layouts/][here]]:
+  
+  #+BEGIN_SRC sh
+    gsettings set org.gnome.settings-daemon.plugins.keyboard active false
+  #+END_SRC
+
+  =org.gnome.settings-daemon.plugins.keyboard= doesn't exist; after =gsettings list-schemas | grep keyboard= try:
+
+  - org.gnome.settings-daemon.peripherals.keyboard
+  - org.cinnamon.settings-daemon.peripherals.keyboard
+
+  According to [[https://bugzilla.redhat.com/show_bug.cgi?id=1528892][this]], removed and replaced with
+  =/etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop=; can
+  we remove =/etc/xdg/autostart/*keyboard*= or at least set
+  =X-GNOME-AutoRestart=false=?
