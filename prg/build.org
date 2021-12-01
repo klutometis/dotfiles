@@ -1,4 +1,18 @@
 #+PROPERTY: header-args :shebang #!/usr/bin/env sh
+* Disable speaker beep
+  See e.g. [[https://superuser.com/a/15779][here]]:
+
+  #+BEGIN_SRC sh
+    modprobe -r pcspkr
+  #+END_SRC
+
+  or:
+
+  #+BEGIN_SRC sh
+    blacklist pcspkr
+  #+END_SRC
+
+  in =/etc/modprobe.d/blacklist=; actually, =/etc/modprobe.d/pcspkr.conf=.
 * ffmpeg for gif
   =obs= for screen-capture; then something like [[https://engineering.giphy.com/how-to-make-gifs-with-ffmpeg/][this]]:
 
