@@ -114,6 +114,23 @@
 
   [[http://blog.jwcxz.com/?p=883][JWC thought about building something for Voice and bitlbee]]; claims [[https://weechat.org/][WeeChat]] is
   superior to irssi, by the way!
+
+** Meet chat, hangouts
+
+   [[https://github.com/EionRobb/purple-hangouts][purple-hangouts]] and then:
+
+   #+BEGIN_EXAMPLE
+     acc add hangouts ...@gmail.com
+     acc hangouts on
+   #+END_EXAMPLE
+   
+   and then:
+
+   #+BEGIN_EXAMPLE
+     chat list hangouts
+     chat add Ugz... #name
+     \j #name
+   #+END_EXAMPLE
 * Building xscreensaver
   For getting all the hacks, try e.g.:
   
