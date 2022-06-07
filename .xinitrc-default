@@ -8,6 +8,6 @@ setxkbmap dvorak
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 xscreensaver -nosplash &
-autocutsel -f -s CLIPBOARD
-autocutsel -f -s PRIMARY
+# autocutsel -f -s CLIPBOARD
+# autocutsel -f -s PRIMARY
 redshift-mountain-view &

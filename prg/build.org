@@ -58,6 +58,8 @@
   #+BEGIN_SRC sh :tangle stumpwm-install-modules
     make install-modules
   #+END_SRC
+
+  [[https://github.com/stumpwm/stumpwm-contrib/commit/8eeb306d10e582307c945eb475dafb07d659d26d?diff=split][My commit]] broke surfraw; let's roll it back.
 * Building bitlbee
   See e.g. [[https://wiki.bitlbee.org/HowtoGtalk][Gtalk]]:
   
@@ -129,7 +131,7 @@
    #+BEGIN_EXAMPLE
      chat list hangouts
      chat add Ugz... #name
-     \j #name
+     /j #name
    #+END_EXAMPLE
 * Building xscreensaver
   For getting all the hacks, try e.g.:
