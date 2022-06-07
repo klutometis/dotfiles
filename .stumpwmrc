@@ -37,6 +37,8 @@
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
 
+(define-key *root-map* (kbd "n") "sr-bookmark memegen")
+
 (define-key *root-map* (kbd "o") "sr-moma")
 (define-key *root-map* (kbd "O") "sr-sel-moma")
 
@@ -50,8 +52,8 @@
 (define-key *root-map* (kbd "w") "sr-w")
 (define-key *root-map* (kbd "W") "sr-sel-w")
 
-(define-key *root-map* (kbd "x") "exec /usr/bin/xterm -ls")
-(define-key *root-map* (kbd "C-x") "exec /usr/bin/xterm -ls")
+(define-key *root-map* (kbd "x") "exec /usr/bin/urxvt")
+(define-key *root-map* (kbd "C-x") "exec /usr/bin/urxvt")
 
 ;;; Turn on mode-line; thanks, Prael:
 ;;; <http://prael.wordpress.com/stumpwmrc/>.

@@ -1,5 +1,56 @@
 #include ".Xdefaults-font"
 
+URxvt.saveLines: 2048
+URxvt.scrollBar: false
+URxvt.scrollBar_right: false
+URxvt.foreground: White
+URxvt.background: Black
+URxvt.iso14755: false
+
+! Thanks, Markus Weimar.*
+!
+! * https://www.markusweimar.de/en/color-schemes/
+! 
+! black
+URxvt.color0:  #000000
+URxvt.color8:  #000000
+! red
+URxvt.color1:  #ff7c4d
+URxvt.color9:  #ff7c4d
+! green
+URxvt.color2:  #22ff00
+URxvt.color10: #22ff00
+! yellow
+URxvt.color3:  #ffcc00
+URxvt.color11: #ffcc00
+! blue
+URxvt.color4:  #1a66ff
+URxvt.color12: #1a66ff
+! magenta
+URxvt.color5:  #ff61df
+URxvt.color13: #ff61df
+! cyan
+URxvt.color6:  #00ffff
+URxvt.color14: #00ffff
+! white
+URxvt.color7:  #888888
+URxvt.color15: #ffffff
+
+! See <https://wiki.archlinux.org/title/rxvt-unicode>.
+URxvt.perl-ext-common:  default,matcher,clipboard,url-select,-searchable-scrollback
+! URxvt.keysym.M-c: perl:clipboard:copy
+! URxvt.keysym.M-v: perl:clipboard:paste
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
+URxvt.keysym.C-Delete: perl:matcher:last
+URxvt.keysym.M-Delete: perl:matcher:list
+URxvt.matcher.rend.0: Uline Bold fg5
+! URxvt.perl-ext: default,url-select
+! URxvt.keysym.M-u: perl:url-select:select_next
+! URxvt.url-select.launcher: /usr/bin/xdg-open
+! URxvt.url-select.underline: true
+
+
 ! XTerm*modifyOtherKeys: 1
 
 ! An example for trying to modify backspace; from
