@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 source ~/.xinitrc-default
-xterm -ls &
+urxvt &
 exec stumpwm
