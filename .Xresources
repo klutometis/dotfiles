@@ -1,15 +1,5 @@
 #include ".Xdefaults-font"
 
-! XTerm*modifyOtherKeys: 1
-
-! An example for trying to modify backspace; from
-! <http://www.in-ulm.de/~mascheck/X11/XTerm>:
-! 
-! XTerm*otherKeymap.translations:  #override \
-!     None<Key>BackSpace:      string(0x08) \n\
-!     Ctrl<Key>BackSpace:      string(0x7F) \n
-
-Xautolock.corners: ++++
 URxvt.perl-ext: default,matcher,clipboard,url-select,keyboard-select
 URxvt.url-launcher: /usr/bin/xdg-open
 URxvt.matcher.button: 1
@@ -21,13 +11,18 @@ URxvt.scrollBar: false
 ! https://addy-dclxvi.github.io/post/configuring-urxvt/
 URxvt.copyCommand: xclip -i -selection clipboard
 URxvt.pasteCommand: xclip -o -selection clipboard
-URxvt.keysym.M-c: perl:clipboard:copy
-URxvt.keysym.M-v: perl:clipboard:paste
-URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+! URxvt.keysym.C-S-c: perl:clipboard:copy
+! URxvt.keysym.C-S-v: perl:clipboard:paste
+! URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+URxvt.keyboard-select.clipboard: true
 URxvt.keysym.M-Escape: perl:keyboard-select:activate
 URxvt.keysym.M-s: perl:keyboard-select:search
 URxvt.keysym.M-u: perl:url-select:select_next
-URxvt.keyboard-select.clipboard: true
+
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
 XTerm*foreground: white
 XTerm*background: black
