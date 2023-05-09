@@ -107,6 +107,10 @@
   (add-hook 'bazel-mode-hook
     (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier))))
 
+(use-package bracketed-paste
+  :config
+  (bracketed-paste-enable))
+
 (use-package better-defaults
   :config
   ;;; Don't flash on bell, after all.
