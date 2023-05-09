@@ -10,8 +10,8 @@
 
 (define-key *root-map* (kbd "a") "sr-bookmark calendar")
 
-(define-key *root-map* (kbd "c") "sr-code-search")
-(define-key *root-map* (kbd "C") "sr-sel-code-search")
+(define-key *root-map* (kbd "c") "surfraw \"code-search\"")
+(define-key *root-map* (kbd "C") "eval (surfraw::surfraw \"code-search\" (get-x-selection))")
 
 (define-key *root-map* (kbd "d") "sr-drive")
 (define-key *root-map* (kbd "D") "sr-sel-drive")
@@ -22,8 +22,8 @@
 (define-key *root-map* (kbd "g") "sr-google")
 (define-key *root-map* (kbd "G") "sr-sel-google")
 
-(define-key *root-map* (kbd "h") "sr-chicken-regex")
-(define-key *root-map* (kbd "H") "sr-sel-chicken-regex")
+(define-key *root-map* (kbd "h") "surfraw \"chat\"")
+(define-key *root-map* (kbd "H") "eval (surfraw::surfraw \"chat\" (get-x-selection))")
 
 ;; Mnemonic is: infinite and negation of infinite.
 (define-key *root-map* (kbd "i") "exec ~/bin/mplayer-loop")
@@ -37,8 +37,10 @@
 (define-key *root-map* (kbd "m") "sr-gmail")
 (define-key *root-map* (kbd "M") "sr-sel-gmail")
 
-(define-key *root-map* (kbd "o") "sr-moma")
-(define-key *root-map* (kbd "O") "sr-sel-moma")
+(define-key *root-map* (kbd "n") "sr-bookmark memegen")
+
+(define-key *root-map* (kbd "o") "surfraw \"moma\"")
+(define-key *root-map* (kbd "O") "eval (surfraw::surfraw \"moma\" (get-x-selection))")
 
 (define-key *root-map* (kbd "p") "exec ~/bin/mplayer-pause")
 
