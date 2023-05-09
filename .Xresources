@@ -1,44 +1,56 @@
 #include ".Xdefaults-font"
 
-! XTerm*modifyOtherKeys: 1
+URxvt.perl-ext: default,matcher,clipboard,url-select,keyboard-select
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
 
-! An example for trying to modify backspace; from
-! <http://www.in-ulm.de/~mascheck/X11/XTerm>:
-! 
-! XTerm*otherKeymap.translations:  #override \
-!     None<Key>BackSpace:      string(0x08) \n\
-!     Ctrl<Key>BackSpace:      string(0x7F) \n
+URxvt.foreground: white
+URxvt.background: black
+URxvt.scrollBar: false
 
-Xautolock.corners: ++++
+! https://addy-dclxvi.github.io/post/configuring-urxvt/
+URxvt.copyCommand: xclip -i -selection clipboard
+URxvt.pasteCommand: xclip -o -selection clipboard
+! URxvt.keysym.C-S-c: perl:clipboard:copy
+! URxvt.keysym.C-S-v: perl:clipboard:paste
+! URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+URxvt.keyboard-select.clipboard: true
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-s: perl:keyboard-select:search
+URxvt.keysym.M-u: perl:url-select:select_next
+URxvt.keysym.M-C-s: builtin-string:
+URxvt.url-select.underline: true
+! Set the button to something else to avoid double-openings.*
+!
+! * https://www.reddit.com/r/urxvt/comments/4xeoji/comment/db3fytu/?utm_source=share&utm_medium=web2x&context=3
+URxvt.url-select.button: 2
+
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
 XTerm*foreground: white
 XTerm*background: black
 XTerm*scrollBar: false
 
-! Fix meta behaviour
 XTerm*eightBitInput: false
+XTerm*metaSendsEscape: true
 
-! Appears to fix the default 80x24 behaviour
 XTerm*waitForMap: true
 XTerm*maximized: true
 
-! Not sure if we need this to fix the resizing behaviour with stumpwm.
 XTerm*ptySttySize: true
 
-! Set utf8 regardless of locale?
 XTerm*utf8: 2
 
-! Allow ratpoison to send meta key
 XTerm*allowSendEvents: true
 
-! Interesting? does not seem to work
 XTerm.perl-ext-common: default,matcher
 XTerm.urlLauncher: opera
 XTerm.matcher.button: 2
 XTerm.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
 
-! Thanks, Rowan Rodrik:
-! <http://blog.bigsmoke.us/2010/01/31/xterm-clipboard-selection>.
 XTerm*VT100.Translations: #override \
     Shift<Key>Insert: insert-selection(CLIPBOARD) \n\
     <Key>Insert: insert-selection(PRIMARY) \n\
@@ -47,127 +59,8 @@ XTerm*VT100.Translations: #override \
     Shift<Btn1Motion>: select-extend() \n\
     Shift<Btn1Up>: select-end(CLIPBOARD)
 
-! Thanks, Romain Francoise: <http://blog.orebokech.com/>; allows for
-! the selections of URLs.
-! XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
-
-! On second thought, let's treat all printable characters as letters;
-! and, for good measure, add line-feeds so we can click past the end
-! of the line:
 XTerm*charClass: 33-126:48,10:48
 
-! Found these here:
-! <https://github.com/league/dot-files/blob/master/app-defaults/XTerm>;
-! appear to fix some of the key-combinations in Emacs involving e.g.
-! punctuation and arrows.
-! XTerm*VT100.translations: #override \
-!   ~Meta  ~Ctrl  ~Shift  <Key>Delete: string(0x1b) string("[3~")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>1: string(0x1b) string("[21x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>2: string(0x1b) string("[22x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>3: string(0x1b) string("[23x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>4: string(0x1b) string("[24x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>5: string(0x1b) string("[25x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>6: string(0x1b) string("[26x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>7: string(0x1b) string("[27x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>8: string(0x1b) string("[28x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>9: string(0x1b) string("[29x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>0: string(0x1b) string("[20x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>=: string(0x1b) string("[2=x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>/: string(0x1b) string("[2/x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>;: string(0x1b) string("[2;x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>-: string(0x1b) string("[2-x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>`: string(0x1b) string("[2`x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>': string(0x1b) string("[2'x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>comma: string(0x1b) string("[2,x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>.: string(0x1b) string("[2.x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>backslash: string(0x1b) string("[2\\x")\n\
-!   ~Meta   Ctrl   Shift  <Key>1: string(0x1b) string("[31x")\n\
-!   ~Meta   Ctrl   Shift  <Key>2: string(0x1b) string("[32x")\n\
-!   ~Meta   Ctrl   Shift  <Key>3: string(0x1b) string("[33x")\n\
-!   ~Meta   Ctrl   Shift  <Key>4: string(0x1b) string("[34x")\n\
-!   ~Meta   Ctrl   Shift  <Key>5: string(0x1b) string("[35x")\n\
-!   ~Meta   Ctrl   Shift  <Key>6: string(0x1b) string("[36x")\n\
-!   ~Meta   Ctrl   Shift  <Key>7: string(0x1b) string("[37x")\n\
-!   ~Meta   Ctrl   Shift  <Key>8: string(0x1b) string("[38x")\n\
-!   ~Meta   Ctrl   Shift  <Key>9: string(0x1b) string("[39x")\n\
-!   ~Meta   Ctrl   Shift  <Key>0: string(0x1b) string("[30x")\n\
-!   ~Meta   Ctrl   Shift  <Key>=: string(0x1b) string("[3=x")\n\
-!   ~Meta   Ctrl   Shift  <Key>/: string(0x1b) string("[3/x")\n\
-!   ~Meta   Ctrl   Shift  <Key>;: string(0x1b) string("[3;x")\n\
-!   ~Meta   Ctrl   Shift  <Key>-: string(0x1b) string("[3-x")\n\
-!   ~Meta   Ctrl   Shift  <Key>`: string(0x1b) string("[3`x")\n\
-!   ~Meta   Ctrl   Shift  <Key>': string(0x1b) string("[3'x")\n\
-!   ~Meta   Ctrl   Shift  <Key>comma: string(0x1b) string("[3,x")\n\
-!   ~Meta   Ctrl   Shift  <Key>.: string(0x1b) string("[3.x")\n\
-!   ~Meta   Ctrl   Shift  <Key>backslash: string(0x1b) string("[3\\x")\n\
-!   ~Meta   Ctrl   Shift  <Key>a: string(0x1b) string("[3ax")\n\
-!   ~Meta   Ctrl   Shift  <Key>b: string(0x1b) string("[3bx")\n\
-!   ~Meta   Ctrl   Shift  <Key>c: string(0x1b) string("[3cx")\n\
-!   ~Meta   Ctrl   Shift  <Key>d: string(0x1b) string("[3dx")\n\
-!   ~Meta   Ctrl   Shift  <Key>e: string(0x1b) string("[3ex")\n\
-!   ~Meta   Ctrl   Shift  <Key>f: string(0x1b) string("[3fx")\n\
-!   ~Meta   Ctrl   Shift  <Key>g: string(0x1b) string("[3gx")\n\
-!   ~Meta   Ctrl   Shift  <Key>h: string(0x1b) string("[3hx")\n\
-!   ~Meta   Ctrl   Shift  <Key>i: string(0x1b) string("[3ix")\n\
-!   ~Meta   Ctrl   Shift  <Key>j: string(0x1b) string("[3jx")\n\
-!   ~Meta   Ctrl   Shift  <Key>k: string(0x1b) string("[3kx")\n\
-!   ~Meta   Ctrl   Shift  <Key>l: string(0x1b) string("[3lx")\n\
-!   ~Meta   Ctrl   Shift  <Key>m: string(0x1b) string("[3mx")\n\
-!   ~Meta   Ctrl   Shift  <Key>n: string(0x1b) string("[3nx")\n\
-!   ~Meta   Ctrl   Shift  <Key>o: string(0x1b) string("[3ox")\n\
-!   ~Meta   Ctrl   Shift  <Key>p: string(0x1b) string("[3px")\n\
-!   ~Meta   Ctrl   Shift  <Key>q: string(0x1b) string("[3qx")\n\
-!   ~Meta   Ctrl   Shift  <Key>r: string(0x1b) string("[3rx")\n\
-!   ~Meta   Ctrl   Shift  <Key>s: string(0x1b) string("[3sx")\n\
-!   ~Meta   Ctrl   Shift  <Key>t: string(0x1b) string("[3tx")\n\
-!   ~Meta   Ctrl   Shift  <Key>u: string(0x1b) string("[3ux")\n\
-!   ~Meta   Ctrl   Shift  <Key>v: string(0x1b) string("[3vx")\n\
-!   ~Meta   Ctrl   Shift  <Key>w: string(0x1b) string("[3wx")\n\
-!   ~Meta   Ctrl   Shift  <Key>x: string(0x1b) string("[3xx")\n\
-!   ~Meta   Ctrl   Shift  <Key>y: string(0x1b) string("[3yx")\n\
-!   ~Meta   Ctrl   Shift  <Key>z: string(0x1b) string("[3zx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Home: string(0x1b) string("[4Hx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Home: string(0x1b) string("[2Hx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>End: string(0x1b) string("[4Ex")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>End: string(0x1b) string("[2Ex")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Prior: string(0x1b) string("[4Px")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Prior: string(0x1b) string("[2Px")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Next: string(0x1b) string("[4Nx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Next: string(0x1b) string("[2Nx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Delete: string(0x1b) string("[4%x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Delete: string(0x1b) string("[2%x")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Delete: string(0x1b) string("[1%x")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Return: string(0x1b) string("[4$x")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Return: string(0x1b) string("[2$x")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Return: string(0x1b) string("[1$x")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Up: string(0x1b) string("[4Ux")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Up: string(0x1b) string("[2Ux")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Up: string(0x1b) string("[1Ux")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Left: string(0x1b) string("[4Lx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Left: string(0x1b) string("[2Lx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Left: string(0x1b) string("[1Lx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Down: string(0x1b) string("[4Dx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Down: string(0x1b) string("[2Dx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Down: string(0x1b) string("[1Dx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Right: string(0x1b) string("[4Rx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Right: string(0x1b) string("[2Rx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Right: string(0x1b) string("[1Rx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>BackSpace: string(0x1b) string("[4Bx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>BackSpace: string(0x1b) string("[2Bx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>BackSpace: string(0x1b) string("[1Bx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>Tab: string(0x1b) string("[4Tx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>Tab: string(0x1b) string("[2Tx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>Tab: string(0x1b) string("[1Tx")\n\
-!    Meta  ~Ctrl  ~Shift  <Key>space: string(0x1b) string("[4Sx")\n\
-!   ~Meta   Ctrl  ~Shift  <Key>space: string(0x1b) string("[2Sx")\n\
-!   ~Meta  ~Ctrl   Shift  <Key>space: string(0x1b) string("[1Sx")\n\
-
-! See
-! <http://lukas.zapletalovi.com/2013/07/hidden-gems-of-xterm.html>;
-! also <https://github.com/mbedna/mbedna/blob/master/.Xresources> and
-! <https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=xterm+exec-formatted+chrome>.
-!
-! Get this to work for e.g. Googling, too!
 *VT100*translations: #override Shift <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY)
 
 XTerm.VT100.translations: #override \
