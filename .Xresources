@@ -1,12 +1,37 @@
 #include ".Xdefaults-font"
 
-URxvt.perl-ext: default,matcher,clipboard,url-select,keyboard-select
-URxvt.url-launcher: /usr/bin/xdg-open
-URxvt.matcher.button: 1
-
 URxvt.foreground: white
 URxvt.background: black
 URxvt.scrollBar: false
+
+! black
+*color0:  #000000
+*color8:  #000000
+! red
+*color1:  #ff7c4d
+*color9:  #ff7c4d
+! green
+*color2:  #22ff00
+*color10: #22ff00
+! yellow
+*color3:  #ffcc00
+*color11: #ffcc00
+! blue
+*color4:  #1a66ff
+*color12: #1a66ff
+! magenta
+*color5:  #ff61df
+*color13: #ff61df
+! cyan
+*color6:  #00ffff
+*color14: #00ffff
+! white
+*color7:  #888888
+*color15: #ffffff
+
+URxvt.perl-ext: default,matcher,clipboard,url-select,keyboard-select
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
 
 ! https://addy-dclxvi.github.io/post/configuring-urxvt/
 URxvt.copyCommand: xclip -i -selection clipboard
