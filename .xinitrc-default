@@ -11,3 +11,5 @@ xscreensaver -nosplash &
 # autocutsel -f -s CLIPBOARD
 # autocutsel -f -s PRIMARY
 redshift-mountain-view &
+# /usr/bin/xscreensaver -nosplash &
+# ~/bin/redshift-mountain-view &
