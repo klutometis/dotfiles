@@ -59,3 +59,5 @@
 ;;; <http://prael.wordpress.com/stumpwmrc/>.
 (if (not (head-mode-line (current-head)))
     (toggle-mode-line (current-screen) (current-head)))
+
+(run-shell-command "setxkbmap dvorak")
