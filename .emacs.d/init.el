@@ -95,6 +95,8 @@
 (use-package apache-mode
   :mode ("\\.conf\\'" . apache-mode))
 
+(use-package atomic-chrome)
+
 (use-package auto-package-update
   :config
   (auto-package-update-maybe)
@@ -249,7 +251,7 @@
 
 (use-package discord)
 
-(use-package dot-mode :mode "\\.dot\\'")
+(use-package graphviz-dot-mode :mode ("\\.dot\\'" . graphviz-dot-mode))
 
 (use-package edit-server)
 
@@ -280,6 +282,8 @@
 
 (use-package flyspell
   :disabled t)
+
+(use-package format-all)
 
 (use-package full-ack)
 
