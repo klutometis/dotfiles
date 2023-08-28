@@ -13,14 +13,14 @@
 (define-key *root-map* (kbd "c") "surfraw \"code-search\"")
 (define-key *root-map* (kbd "C") "eval (surfraw::surfraw \"code-search\" (get-x-selection))")
 
-(define-key *root-map* (kbd "d") "sr-drive")
-(define-key *root-map* (kbd "D") "sr-sel-drive")
+(define-key *root-map* (kbd "d") "surfraw \"drive\"")
+(define-key *root-map* (kbd "D") "eval (surfraw::surfraw \"drive\" (get-x-selection))")
 
-(define-key *root-map* (kbd "e") "sr-oed")
-(define-key *root-map* (kbd "E") "sr-sel-oed")
+(define-key *root-map* (kbd "e") "surfraw \"oed\"")
+(define-key *root-map* (kbd "E") "eval (surfraw::surfraw \"oed\" (get-x-selection))")
 
-(define-key *root-map* (kbd "g") "sr-google")
-(define-key *root-map* (kbd "G") "sr-sel-google")
+(define-key *root-map* (kbd "g") "surfraw \"google\"")
+(define-key *root-map* (kbd "G") "eval (surfraw::surfraw \"google\" (get-x-selection))")
 
 (define-key *root-map* (kbd "h") "surfraw \"chat\"")
 (define-key *root-map* (kbd "H") "eval (surfraw::surfraw \"chat\" (get-x-selection))")
@@ -34,8 +34,8 @@
 (define-key *root-map* (kbd "l") "exec ~/bin/xscreensaver-lock")
 (define-key *root-map* (kbd "C-l") "exec ~/bin/xscreensaver-lock")
 
-(define-key *root-map* (kbd "m") "sr-gmail")
-(define-key *root-map* (kbd "M") "sr-sel-gmail")
+(define-key *root-map* (kbd "m") "surfraw \"gmail\"")
+(define-key *root-map* (kbd "M") "eval (surfraw::surfraw \"code-search\" (get-x-selection))")
 
 (define-key *root-map* (kbd "n") "sr-bookmark memegen")
 
@@ -46,11 +46,11 @@
 
 (define-key *root-map* (kbd "q") "sr-bookmark critique")
 
-(define-key *root-map* (kbd "r") "sr-groups")
-(define-key *root-map* (kbd "R") "sr-sel-groups")
+(define-key *root-map* (kbd "r") "surfraw \"groups\"")
+(define-key *root-map* (kbd "R") "eval (surfraw::surfraw \"groups\" (get-x-selection))")
 
-(define-key *root-map* (kbd "w") "sr-w")
-(define-key *root-map* (kbd "W") "sr-sel-w")
+(define-key *root-map* (kbd "w") "surfraw \"w\"")
+(define-key *root-map* (kbd "W") "eval (surfraw::surfraw \"w\" (get-x-selection))")
 
 (define-key *root-map* (kbd "x") "exec /usr/bin/urxvt")
 (define-key *root-map* (kbd "C-x") "exec /usr/bin/urxvt")
