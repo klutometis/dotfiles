@@ -72,11 +72,11 @@ export EC2_HOME=/usr/local/ec2
 export EDITOR='emacs-wait'
 # Use the hard-coded framebuffer font.
 export FBFONT=fim://
-export GOPATH=~/prg/go
-export GOROOT=~/lib/go
-export GOOS=linux
-export GOARCH=amd64
-export GOBIN=~/bin
+# export GOPATH=~/prg/go
+# export GOROOT=~/lib/go
+# export GOOS=linux
+# export GOARCH=amd64
+# export GOBIN=~/bin
 export GROFF_NO_SGR=1
 export HADOOP_PREFIX=/usr/local/hadoop
 export HADOOP_COMMON_HOME=$HADOOP_PREFIX
