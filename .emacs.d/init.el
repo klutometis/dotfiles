@@ -283,7 +283,16 @@
 (use-package flyspell
   :disabled t)
 
-(use-package format-all)
+(use-package format-all
+  :config
+  (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
+  (setq-default format-all-formatters
+                '(("JSON" (deno))
+                  ("TypeScript" (deno))
+                  ("JavaScript" (deno))
+                  ("YAML" (prettier))
+                  ("Emacs Lisp" (emacs-lisp))
+                  ("Bazel" (buildifier)))))
 
 (use-package full-ack)
 
@@ -418,10 +427,12 @@
   :config
   (add-hook 'markdown-mode-hook
     (lambda ()
-      (typopunct-change-language 'english t)
-      (typopunct-mode 1)
+      ;; (typopunct-change-language 'english t)
+      ;; (typopunct-mode 1)
       (auto-fill-mode 1)
-      (unbind-key "C-c C-s" markdown-mode-map))))
+      (unbind-key "C-c C-s" markdown-mode-map)
+      (setq-local format-all-formatters
+                  '(("Markdown" (prettier "--prose-wrap=always")))))))
 
 (use-package midnight
   :config
@@ -473,8 +484,9 @@
   (add-hook 'org-mode-hook
     (lambda ()
       (auto-fill-mode)
-      (typopunct-change-language 'english t)
-      (typopunct-mode 1)))
+      ;; (typopunct-change-language 'english t)
+      ;; (typopunct-mode 1)
+      ))
   
   ;; Make the code-export work with light backgrounds; see e.g.
   ;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
@@ -941,35 +953,35 @@ Then switch to the process buffer."
 
 ;; Let's do auto-quotes, dashes, &c.; see:
 ;; <http://www.emacswiki.org/emacs/TypographicalPunctuationMarks>.
-(use-package typopunct
-  :config
-  ;; Wrap selected text in smart quotes.
-  (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
-    (let* ((lang (or (get-text-property (point) 'typopunct-language)
-                     typopunct-buffer-language))
-           (omark (if single
-                      (typopunct-opening-single-quotation-mark lang)
-                    (typopunct-opening-quotation-mark lang)))
-           (qmark (if single
-                      (typopunct-closing-single-quotation-mark lang)
-                    (typopunct-closing-quotation-mark lang))))
-      (cond
-       (mark-active
-        (let ((skeleton-end-newline nil)
-              (singleo (typopunct-opening-single-quotation-mark lang))
-              (singleq (typopunct-closing-single-quotation-mark lang)))
-          (if (> (point) (mark))
-              (exchange-point-and-mark))
-          (save-excursion
-            (while (re-search-forward (regexp-quote (string omark)) (mark) t)
-              (replace-match (regexp-quote (string singleo)) nil nil)))
-          (save-excursion
-            (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
-              (replace-match (regexp-quote (string singleq)) nil nil)))
-          (skeleton-insert (list nil omark '_ qmark) -1)))
-       ((looking-at (regexp-opt (list (string omark) (string qmark))))
-        (forward-char 1))
-       (t ad-do-it)))))
+;; (use-package typopunct
+;;   :config
+;;   ;; Wrap selected text in smart quotes.
+;;   (defadvice typopunct-insert-quotation-mark (around wrap-region activate)
+;;     (let* ((lang (or (get-text-property (point) 'typopunct-language)
+;;                      typopunct-buffer-language))
+;;            (omark (if single
+;;                       (typopunct-opening-single-quotation-mark lang)
+;;                     (typopunct-opening-quotation-mark lang)))
+;;            (qmark (if single
+;;                       (typopunct-closing-single-quotation-mark lang)
+;;                     (typopunct-closing-quotation-mark lang))))
+;;       (cond
+;;        (mark-active
+;;         (let ((skeleton-end-newline nil)
+;;               (singleo (typopunct-opening-single-quotation-mark lang))
+;;               (singleq (typopunct-closing-single-quotation-mark lang)))
+;;           (if (> (point) (mark))
+;;               (exchange-point-and-mark))
+;;           (save-excursion
+;;             (while (re-search-forward (regexp-quote (string omark)) (mark) t)
+;;               (replace-match (regexp-quote (string singleo)) nil nil)))
+;;           (save-excursion
+;;             (while (re-search-forward (regexp-quote (string qmark)) (mark) t)
+;;               (replace-match (regexp-quote (string singleq)) nil nil)))
+;;           (skeleton-insert (list nil omark '_ qmark) -1)))
+;;        ((looking-at (regexp-opt (list (string omark) (string qmark))))
+;;         (forward-char 1))
+;;        (t ad-do-it)))))
 
 (use-package unbound)
 
@@ -1014,6 +1026,9 @@ Then switch to the process buffer."
 ;;;; TODO: Find some mechanism to store these in an auxiliary package;
 ;;;; see
 ;;;; e.g. <http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html#“local”-packages>.
+
+(add-hook 'prog-mode-hook 'format-all-mode)
+(add-hook 'prog-mode-hook 'format-all-ensure-formatter)
 
 ;;; TODO: Do we need to set this in specific modes (e.g. cc-mode), or
 ;;; does it suffice to set it globally here?
