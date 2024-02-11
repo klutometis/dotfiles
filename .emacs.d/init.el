@@ -287,12 +287,16 @@
   :config
   (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
   (setq-default format-all-formatters
-                '(("JSON" (deno))
-                  ("TypeScript" (deno))
-                  ("JavaScript" (deno))
-                  ("YAML" (prettier))
+                '(
+                  ("Bazel" (buildifier))
                   ("Emacs Lisp" (emacs-lisp))
-                  ("Bazel" (buildifier)))))
+                  ("JSON" (deno))
+                  ("Python" (black))
+                  ("JavaScript" (deno))
+                  ("TypeScript" (deno))
+                  ("YAML" (prettier))
+                  ))
+  (add-hook 'before-save-hook 'format-all-buffer))
 
 (use-package full-ack)
 
