@@ -44,9 +44,9 @@
   :config
   ;; Let's try using the home-keys, even though the author recommends
   ;; using more than 10.
-  ;; 
+  ;;
   ;; (setq ace-jump-mode-move-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
-  
+
   ;; Everything becomes invisible, otherwise; should we let emacs know
   ;; that we have a dark background, somehow?
   ;;
@@ -87,7 +87,7 @@
   ;; On second thought, let's use home-row keys which are not already
   ;; defined in aw-dispatch-list.
   (setq aw-keys '(?a ?e ?u ?i ?d ?h ?t ?s))
-  
+
   :config
   ;; Otherwise, the dimming makes the screens unreadable.
   (set-face-foreground 'aw-background-face "gray100"))
@@ -153,7 +153,7 @@
                    url))
 
   (setq browse-url-browser-function 'browse-url-chrome)
-  
+
   (defun browse-lucky (start end)
     (interactive "r")
     (let ((q (buffer-substring-no-properties start end)))
@@ -165,7 +165,7 @@
   (setq calendar-latitude 37.3894
         calendar-longitude -122.0819
         calendar-location-name "Mountain View, CA")
-  
+
   :config
   ;; Add Discordian date to other-dates
   (defadvice calendar-other-dates
@@ -192,7 +192,7 @@
   :bind ("C-TAB" . company-complete)
   :config
   (global-company-mode)
-  
+
   ;; Make company actually visible in the terminal; thanks, nsf!
   ;; <https://github.com/nsf/gocode/blob/master/emacs-company/README.md>.
   (custom-set-faces
@@ -210,7 +210,7 @@
    '(company-tooltip-common-selection
      ((((type x)) (:inherit company-tooltip-selection :weight bold))
       (t (:inherit company-tooltip-selection)))))
-  
+
   (use-package helm-company
     :config
     (bind-key "C-:" 'helm-company company-mode-map)
@@ -324,12 +324,12 @@
          ;;
          ;; Other people have experienced this, too, with tramp:
          ;; <https://github.com/emacs-helm/helm/issues/749>.
-         ;; 
+         ;;
          ;; ("C-x b" . switch-to-buffer)
-         ;; 
+         ;;
          ;; You know what? I can't fucking stand helm-find-files,
          ;; either; let's go back to ido!
-         ;; 
+         ;;
          ;; ("C-x C-f" . helm-find-files)
          ("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
@@ -365,7 +365,7 @@
 ;;   :init
 ;;   ;; Helm-swoop should save file after edit.
 ;;   (setq helm-multi-swoop-edit-save t)
-  
+
 ;;   :config
 ;;   (bind-keys :map helm-swoop-map
 ;;              ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
@@ -411,7 +411,7 @@
   :config
   ;; These doesn't appear to be valid anymore; maybe magit-diff-added
   ;; and magit-diff-removed?
-  ;; 
+  ;;
   ;; (set-face-foreground 'magit-diff-add "green3")
   ;; (set-face-foreground 'magit-diff-del "red3")
   (unless window-system
@@ -420,7 +420,7 @@
     ;; (set-face-background 'magit-tag "black")
     )
   (setq magit-auto-revert-mode nil)
-  
+
   ;; Make this slightly more permissive such that the terminal question-mark or
   ;; colon are optional.
   (setq magit-process-yes-or-no-prompt-regexp
@@ -449,7 +449,7 @@
 ;; (use-package mediawiki)
 
 ;;; Local package for everything that can't be done with use-package.
-;;; 
+;;;
 ;;; TODO: consider calling it bootstrap and placing towards the
 ;;; beginning?
 ;; (use-package miscellenea
@@ -468,10 +468,10 @@
 (use-package openwith
   :init
   (setf openwith-associations
-  '(("\\.pdf\\'" "google-chrome" (file))
-    ("\\.mp3\\'" "mplayer" (file))
-    ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
-    ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
+        '(("\\.pdf\\'" "google-chrome" (file))
+          ("\\.mp3\\'" "mplayer" (file))
+          ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
+          ("\\.\\(?:jp?g\\|png\\)\\'" "sxiv" (file))))
   :config
   (openwith-mode t))
 
@@ -491,7 +491,7 @@
       ;; (typopunct-change-language 'english t)
       ;; (typopunct-mode 1)
       ))
-  
+
   ;; Make the code-export work with light backgrounds; see e.g.
   ;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
   (setq org-html-head "<style type=\"text/css\">
@@ -527,7 +527,7 @@
     pre span.org-rainbow-delimiters-depth-9  {color:#887070;}
     pre span.org-sh-quoted-exec              {color:#FF1493;}
   </style>")
-  
+
   ;; Actually use the style defined above in org-html-head.
   (setq org-html-htmlize-output-type 'css)
 
@@ -551,7 +551,7 @@
   (add-to-list 'org-src-lang-modes '("c++" . c++))
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
   (add-to-list 'org-src-lang-modes '("ditaa" . artist))
-  
+
   ;; See <http://orgmode.org/worg/org-issues.html> and
   ;; <http://article.gmane.org/gmane.emacs.orgmode/33955>.
   (defun org-babel-execute:ditaa (body params)
@@ -643,7 +643,7 @@ This function is called by `org-babel-execute-src-block'."
   ;; For LaTeX output, use no indentation but paragraph-skips by
   ;; default.
   ;; (add-to-list 'org-export-latex-packages-alist '("" "parskip"))
-  
+
   (defun org-export-html-format-image (src par-open)
     "Create image tag with source and attributes."
     (save-match-data
@@ -669,30 +669,30 @@ This function is called by `org-babel-execute-src-block'."
                        (concat "\n<p>" caption "</p>")
                        (if org-par-open "\n<p>" ""))))))))
 
-    (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
+  (bind-key "C-x C-s" 'org-edit-src-save org-src-mode-map)
 
-    ;; (setq org-latex-pdf-process
-    ;;       '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+  ;; (setq org-latex-pdf-process
+  ;;       '("latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
-    (setq org-latex-pdf-process
-          '("latexmk -pdflatex=lualatex -latex=lualatex -pdf -f %f"))
+  (setq org-latex-pdf-process
+        '("latexmk -pdflatex=lualatex -latex=lualatex -pdf -f %f"))
 
-    (setq org-latex-default-packages-alist
-          '(;; ("AUTO" "inputenc"  t)
-            ;; ("T1"   "fontenc"   t)
-            ;; (""     "fixltx2e"  nil)
-            ;; (""     "graphicx"  t)
-            ;; (""     "grffile"   t)
-            ;; (""     "longtable" nil)
-            ;; (""     "wrapfig"   nil)
-            ;; (""     "rotating"  nil)
-            ;; ("normalem" "ulem"  t)
-            (""     "amsmath"   t)
-            ;; (""     "textcomp"  t)
-            (""     "amssymb"   t)
-            ;; (""     "capt-of"   nil)
-            ("colorlinks=true,urlcolor=blue"     "hyperref"  nil)
-            ("" "fontspec" t))))
+  (setq org-latex-default-packages-alist
+        '(;; ("AUTO" "inputenc"  t)
+          ;; ("T1"   "fontenc"   t)
+          ;; (""     "fixltx2e"  nil)
+          ;; (""     "graphicx"  t)
+          ;; (""     "grffile"   t)
+          ;; (""     "longtable" nil)
+          ;; (""     "wrapfig"   nil)
+          ;; (""     "rotating"  nil)
+          ;; ("normalem" "ulem"  t)
+          (""     "amsmath"   t)
+          ;; (""     "textcomp"  t)
+          (""     "amssymb"   t)
+          ;; (""     "capt-of"   nil)
+          ("colorlinks=true,urlcolor=blue"     "hyperref"  nil)
+          ("" "fontspec" t))))
 
 (use-package paredit
   :config
@@ -755,9 +755,9 @@ Then switch to the process buffer."
          ("\\.sxml\\'" . scheme-mode))
   :config
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-  
+
   (setq scheme-program-name "csi -n")
-  
+
   ;; Evaluate whole Scheme buffer.
   (defun scheme-send-buffer ()
     "Just send the goddamn thing."
@@ -773,7 +773,7 @@ Then switch to the process buffer."
   (bind-keys :map scheme-mode-map
              ("C-c b" . scheme-send-buffer)
              ("C-c B" . scheme-send-buffer-and-go))
-  
+
   ;; Indent-functions for match, etc.
   (put 'and-let* 'scheme-indent-function 1)
   (put 'bind-lambda 'scheme-indent-function 1)
@@ -854,7 +854,7 @@ Then switch to the process buffer."
   :config
   ;; Turn color on
   (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-  
+
   ;; Also turn color on for ad-hoc commands (see
   ;; <http://stackoverflow.com/questions/5819719/emacs-shell-command-output-not-showing-ansi-colors-but-the-code>).
   (defadvice display-message-or-buffer (before ansi-color activate)
@@ -918,7 +918,7 @@ Then switch to the process buffer."
   (setq sql-ms-options '("--" "-w" "300" "-n")))
 
 (use-package sql-indent)
-  
+
 (use-package surfraw
   :load-path "lisp/"
   :ensure nil
@@ -945,7 +945,7 @@ Then switch to the process buffer."
               ("R" . surfraw-groups-region)
               ("w" . surfraw-W)
               ("W" . surfraw-W-region)
-              
+
               ("a" .
                (lambda () (interactive) (surfraw-bookmark "calendar")))
               ("q" .
@@ -1239,7 +1239,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c u" . kill-line-backward)
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
- ("C-x C-r" . revert-buffer) 
+ ("C-x C-r" . revert-buffer)
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
  ("M-;" . comment-dwim)
@@ -1311,7 +1311,7 @@ point reaches the beginning or end of the buffer, stop there."
           (rename-file name new-name 1)
           (rename-buffer new-name)
           (set-visited-file-name new-name)
-                    (set-buffer-modified-p nil))))))
+          (set-buffer-modified-p nil))))))
 
 ;;; Copy the current line, don't kill it; see
 ;;; <http://www.emacswiki.org/emacs/CopyingWholeLines> for other
