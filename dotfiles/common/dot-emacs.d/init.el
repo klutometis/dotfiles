@@ -50,10 +50,24 @@
   ;;; Don't flash on bell, after all.
   (setq visible-bell nil))
 
+(use-package compile
+  :config
+  (setq compilation-ask-about-save nil)
+  (setq compilation-always-kill t))
+
 (use-package desktop
   :config
   (desktop-save-mode 1)
   (add-to-list 'desktop-globals-to-save 'kill-ring))
+
+(use-package dired-subtree
+  :bind (:map dired-mode-map
+              ("i" . dired-subtree-insert)
+              (";" . dired-subtree-remove)))
+
+(use-package emacs
+  :hook
+  ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
 
 (use-package find-dired
   :bind (("C-c f" . find-grep-dired)
