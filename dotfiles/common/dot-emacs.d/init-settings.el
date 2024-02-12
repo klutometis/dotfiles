@@ -2,6 +2,9 @@
 (delete-selection-mode t)
 
 ;;; Show the column-number in addition to the row-number in the
+;;; status-bar.
+(setq column-number-mode t)
+
 ;;; Set the location of the custom file
 (setq custom-file "~/.emacs.d/custom.el")
 
