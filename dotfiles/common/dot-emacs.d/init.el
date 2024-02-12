@@ -162,6 +162,12 @@
   (setq magit-process-yes-or-no-prompt-regexp
         " [\[(]\\([Yy]\\(?:es\\)?\\)[/|]\\([Nn]o?\\)[\])] ?[?:]? ?$"))
 
+(use-package markdown-mode
+  :hook ((markdown-mode-hook
+	  . (lambda ()
+	      (auto-fill-mode 1)
+	      (unbind-key "C-c C-s" markdown-mode-map)))))
+
 (use-package midnight
   :config
   (setq clean-buffer-list-delay-general 7)
