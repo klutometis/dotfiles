@@ -1,3 +1,16 @@
+;;; Insert the buffer-name when working with the minibuffer; thanks,
+;;; polyglot: <http://stackoverflow.com/q/455345>.
+(defun current-buffer-not-mini ()
+  "Return current-buffer if current buffer is not the *mini-buffer*
+  else return buffer before minibuf is activated."
+  (if (not (window-minibuffer-p)) (current-buffer)
+    (if (eq (get-lru-window) (next-window))
+        (window-buffer (previous-window)) (window-buffer (next-window)))))
+
+(define-key minibuffer-local-map
+  (kbd "C-c TAB") (lambda () (interactive)
+                    (insert (buffer-name (current-buffer-not-mini)))))
+
 ;;; Typed text replaces selection.
 (delete-selection-mode t)
 
