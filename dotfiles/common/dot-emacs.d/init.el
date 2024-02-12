@@ -45,6 +45,11 @@
   :hook ((bazel-mode-hook
 	  . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
 
+(use-package better-defaults
+  :config
+  ;;; Don't flash on bell, after all.
+  (setq visible-bell nil))
+
 (use-package desktop
   :config
   (desktop-save-mode 1)
