@@ -91,6 +91,9 @@
   :init
   (setq graphviz-dot-indent-width 2))
 
+(use-package grep
+  :bind ("C-c r" . rgrep))
+
 (use-package helm
   :config
   (helm-mode 1))
