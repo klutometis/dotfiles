@@ -72,6 +72,7 @@
                   ("Bazel" (buildifier))
                   ("Emacs Lisp" (emacs-lisp))
                   ("JSON" (deno))
+		  ("Markdown" (prettier "--prose-wrap=always"))
                   ("Python" (black))
                   ("JavaScript" (deno))
                   ("TypeScript" (deno))
