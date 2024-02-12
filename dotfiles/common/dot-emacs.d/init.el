@@ -85,6 +85,8 @@
                   ))
   (add-hook 'before-save-hook 'format-all-buffer))
 
+(use-package full-ack)
+
 (use-package gptel)
 
 (use-package graphviz-dot-mode
