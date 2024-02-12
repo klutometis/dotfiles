@@ -179,6 +179,8 @@ point reaches the beginning or end of the buffer, stop there."
  ("M-o" . smart-open-line)
  )
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 ;;; https://emacs.stackexchange.com/a/17277
 (defun y-or-n-p-with-return (orig-func &rest args)
   (let ((query-replace-map (copy-keymap query-replace-map)))
