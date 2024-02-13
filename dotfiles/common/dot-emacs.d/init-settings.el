@@ -1,3 +1,9 @@
+;;; Send backups to alternative location.
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
+(setq vc-make-backup-files t)
+(setq kept-old-versions 5)
+(setq kept-new-versions 5)
+
 ;;; Insert the buffer-name when working with the minibuffer; thanks,
 ;;; polyglot: <http://stackoverflow.com/q/455345>.
 (defun current-buffer-not-mini ()
