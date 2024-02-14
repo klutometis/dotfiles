@@ -55,6 +55,7 @@ path+=/usr/local/bin
 path+=/usr/bin
 path+=/bin
 path+=$HOME/.config/surfraw/elvi
+path+=$HOME/.npm-global/bin
 
 export ACLOCAL="aclocal -I /usr/local/share/aclocal"
 # We're doing it wrong.
