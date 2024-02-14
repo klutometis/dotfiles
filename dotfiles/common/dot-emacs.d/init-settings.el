@@ -49,8 +49,8 @@
         (window-buffer (previous-window)) (window-buffer (next-window)))))
 
 (define-key minibuffer-local-map
-  (kbd "C-c TAB") (lambda () (interactive)
-                    (insert (buffer-name (current-buffer-not-mini)))))
+            (kbd "C-c TAB") (lambda () (interactive)
+                              (insert (buffer-name (current-buffer-not-mini)))))
 
 ;;; Typed text replaces selection.
 (delete-selection-mode t)
