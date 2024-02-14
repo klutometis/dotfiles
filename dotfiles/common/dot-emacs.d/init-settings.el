@@ -1,3 +1,21 @@
+;;; Save all buffers, no confirmation (doesn't seem to work).
+(defun save-all-buffers-no-confirmation (orig-func &rest args)
+  "Save all buffers without confirmation."
+  (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t))
+            ((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
+    (apply orig-func args)))
+
+(advice-add 'save-some-buffers :around #'save-all-buffers-no-confirmation)
+
+;;; This one seems to work; how to make it work with recompile, etc.?
+(defun save-all-file-buffers ()
+  "Save all buffers with file names that are modified, without confirmation."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (buffer-file-name) (buffer-modified-p))
+        (save-buffer)))))
+
 ;;; Send backups to alternative location.
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
 (setq vc-make-backup-files t)
