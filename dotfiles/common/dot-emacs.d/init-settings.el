@@ -16,6 +16,23 @@
       (when (and (buffer-file-name) (buffer-modified-p))
         (save-buffer)))))
 
+;;; Subword mode
+(global-subword-mode 1)
+
+(defun select-next-subword ()
+  "Extend selection to the next subword, or select the next subword if none is selected."
+  (interactive)
+  (if (use-region-p)
+      (progn
+        ;; If a region is selected, move to the end of the selection
+        (goto-char (region-end))
+        ;; Extend the selection to the next subword
+        (subword-right 1))
+    (progn
+      ;; If no region is selected, start a new selection
+      (set-mark (point))
+      (subword-right 1))))
+
 ;;; Send backups to alternative location.
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
 (setq vc-make-backup-files t)
@@ -193,6 +210,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c o" . occur)
  ("C-c p" . pwd)
  ("C-c u" . kill-line-backward)
+ ("C-c w" . select-next-subword)
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
  ("C-x C-f" . helm-find-files)
