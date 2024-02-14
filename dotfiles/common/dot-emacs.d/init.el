@@ -231,6 +231,10 @@
 (use-package sort
   :bind ("C-c s" . sort-lines))
 
+(use-package typescript-mode
+  :config
+  (setq typescript-indent-level 2))
+
 (use-package windmove
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
