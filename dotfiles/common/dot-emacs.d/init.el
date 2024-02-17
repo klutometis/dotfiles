@@ -47,9 +47,18 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
+(use-package avy
+  :bind (("C-:" . avy-goto-char)
+         ("C-'" . avy-goto-char-2)
+         ("C-M-." . avy-goto-char-timer)
+         ("M-g f" . avy-goto-line)
+         ("M-g w" . avy-goto-word-1)
+         ("M-g e" . avy-goto-word-0)
+         ("C-c C-j" . avy-resume)))
+
 (use-package bazel
   :hook ((bazel-mode-hook
-	  . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
+          . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
 
 (use-package better-defaults
   :config
