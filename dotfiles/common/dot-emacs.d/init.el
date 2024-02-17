@@ -96,7 +96,7 @@
   ;; Find-name-dired should run case-insensitively.
   (setq read-file-name-completion-ignore-case t)
   :hook ((dired-mode-hook
-	  . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
+          . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
 
 (use-package format-all
   :config
