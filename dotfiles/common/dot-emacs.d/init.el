@@ -155,11 +155,11 @@
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-buffers-list)
          ("C-c C-l" . helm-minibuffer-history)
-	 ("C-c C-l" . helm-minibuffer-history)
+         ("C-c C-l" . helm-minibuffer-history)
          ("C-x C-f" . helm-find-files)
          ([tab] . helm-execute-persistent-action)
-	 :map minibuffer-local-map
-	 ("C-c C-l" . helm-minibuffer-history))
+         :map minibuffer-local-map
+         ("C-c C-l" . helm-minibuffer-history))
   :init
   ;; Fuzzy match
   (setq helm-M-x-fuzzy-match t
