@@ -3,7 +3,7 @@
       '(("org" . "http://orgmode.org/elpa/")
         ("melpa" . "http://melpa.org/packages/")
         ;; ("marmalade" . "http://marmalade-repo.org/packages/")
-	("gnu" . "http://elpa.gnu.org/packages/")))
+        ("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
 (setq package-check-signature nil)
@@ -107,7 +107,7 @@
 (use-package bazel-mode
   :config
   (add-hook 'bazel-mode-hook
-	    (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier))))
+            (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier))))
 
 (use-package bracketed-paste
   :config
@@ -176,12 +176,12 @@
   (use-package discord)
   (ad-activate 'calendar-other-dates)
   (add-hook 'calendar-mode-hook
-	    (lambda ()
-	      (bind-key "p D"
-			(lambda ()
-			  (interactive)
-			  (calendar-discordian-print-date))
-			calendar-mode-map))))
+            (lambda ()
+              (bind-key "p D"
+                        (lambda ()
+                          (interactive)
+                          (calendar-discordian-print-date))
+                        calendar-mode-map))))
 
 (use-package cl)
 
@@ -258,7 +258,7 @@
 (use-package eshell
   :config
   (add-hook 'eshell-mode-hook
-	    (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
+            (lambda () (bind-key "C-c C-l" 'helm-eshell-history eshell-mode-map))))
 
 (use-package ess
   :config
@@ -277,8 +277,8 @@
   (setq read-file-name-completion-ignore-case t)
 
   (add-hook 'dired-mode-hook
-	    (lambda ()
-	      (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
+            (lambda ()
+              (bind-key "F" 'dired-do-find-marked-files dired-mode-map))))
 
 (use-package flyspell
   :disabled t)
@@ -335,8 +335,8 @@
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-buffers-list)
          ("C-c C-l" . helm-minibuffer-history)
-	 :map minibuffer-local-map
-	 ("C-c C-l" . helm-minibuffer-history))
+         :map minibuffer-local-map
+         ("C-c C-l" . helm-minibuffer-history))
   :init
   ;; Fuzzy match
   (setq helm-M-x-fuzzy-match t
@@ -395,8 +395,8 @@
   ;; Normal comments in Javascript, despite the fact that we use
   ;; paredit
   (add-hook 'js-mode-hook
-	    (lambda ()
-	      (bind-key "M-;" 'comment-dwim paredit-mode-map))))
+            (lambda ()
+              (bind-key "M-;" 'comment-dwim paredit-mode-map))))
 
 ;;; Keyfreq, for collecting keystroke statistics
 (use-package keyfreq
@@ -432,21 +432,21 @@
   ;; :bind (:map markdown-mode-map ("C-c '" . ))
   :config
   (add-hook 'markdown-mode-hook
-	    (lambda ()
-	      ;; (typopunct-change-language 'english t)
-	      ;; (typopunct-mode 1)
-	      (auto-fill-mode 1)
-	      (unbind-key "C-c C-s" markdown-mode-map)
-	      (setq-local format-all-formatters
-			  '(("Markdown" (prettier "--prose-wrap=always")))))))
+            (lambda ()
+              ;; (typopunct-change-language 'english t)
+              ;; (typopunct-mode 1)
+              (auto-fill-mode 1)
+              (unbind-key "C-c C-s" markdown-mode-map)
+              (setq-local format-all-formatters
+                          '(("Markdown" (prettier "--prose-wrap=always")))))))
 
 (use-package midnight
   :config
   (setq clean-buffer-list-delay-general 7)
   (midnight-delay-set 'midnight-delay 0)
   (add-hook 'midnight-hook
-	    (lambda () (interactive)
-	      (desktop-save desktop-dirname))))
+            (lambda () (interactive)
+              (desktop-save desktop-dirname))))
 
 ;; (use-package mediawiki)
 
@@ -488,11 +488,11 @@
         '((path "//cdn.mathjax.org/mathjax/latest/MathJax.js")))
   :config
   (add-hook 'org-mode-hook
-	    (lambda ()
-	      (auto-fill-mode)
-	      ;; (typopunct-change-language 'english t)
-	      ;; (typopunct-mode 1)
-	      ))
+            (lambda ()
+              (auto-fill-mode)
+              ;; (typopunct-change-language 'english t)
+              ;; (typopunct-mode 1)
+              ))
 
   ;; Make the code-export work with light backgrounds; see e.g.
   ;; <https://raw.githubusercontent.com/kaushalmodi/.emacs.d/master/misc/css/leuven_theme.css>.
@@ -731,11 +731,11 @@ Then switch to the process buffer."
     (python-switch-to-python t))
 
   (add-hook 'python-mode-hook
-	    (lambda ()
-	      (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
-	      (define-key python-mode-map (kbd "C-c z")
-		(lambda () (interactive) (python-switch-to-python t)))
-	      (push '("not" . ?¬) prettify-symbols-alist))))
+            (lambda ()
+              (define-key python-mode-map (kbd "C-c M-c") 'python-send-buffer-and-go)
+              (define-key python-mode-map (kbd "C-c z")
+                          (lambda () (interactive) (python-switch-to-python t)))
+              (push '("not" . ?¬) prettify-symbols-alist))))
 
 (use-package savehist
   :config
@@ -873,8 +873,8 @@ Then switch to the process buffer."
     (sh-execute-region (point-min) (point-max)))
 
   (add-hook 'sh-mode-hook
-	    (lambda ()
-	      (bind-key "C-c b" 'sh-execute-buffer sh-mode-map))))
+            (lambda ()
+              (bind-key "C-c b" 'sh-execute-buffer sh-mode-map))))
 
 (use-package sh-script
   :mode ("\\.bats\\'" . sh-mode))
@@ -912,8 +912,8 @@ Then switch to the process buffer."
 
   (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
   (add-hook 'sql-mode-hook
-	    (lambda ()
-	      (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
+            (lambda ()
+              (define-key sql-mode-map (kbd "TAB") 'sql-indent-line)))
 
   ;; The executable is osql, but osql doesn't seem to pass things to
   ;; isql correctly.
@@ -1177,8 +1177,8 @@ point reaches the beginning or end of the buffer, stop there."
         (window-buffer (previous-window)) (window-buffer (next-window)))))
 
 (define-key minibuffer-local-map
-  (kbd "C-c TAB") (lambda () (interactive)
-                    (insert (buffer-name (current-buffer-not-mini)))))
+            (kbd "C-c TAB") (lambda () (interactive)
+                              (insert (buffer-name (current-buffer-not-mini)))))
 
 ;;; For makefiles, dot, SQL and such things.
 (setq tab-width 4)
@@ -1198,7 +1198,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; Prevent "Active processes exist" on exit; thanks, Jürgen Hötzel:
 ;;; <http://stackoverflow.com/a/2708042>.
 (add-hook 'comint-exec-hook
-	  (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
+          (lambda () (process-kill-without-query (get-buffer-process (current-buffer)) nil)))
 
 (bind-keys
  :map comint-mode-map
@@ -1373,7 +1373,7 @@ the line."
 
 ;;; This doesn't seem to work in the ESS package, for some reason.
 (add-hook 'R-mode-hook
-	  (lambda () (push '("<-" . ?←) prettify-symbols-alist)))
+          (lambda () (push '("<-" . ?←) prettify-symbols-alist)))
 
 ;; Make `lambda' → `λ', etc.
 (global-prettify-symbols-mode)
