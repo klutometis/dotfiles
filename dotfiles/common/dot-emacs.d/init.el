@@ -204,9 +204,9 @@
 
 (use-package markdown-mode
   :hook ((markdown-mode-hook
-	  . (lambda ()
-	      (auto-fill-mode 1)
-	      (unbind-key "C-c C-s" markdown-mode-map)))))
+          . (lambda ()
+              (auto-fill-mode 1)
+              (unbind-key "C-c C-s" markdown-mode-map)))))
 
 (use-package midnight
   :config
@@ -219,16 +219,16 @@
   (push "notes" clean-buffer-list-kill-never-buffer-names)
   (push "TODO" clean-buffer-list-kill-never-buffer-names)
   (add-hook 'midnight-hook
-	    (lambda () (interactive)
-	      (desktop-save desktop-dirname))))
+            (lambda () (interactive)
+              (desktop-save desktop-dirname))))
 
 (use-package paredit
   :bind (:map paredit-mode-map
-	      ("M-(" . paredit-wrap-round)
+              ("M-(" . paredit-wrap-round)
               ("M-)" . paredit-clone-round-and-newline))
   :hook ((emacs-lisp-mode . paredit-mode)
-	 (lisp-interaction-mode . paredit-mode)
-	 (scheme-mode . paredit-mode)))
+         (lisp-interaction-mode . paredit-mode)
+         (scheme-mode . paredit-mode)))
 
 (use-package savehist
   :config
