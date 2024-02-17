@@ -236,4 +236,4 @@ point reaches the beginning or end of the buffer, stop there."
 (setq visible-bell nil)
 
 (add-hook 'sh-mode-hook
-	  (lambda () (add-hook 'before-save-hook #'whitespace-cleanup nil :local)))
+          (lambda () (add-hook 'before-save-hook #'whitespace-cleanup nil :local)))
