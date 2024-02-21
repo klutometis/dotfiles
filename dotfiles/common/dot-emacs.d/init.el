@@ -47,9 +47,18 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
+(use-package avy
+  :bind (("C-:" . avy-goto-char)
+         ("C-'" . avy-goto-char-2)
+         ("C-M-." . avy-goto-char-timer)
+         ("M-g f" . avy-goto-line)
+         ("M-g w" . avy-goto-word-1)
+         ("M-g e" . avy-goto-word-0)
+         ("C-c C-j" . avy-resume)))
+
 (use-package bazel
   :hook ((bazel-mode-hook
-	  . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
+          . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
 
 (use-package better-defaults
   :config
@@ -87,7 +96,7 @@
   ;; Find-name-dired should run case-insensitively.
   (setq read-file-name-completion-ignore-case t)
   :hook ((dired-mode-hook
-	  . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
+          . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
 
 (use-package format-all
   :config
@@ -96,11 +105,12 @@
                 '(
                   ("Bazel" (buildifier))
                   ("Emacs Lisp" (emacs-lisp))
+                  ("HTML" (prettier))
                   ("JSON" (deno))
-		  ("Markdown" (prettier "--prose-wrap=always"))
-                  ("Python" (black))
                   ("JavaScript" (deno))
-                  ("TypeScript" (deno))
+                  ("Markdown" (prettier "--prose-wrap=always"))
+                  ("Python" (black))
+                  ("TypeScript" (prettier "--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict"))
                   ("YAML" (prettier))
                   ))
   (add-hook 'before-save-hook 'format-all-buffer))
@@ -145,11 +155,11 @@
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-buffers-list)
          ("C-c C-l" . helm-minibuffer-history)
-	 ("C-c C-l" . helm-minibuffer-history)
+         ("C-c C-l" . helm-minibuffer-history)
          ("C-x C-f" . helm-find-files)
          ([tab] . helm-execute-persistent-action)
-	 :map minibuffer-local-map
-	 ("C-c C-l" . helm-minibuffer-history))
+         :map minibuffer-local-map
+         ("C-c C-l" . helm-minibuffer-history))
   :init
   ;; Fuzzy match
   (setq helm-M-x-fuzzy-match t
@@ -194,9 +204,9 @@
 
 (use-package markdown-mode
   :hook ((markdown-mode-hook
-	  . (lambda ()
-	      (auto-fill-mode 1)
-	      (unbind-key "C-c C-s" markdown-mode-map)))))
+          . (lambda ()
+              (auto-fill-mode 1)
+              (unbind-key "C-c C-s" markdown-mode-map)))))
 
 (use-package midnight
   :config
@@ -209,16 +219,16 @@
   (push "notes" clean-buffer-list-kill-never-buffer-names)
   (push "TODO" clean-buffer-list-kill-never-buffer-names)
   (add-hook 'midnight-hook
-	    (lambda () (interactive)
-	      (desktop-save desktop-dirname))))
+            (lambda () (interactive)
+              (desktop-save desktop-dirname))))
 
 (use-package paredit
   :bind (:map paredit-mode-map
-	      ("M-(" . paredit-wrap-round)
+              ("M-(" . paredit-wrap-round)
               ("M-)" . paredit-clone-round-and-newline))
   :hook ((emacs-lisp-mode . paredit-mode)
-	 (lisp-interaction-mode . paredit-mode)
-	 (scheme-mode . paredit-mode)))
+         (lisp-interaction-mode . paredit-mode)
+         (scheme-mode . paredit-mode)))
 
 (use-package savehist
   :config
@@ -230,6 +240,10 @@
 
 (use-package sort
   :bind ("C-c s" . sort-lines))
+
+(use-package typescript-mode
+  :config
+  (setq typescript-indent-level 2))
 
 (use-package windmove
   :bind (("<up>" . windmove-up)
