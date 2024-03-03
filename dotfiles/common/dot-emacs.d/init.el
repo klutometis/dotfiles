@@ -129,7 +129,9 @@
   (setq graphviz-dot-indent-width 2))
 
 (use-package grep
-  :bind ("C-c r" . rgrep))
+  :bind ("C-c r" . rgrep)
+  :config
+  (setq grep-save-buffers 'save-all-file-buffers))
 
 (use-package helm
   :config
