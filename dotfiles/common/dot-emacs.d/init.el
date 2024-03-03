@@ -106,18 +106,28 @@
 (use-package format-all
   :config
   (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
-  (setq-default format-all-formatters
-                '(
-                  ("Bazel" (buildifier))
-                  ("Emacs Lisp" (emacs-lisp))
-                  ("HTML" (prettier))
-                  ("JSON" (deno))
-                  ("JavaScript" (deno))
-                  ("Markdown" (prettier "--prose-wrap=always"))
-                  ("Python" (black))
-                  ("TypeScript" (prettier "--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict"))
-                  ("YAML" (prettier))
-                  ))
+  (let ((prettier-flags '("--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--quote-props=preserve"  "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict")))
+    (setq-default format-all-formatters
+                  '(
+                    ("Bazel" (buildifier))
+                    ("Emacs Lisp" (emacs-lisp))
+                    ("HTML" (prettier))
+                    ("JSON" (deno))
+                    ("JavaScript" (deno))
+                    ("Markdown" (mdformat))
+                    ("Python" (black))
+                    ("SCSS" (prettier ,prettier-flags))
+                    ("TypeScript" (prettier ,prettier-flags))
+                    ("YAML" (prettier))
+                    )))
+  (defun my-format-all-buffer-around-advice (orig-fun &rest args)
+    "Around advice for `format-all-buffer' to restore the cursor position."
+    (let ((current-pos (point-marker)))
+      (apply orig-fun args)
+      (goto-char current-pos)))
+
+  (advice-add 'format-all-buffer :around #'my-format-all-buffer-around-advice)
+
   (add-hook 'before-save-hook 'format-all-buffer))
 
 (use-package full-ack)
