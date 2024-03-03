@@ -20,6 +20,11 @@
 
 (setq straight-use-package-by-default t)
 
+;; Load a separate file containing all global settings and functions;
+;; front-loading to enjoy the function definitions when configuring packages
+;; below.
+(load "~/.emacs.d/init-settings.el")
+
 (use-package ace-window
   :bind ("C-x o" . ace-window)
   :init
@@ -258,6 +263,3 @@
 (use-package winner
   :config
   (winner-mode 1))
-
-;; Load a separate file containing all global settings
-(load "~/.emacs.d/init-settings.el")
