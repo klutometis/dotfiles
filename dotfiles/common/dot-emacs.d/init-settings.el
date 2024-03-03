@@ -227,6 +227,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-o" . smart-open-line-above)
  ("C-x C-f" . helm-find-files)
  ("C-x C-r" . revert-buffer)
+ ("C-x s" . save-all-file-buffers)
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
  ("M-;" . comment-dwim)
