@@ -108,6 +108,9 @@
   :hook ((dired-mode-hook
           . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
 
+;; (use-package flycheck
+;;   :init (global-flycheck-mode))
+
 (use-package format-all
   :config
   (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
