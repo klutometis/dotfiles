@@ -194,6 +194,30 @@
   ;; Man-page at point
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
 
+(use-package lsp-mode
+  :init
+  ;; (setq lsp-prefer-flymake nil) ;; Use lsp-ui and flycheck instead of flymake
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-clients-clangd-args
+        '("--background-index"
+          "--suggest-missing-includes"
+          "--clang-tidy"
+          "--header-insertion=iwyu"))
+  :config
+  (setq lsp-headerline-breadcrumb-enable nil)
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (c++-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-sideline-enable nil
+        lsp-ui-doc-enable nil))
+
 (use-package magit
   :bind ("C-c g" . magit-status)
   :init
