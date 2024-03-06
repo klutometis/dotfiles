@@ -1,3 +1,15 @@
+;;; Copy filename to the clipboard; from
+;;; <http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/>.
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
 ;;; Save all buffers, no confirmation (doesn't seem to work).
 (defun save-all-buffers-no-confirmation (orig-func &rest args)
   "Save all buffers without confirmation."
@@ -215,6 +227,7 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-o" . smart-open-line-above)
  ("C-x C-f" . helm-find-files)
  ("C-x C-r" . revert-buffer)
+ ("C-x s" . save-all-file-buffers)
  ("C-x TAB" . indent-rigidly)
  ("M-%" . query-replace-regexp)
  ("M-;" . comment-dwim)

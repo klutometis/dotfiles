@@ -20,6 +20,11 @@
 
 (setq straight-use-package-by-default t)
 
+;; Load a separate file containing all global settings and functions;
+;; front-loading to enjoy the function definitions when configuring packages
+;; below.
+(load "~/.emacs.d/init-settings.el")
+
 (use-package ace-window
   :bind ("C-x o" . ace-window)
   :init
@@ -114,19 +119,29 @@
 (use-package format-all
   :config
   (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
-  (setq-default format-all-formatters
-                '(
-                  ("Bazel" (buildifier))
-                  ("C++" (clang-format))
-                  ("Emacs Lisp" (emacs-lisp))
-                  ("HTML" (prettier))
-                  ("JSON" (deno))
-                  ("JavaScript" (deno))
-                  ("Markdown" (prettier "--prose-wrap=always"))
-                  ("Python" (black))
-                  ("TypeScript" (prettier "--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict"))
-                  ("YAML" (prettier))
-                  ))
+  (let ((prettier-flags '("--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--quote-props=preserve"  "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict")))
+    (setq-default format-all-formatters
+                  '(
+                    ("Bazel" (buildifier))
+                    ("C++" (clang-format))
+                    ("Emacs Lisp" (emacs-lisp))
+                    ("HTML" (prettier))
+                    ("JSON" (deno))
+                    ("JavaScript" (deno))
+                    ("Markdown" (mdformat))
+                    ("Python" (black))
+                    ("SCSS" (prettier ,prettier-flags))
+                    ("TypeScript" (prettier ,prettier-flags))
+                    ("YAML" (prettier))
+                    )))
+  (defun my-format-all-buffer-around-advice (orig-fun &rest args)
+    "Around advice for `format-all-buffer' to restore the cursor position."
+    (let ((current-pos (point-marker)))
+      (apply orig-fun args)
+      (goto-char current-pos)))
+
+  (advice-add 'format-all-buffer :around #'my-format-all-buffer-around-advice)
+
   (add-hook 'before-save-hook 'format-all-buffer))
 
 (use-package full-ack)
@@ -138,7 +153,9 @@
   (setq graphviz-dot-indent-width 2))
 
 (use-package grep
-  :bind ("C-c r" . rgrep))
+  :bind ("C-c r" . rgrep)
+  :config
+  (setq grep-save-buffers 'save-all-file-buffers))
 
 (use-package helm
   :config
@@ -300,6 +317,3 @@
 (use-package winner
   :config
   (winner-mode 1))
-
-;; Load a separate file containing all global settings
-(load "~/.emacs.d/init-settings.el")
