@@ -41,6 +41,9 @@
   ;; Otherwise, the dimming makes the screens unreadable.
   (set-face-foreground 'aw-background-face "gray100"))
 
+(use-package ansi-color
+  :hook (compilation-filter . ansi-color-compilation-filter))
+
 (use-package auto-package-update
   :config
   (setq auto-package-update-delete-old-versions t)
