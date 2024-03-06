@@ -68,6 +68,13 @@
   ;;; Don't flash on bell, after all.
   (setq visible-bell nil))
 
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :config
+  (setq company-minimum-prefix-length 1
+        company-idle-delay 0.0)) ;; Default is 0.2
+
 (use-package compile
   :config
   (setq compilation-ask-about-save nil)
