@@ -283,6 +283,10 @@
   :config
   (setq typescript-indent-level 2))
 
+(use-package which-key
+  :config
+  (which-key-mode))
+
 (use-package windmove
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
