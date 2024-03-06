@@ -117,6 +117,7 @@
   (setq-default format-all-formatters
                 '(
                   ("Bazel" (buildifier))
+                  ("C++" (clang-format))
                   ("Emacs Lisp" (emacs-lisp))
                   ("HTML" (prettier))
                   ("JSON" (deno))
