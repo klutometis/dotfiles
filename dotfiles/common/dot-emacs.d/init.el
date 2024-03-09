@@ -128,7 +128,7 @@
                     ("HTML" (prettier))
                     ("JSON" (deno))
                     ("JavaScript" (deno))
-                    ("Markdown" (mdformat))
+                    ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
                     ("Python" (black))
                     ("SCSS" (prettier ,prettier-flags))
                     ("TypeScript" (prettier ,prettier-flags))
