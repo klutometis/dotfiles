@@ -138,6 +138,7 @@
                     ("SCSS" (prettier ,prettier-flags))
                     ("TypeScript" (prettier ,prettier-flags))
                     ("YAML" (prettier))
+                    ("Graphviz" (nop))
                     )))
   (defun my-format-all-buffer-around-advice (orig-fun &rest args)
     "Around advice for `format-all-buffer' to restore the cursor position."
