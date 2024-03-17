@@ -96,6 +96,11 @@
               (";" . dired-subtree-remove)))
 
 (use-package emacs
+  :config
+  ;; Show the column-number in addition to the row-number in the
+  ;; status-bar.
+  (column-number-mode 1)
+  (global-display-line-numbers-mode 1)
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
 
