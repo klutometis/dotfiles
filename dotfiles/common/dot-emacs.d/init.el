@@ -221,6 +221,10 @@
   ;; Man-page at point
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
 
+(use-package language-id
+  :config
+  (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions))
+
 (use-package lsp-mode
   :init
   ;; (setq lsp-prefer-flymake nil) ;; Use lsp-ui and flycheck instead of flymake
