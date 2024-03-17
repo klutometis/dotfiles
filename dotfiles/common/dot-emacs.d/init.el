@@ -299,6 +299,11 @@
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
 
+(use-package python
+  :config
+  ;; Let's go 4 to be congruent with `black`.
+  (setq python-indent-offset 4))
+
 (use-package savehist
   :config
   (setq savehist-save-minibuffer-history 1)
