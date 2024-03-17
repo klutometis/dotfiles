@@ -148,7 +148,14 @@
 
   (advice-add 'format-all-buffer :around #'my-format-all-buffer-around-advice)
 
-  (add-hook 'before-save-hook 'format-all-buffer))
+  (add-hook 'before-save-hook 'format-all-buffer)
+
+  (define-format-all-formatter nop
+    (:executable "nop")
+    (:install)
+    (:languages "Graphviz")
+    (:features)
+    (:format (format-all--buffer-easy executable "-"))))
 
 (use-package full-ack)
 
