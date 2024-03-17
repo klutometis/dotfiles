@@ -336,3 +336,11 @@
 (use-package winner
   :config
   (winner-mode 1))
+
+(use-package yasnippet
+  :config
+  (yas-global-mode 01)
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets")))
+
+(use-package yasnippet-snippets
+  :after yasnippet)
