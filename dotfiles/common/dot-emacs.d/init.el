@@ -171,9 +171,6 @@
   (setq grep-save-buffers 'save-all-file-buffers))
 
 (use-package helm
-  :config
-  (helm-mode 1))
-(use-package helm
   :bind (("<f1> a" . helm-apropos)
          ("C-c h o" . helm-occur)
          ;; Can't stand this, for some reason; let's head back to
