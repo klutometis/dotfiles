@@ -337,6 +337,12 @@
   :config
   (winner-mode 1))
 
+(use-package xclip
+  :config
+  (setq xclip-method 'xsel)
+  (setq xclip-program "xsel")
+  (xclip-mode 1))
+
 (use-package yasnippet
   :config
   (yas-global-mode 01)
