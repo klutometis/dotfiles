@@ -136,6 +136,7 @@
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
                     ("Python" (black))
                     ("SCSS" (prettier ,prettier-flags))
+                    ("Slidev" (prettier))
                     ("TypeScript" (prettier ,prettier-flags))
                     ("YAML" (prettier))
                     ("Graphviz" (nop))
