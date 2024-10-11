@@ -126,7 +126,7 @@
   (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
   (let ((prettier-flags '("--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--quote-props=preserve"  "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict")))
     (setq-default format-all-formatters
-                  '(
+                  `(
                     ("Bazel" (buildifier))
                     ("C++" (clang-format))
                     ("Emacs Lisp" (emacs-lisp))
@@ -135,8 +135,8 @@
                     ("JavaScript" (deno))
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
                     ("Python" (black))
-                    ("SCSS" (prettier ,prettier-flags))
-                    ("TypeScript" (prettier ,prettier-flags))
+                    ("SCSS" (prettier . ,prettier-flags))
+                    ("TypeScript" (prettier . ,prettier-flags))
                     ("YAML" (prettier))
                     ("Graphviz" (nop))
                     )))
@@ -225,29 +225,29 @@
   :config
   (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions))
 
-(use-package lsp-mode
-  :init
-  ;; (setq lsp-prefer-flymake nil) ;; Use lsp-ui and flycheck instead of flymake
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  (setq lsp-clients-clangd-args
-        '("--background-index"
-          "--suggest-missing-includes"
-          "--clang-tidy"
-          "--header-insertion=iwyu"))
-  :config
-  (setq lsp-headerline-breadcrumb-enable nil)
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (c++-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
+;; (use-package lsp-mode
+;;   :init
+;;   ;; (setq lsp-prefer-flymake nil) ;; Use lsp-ui and flycheck instead of flymake
+;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+;;   (setq lsp-keymap-prefix "C-c l")
+;;   (setq lsp-clients-clangd-args
+;;         '("--background-index"
+;;           "--suggest-missing-includes"
+;;           "--clang-tidy"
+;;           "--header-insertion=iwyu"))
+;;   :config
+;;   (setq lsp-headerline-breadcrumb-enable nil)
+;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+;;          (c++-mode . lsp)
+;;          ;; if you want which-key integration
+;;          (lsp-mode . lsp-enable-which-key-integration))
+;;   :commands lsp)
 
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-sideline-enable nil
-        lsp-ui-doc-enable nil))
+;; (use-package lsp-ui
+;;   :commands lsp-ui-mode
+;;   :config
+;;   (setq lsp-ui-sideline-enable nil
+;;         lsp-ui-doc-enable nil))
 
 (use-package magit
   :bind ("C-c g" . magit-status)
@@ -319,6 +319,8 @@
   :config
   (setq typescript-indent-level 2))
 
+(use-package tree-sitter)
+
 (use-package which-key
   :config
   (which-key-mode))
@@ -341,7 +343,23 @@
   :config
   (setq xclip-method 'xsel)
   (setq xclip-program "xsel")
-  (xclip-mode 1))
+
+  :init
+  (defun xclip-copy-to-clipboard ()
+    "Copy selection to clipboard using xclip."
+    (interactive)
+    (when (use-region-p)  ; Ensure there is a text selection
+      (xclip-set-selection 'clipboard (buffer-substring-no-properties (region-beginning) (region-end)))
+      (deactivate-mark)))  ; Optionally clear the selection
+
+  (defun xclip-paste-from-clipboard ()
+    "Paste text from clipboard using xclip."
+    (interactive)
+    (insert (xclip-get-selection 'clipboard)))
+
+  :bind
+  (("M-C-w" . xclip-copy-to-clipboard)
+   ("M-C-y" . xclip-paste-from-clipboard)))
 
 (use-package yasnippet
   :config
