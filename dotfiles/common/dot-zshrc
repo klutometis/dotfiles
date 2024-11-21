@@ -185,3 +185,7 @@ setopt NO_NOMATCH
 if [ -f ~/.$(hostname -s).sh ]; then
         source ~/.$(hostname -s).sh
 fi
+
+eval "$(rbenv init -)"
+
+
