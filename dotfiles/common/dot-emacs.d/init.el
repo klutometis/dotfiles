@@ -160,7 +160,15 @@
 
 (use-package full-ack)
 
-(use-package gptel)
+(use-package gptel
+  :ensure t
+  :bind (("C-c C-l s" . gptel-send)
+         ("C-c C-l c" . gptel-clear)
+         ("C-c C-l i" . gptel-insert)
+         ("C-c C-l k" . gptel-set-api-key)
+         ("C-c C-l m" . gptel-switch-model)
+         ("C-c C-l n" . gptel-next-response)
+         ("C-c C-l p" . gptel-previous-response)))
 
 (use-package graphviz-dot-mode
   :init
@@ -196,12 +204,8 @@
          ("M-x" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
          ("C-x b" . helm-buffers-list)
-         ("C-c C-l" . helm-minibuffer-history)
-         ("C-c C-l" . helm-minibuffer-history)
          ("C-x C-f" . helm-find-files)
-         ([tab] . helm-execute-persistent-action)
-         :map minibuffer-local-map
-         ("C-c C-l" . helm-minibuffer-history))
+         ([tab] . helm-execute-persistent-action))
   :init
   ;; Fuzzy match
   (setq helm-M-x-fuzzy-match t
@@ -214,7 +218,6 @@
 
   :config
   (helm-mode 1)
-  (bind-key "C-c C-l" 'helm-minibuffer-history minibuffer-local-map)
   ;; Use ack.
   (when (executable-find "ack-grep")
     (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
@@ -224,7 +227,8 @@
 
 (use-package language-id
   :config
-  (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions))
+  (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions)
+  (push '("Slidev" (markdown-mode (language-id--file-name-regexp "slides\\.md"))) language-id--definitions))
 
 (use-package lsp-mode
   :init
@@ -310,8 +314,10 @@
   (setq savehist-save-minibuffer-history 1)
   (setq savehist-additional-variables
         '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring)
-        savehist-file "~/.emacs.d/savehist")
-  (savehist-mode t))
+        savehist-file "~/.emacs.d/savehist"
+        ;; Hack to attempt to deal with 100% CPU every couple minutes.
+        savehist-autosave-interval 600)
+  (savehist-mode -1))
 
 (use-package sort
   :bind ("C-c s" . sort-lines))
@@ -337,6 +343,8 @@
 (use-package winner
   :config
   (winner-mode 1))
+
+(use-package xclip)
 
 (use-package yasnippet
   :config
