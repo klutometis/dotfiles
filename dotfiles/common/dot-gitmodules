@@ -1,3 +1,6 @@
 [submodule ".oh-my-zsh"]
 	path = .oh-my-zsh
 	url = git://github.com/robbyrussell/oh-my-zsh.git
+[submodule "prg/build-with-ai/pre-commit"]
+	path = prg/build-with-ai/pre-commit
+	url = https://github.com/klutometis/pre-commit.git
