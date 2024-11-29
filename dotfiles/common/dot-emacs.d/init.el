@@ -347,7 +347,13 @@
   :config
   (setq typescript-indent-level 2))
 
-(use-package tree-sitter)
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (global-treesit-auto-mode)
+  (treesit-auto-add-to-auto-mode-alist 'all))
+
 
 (use-package which-key
   :config
