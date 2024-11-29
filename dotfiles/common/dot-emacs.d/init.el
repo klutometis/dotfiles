@@ -77,6 +77,12 @@
   ;;; Don't flash on bell, after all.
   (setq visible-bell nil))
 
+(use-package combobulate
+  :bind (("C-<M-a>" . combobulate-navigate-beginning-of-defun))
+  :custom
+  (combobulate-key-prefix "C-c o")
+  :hook ((prog-mode . combobulate-mode)))
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
