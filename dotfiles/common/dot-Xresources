@@ -55,6 +55,15 @@ URxvt.iso14755_52: false
 URxvt.keysym.Shift-Control-V: eval:paste_clipboard
 URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
+URxvt.metaSendsEscape: true
+
+URxvt.keysym.M-Up: \033[1;3A
+URxvt.keysym.M-Down: \033[1;3B
+URxvt.keysym.M-Right: \033[1;3C
+URxvt.keysym.M-Left: \033[1;3D
+
+URxvt.keysym.M-C-a: \033[1;9A
+
 XTerm*foreground: white
 XTerm*background: black
 XTerm*scrollBar: false
