@@ -69,6 +69,16 @@
 
   :custom
   (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
+  (avy-dispatch-alist
+   '((?x . avy-action-kill-move)
+     (?X . avy-action-kill-stay)
+     (?p . avy-action-teleport) ;; replaced ?t
+     (?m . avy-action-mark)
+     (?f . avy-action-copy)     ;; replaced ?n
+     (?v . avy-action-yank)     ;; replaced ?i
+     (?Y . avy-action-yank-line)
+     (?z . avy-action-zap-to-char)))
+
 
 (use-package bazel
   :hook ((bazel-mode-hook
