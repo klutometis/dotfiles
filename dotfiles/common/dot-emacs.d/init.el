@@ -79,6 +79,11 @@
      (?Y . avy-action-yank-line)
      (?z . avy-action-zap-to-char)))
 
+  :custom-face
+  (avy-lead-face ((t (:background "yellow" :foreground "black" :weight bold))))
+  (avy-lead-face-0 ((t (:background "cyan" :foreground "black" :weight bold))))
+  (avy-lead-face-1 ((t (:background "green" :foreground "black" :weight bold))))
+  (avy-lead-face-2 ((t (:background "magenta" :foreground "black" :weight bold)))))
 
 (use-package bazel
   :hook ((bazel-mode-hook
