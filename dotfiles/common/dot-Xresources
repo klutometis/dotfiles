@@ -1,102 +1,76 @@
 #include ".Xdefaults-font"
 
+!--------------------------
+! URxvt Configuration
+!--------------------------
+
+! General appearance
 URxvt.foreground: white
 URxvt.background: black
 URxvt.scrollBar: false
 
-! black
+! Colors
+! Black
 *color0:  #000000
 *color8:  #000000
-! red
+! Red
 *color1:  #ff7c4d
 *color9:  #ff7c4d
-! green
+! Green
 *color2:  #22ff00
 *color10: #22ff00
-! yellow
+! Yellow
 *color3:  #ffcc00
 *color11: #ffcc00
-! blue
+! Blue
 *color4:  #1a66ff
 *color12: #1a66ff
-! magenta
+! Magenta
 *color5:  #ff61df
 *color13: #ff61df
-! cyan
+! Cyan
 *color6:  #00ffff
 *color14: #00ffff
-! white
+! White
 *color7:  #888888
 *color15: #ffffff
 
+!--------------------------
+! Extensions and Plugins
+!--------------------------
 URxvt.perl-ext: default,matcher,clipboard,url-select,keyboard-select
 URxvt.url-launcher: /usr/bin/xdg-open
 URxvt.matcher.button: 1
+URxvt.url-select.button: 2
+URxvt.url-select.underline: true
 
-! https://addy-dclxvi.github.io/post/configuring-urxvt/
+! Clipboard integration
 URxvt.copyCommand: xclip -i -selection clipboard
 URxvt.pasteCommand: xclip -o -selection clipboard
-! URxvt.keysym.C-S-c: perl:clipboard:copy
-! URxvt.keysym.C-S-v: perl:clipboard:paste
-! URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
 URxvt.keyboard-select.clipboard: true
-URxvt.keysym.M-Escape: perl:keyboard-select:activate
-URxvt.keysym.M-s: perl:keyboard-select:search
-URxvt.keysym.M-u: perl:url-select:select_next
-URxvt.keysym.M-C-s: builtin-string:
-URxvt.url-select.underline: true
-! Set the button to something else to avoid double-openings.*
-!
-! * https://www.reddit.com/r/urxvt/comments/4xeoji/comment/db3fytu/?utm_source=share&utm_medium=web2x&context=3
-URxvt.url-select.button: 2
-
-URxvt.iso14755: false
-URxvt.iso14755_52: false
 URxvt.keysym.Shift-Control-V: eval:paste_clipboard
 URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
 
-URxvt.metaSendsEscape: true
-
+!--------------------------
+! Keybindings
+!--------------------------
+! Navigation keys (Meta)
 URxvt.keysym.M-Up: \033[1;3A
 URxvt.keysym.M-Down: \033[1;3B
 URxvt.keysym.M-Right: \033[1;3C
 URxvt.keysym.M-Left: \033[1;3D
 
+! Meta + Ctrl combinations
 URxvt.keysym.M-C-a: \033[1;9A
 
-XTerm*foreground: white
-XTerm*background: black
-XTerm*scrollBar: false
+! Other keybindings
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-s: perl:keyboard-select:search
+URxvt.keysym.M-u: perl:url-select:select_next
 
-XTerm*eightBitInput: false
-XTerm*metaSendsEscape: true
-
-XTerm*waitForMap: true
-XTerm*maximized: true
-
-XTerm*ptySttySize: true
-
-XTerm*utf8: 2
-
-XTerm*allowSendEvents: true
-
-XTerm.perl-ext-common: default,matcher
-XTerm.urlLauncher: opera
-XTerm.matcher.button: 2
-XTerm.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
-
-XTerm*VT100.Translations: #override \
-    Shift<Key>Insert: insert-selection(CLIPBOARD) \n\
-    <Key>Insert: insert-selection(PRIMARY) \n\
-    Shift<Btn2Up>: insert-selection(CLIPBOARD) \n\
-    Shift<Btn1Down>: select-start() \n\
-    Shift<Btn1Motion>: select-extend() \n\
-    Shift<Btn1Up>: select-end(CLIPBOARD)
-
-XTerm*charClass: 33-126:48,10:48
-
-*VT100*translations: #override Shift <Btn1Up>: exec-formatted("google-chrome '%t'", PRIMARY)
-
-XTerm.VT100.translations: #override \
-Meta <Key> minus: smaller-vt-font() \n\
-Meta <Key> plus: larger-vt-font() \n
+!--------------------------
+! Behavior and Interaction
+!--------------------------
+URxvt.metaSendsEscape: true
+URxvt.iso14755: false
+URxvt.iso14755_52: false
