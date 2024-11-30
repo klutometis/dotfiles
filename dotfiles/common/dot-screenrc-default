@@ -1,3 +1,6 @@
+# Let's try C-z as hotkey (à la tmux).
+escape ^Zz
+
 # Turn startup message off
 startup_message off
 
