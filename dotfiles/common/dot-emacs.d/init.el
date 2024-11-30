@@ -263,6 +263,12 @@
   ;; Man-page at point
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
 
+(use-package keyfreq
+  :config
+  (keyfreq-mode 1)           ;; Enable keyfreq-mode
+  (keyfreq-autosave-mode 1)) ;; Automatically save frequency data
+
+
 (use-package language-id
   :config
   (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions)
