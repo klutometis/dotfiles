@@ -58,6 +58,7 @@
 (use-package avy
   :init
   (unbind-key "C-c a")
+
   :bind (("C-c a c" . avy-goto-char)
          ("C-c a C" . avy-goto-char-2)
          ("C-c a t" . avy-goto-char-timer)
@@ -65,8 +66,9 @@
          ("C-c a w" . avy-goto-word-1)
          ("C-c a e" . avy-goto-word-0)
          ("C-c a r" . avy-resume))
-  :config
-  (setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
+
+  :custom
+  (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s))
 
 (use-package bazel
   :hook ((bazel-mode-hook
