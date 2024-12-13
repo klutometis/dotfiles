@@ -23,8 +23,8 @@ URxvt.scrollBar: false
 *color3:  #ffcc00
 *color11: #ffcc00
 ! Blue
-*color4:  #1a66ff
-*color12: #1a66ff
+*color4:  #3399ff
+*color12: #3399ff
 ! Magenta
 *color5:  #ff61df
 *color13: #ff61df
@@ -62,6 +62,7 @@ URxvt.keysym.M-Left: \033[1;3D
 
 ! Meta + Ctrl combinations
 URxvt.keysym.M-C-a: \033[1;9A
+URxvt.keysym.M-C-z: \033[1;9Z
 
 ! Other keybindings
 URxvt.keysym.M-Escape: perl:keyboard-select:activate
