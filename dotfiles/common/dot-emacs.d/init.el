@@ -150,7 +150,7 @@
   ;; status-bar.
   (column-number-mode 1)
   :bind (("M-z" . zap-to-char)
-         ("C-M-z" . zap-up-to-char))
+         ("C-<M-z>" . zap-up-to-char))
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
 
