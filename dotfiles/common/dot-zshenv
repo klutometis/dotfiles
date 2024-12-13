@@ -1,1 +1,2 @@
 path=(~/bin $path)
+. "$HOME/.cargo/env"
