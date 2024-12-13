@@ -58,6 +58,7 @@
 (use-package avy
   :init
   (unbind-key "C-c a")
+  (load-file "~/.emacs.d/avy-actions.el")
 
   :bind (("C-c a c" . avy-goto-char)
          ("C-c a C" . avy-goto-char-2)
@@ -72,12 +73,21 @@
   (avy-dispatch-alist
    '((?x . avy-action-kill-move)
      (?X . avy-action-kill-stay)
-     (?p . avy-action-teleport) ;; replaced ?t
      (?m . avy-action-mark)
      (?f . avy-action-copy)     ;; replaced ?n
      (?v . avy-action-yank)     ;; replaced ?i
      (?Y . avy-action-yank-line)
-     (?z . avy-action-zap-to-char)))
+     (?z . avy-action-zap-to-char)
+     (?k . avy-action-kill-stay)
+     (?K . avy-action-kill-whole-line)
+     (?w . avy-action-copy)
+     (?W . avy-action-copy-whole-line)
+     (?y . avy-action-yank)
+     (?Y . avy-action-yank-whole-line)
+     (?p . avy-action-teleport)  ;; replaced ?t
+     (?P . avy-action-teleport-whole-line) ;; replaced ?T
+     (?M . avy-action-mark-to-char)
+     (?\; . avy-action-flyspell)))
 
   :custom-face
   (avy-lead-face ((t (:background "yellow" :foreground "black" :weight bold))))
@@ -117,6 +127,8 @@
   (desktop-save-mode 1)
   (add-to-list 'desktop-globals-to-save 'kill-ring))
 
+(use-package dictionary)
+
 (use-package dired-subtree
   :bind (:map dired-mode-map
               ("i" . dired-subtree-insert)
@@ -130,17 +142,19 @@
     (define-key input-decode-map "\e[1;3B" [M-down])
     (define-key input-decode-map "\e[1;3C" [M-right])
     (define-key input-decode-map "\e[1;3D" [M-left])
-    (define-key input-decode-map "\e[1;9A" [C-M-a]))
+    (define-key input-decode-map "\e[1;9A" [C-M-a])
+    (define-key input-decode-map "\e[1;9Z" [C-M-z]))
 
   :config
   ;; Show the column-number in addition to the row-number in the
   ;; status-bar.
   (column-number-mode 1)
-  (global-display-line-numbers-mode 1)
   :bind (("M-z" . zap-to-char)
          ("C-M-z" . zap-up-to-char))
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
+
+(use-package embark)
 
 (use-package find-dired
   :bind (("C-c f" . find-grep-dired)
@@ -174,6 +188,7 @@
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
                     ("Python" (black))
                     ("SCSS" (prettier ,prettier-flags))
+                    ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
                     ("Slidev" (prettier))
                     ("TypeScript" (prettier ,prettier-flags))
                     ("YAML" (prettier))
@@ -262,6 +277,8 @@
           helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
   ;; Man-page at point
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
+
+(use-package helpful)
 
 (use-package keyfreq
   :config
@@ -361,7 +378,7 @@
         savehist-file "~/.emacs.d/savehist"
         ;; Hack to attempt to deal with 100% CPU every couple minutes.
         savehist-autosave-interval 600)
-  (savehist-mode -1))
+  (savehist-mode))
 
 (use-package sort
   :bind ("C-c s" . sort-lines))
@@ -373,6 +390,7 @@
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
+  (treesit-font-lock-level 6)
   :config
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist 'all))
