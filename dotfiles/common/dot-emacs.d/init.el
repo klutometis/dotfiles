@@ -134,6 +134,8 @@
               ("i" . dired-subtree-insert)
               (";" . dired-subtree-remove)))
 
+(use-package edit-indirect)
+
 (use-package emacs
   :init
   ;; Configure input-decode-map for terminal Meta + Arrow keys
