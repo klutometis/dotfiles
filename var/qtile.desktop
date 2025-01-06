@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Qtile (venv)
+Comment=Qtile Session (Isolated in venv)
+Exec=/home/danenberg/bin/qtile.sh
+Type=Application
+Keywords=wm;tiling
