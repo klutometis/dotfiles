@@ -11,10 +11,11 @@ keycode 108 = Meta_R Alt_R
 keycode 66  = Control_L
 keycode 37  = Control_L
 keycode 107  = Multi_key
-keycode 133 = Multi_key
+keycode 133 = Super_L
 
 add control = Control_L Control_R
 add mod1 = Meta_L Meta_R
+add mod4 = Super_L
 
 ! Thanks, Olin; thanks, Kragen:
 ! <http://canonical.org/~kragen/setting-up-keyboard.html>,
