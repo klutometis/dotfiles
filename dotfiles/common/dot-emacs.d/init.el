@@ -375,11 +375,11 @@
   :config
   (setq savehist-save-minibuffer-history 1)
   (setq savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring)
-        savehist-file "~/.emacs.d/savehist"
-        ;; Hack to attempt to deal with 100% CPU every couple minutes.
-        savehist-autosave-interval 600)
-  (savehist-mode))
+        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring))
+  (setq savehist-file "~/.emacs.d/savehist")
+  ;; Hack to attempt to deal with 100% CPU every couple minutes.
+  ;; (setq savehist-autosave-interval 600)
+  (savehist-mode 1))
 
 (use-package sort
   :bind ("C-c s" . sort-lines))
@@ -396,6 +396,7 @@
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist 'all))
 
+(use-package transient)
 
 (use-package which-key
   :config
