@@ -377,7 +377,8 @@
   :config
   (setq savehist-save-minibuffer-history 1)
   (setq savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring))
+        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring
+                    helm-M-x-input-history helm-find-files-history helm-grep-history))
   (setq savehist-file "~/.emacs.d/savehist")
   ;; Hack to attempt to deal with 100% CPU every couple minutes.
   ;; (setq savehist-autosave-interval 600)
