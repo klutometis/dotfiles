@@ -211,7 +211,14 @@
     (:install)
     (:languages "Graphviz")
     (:features)
-    (:format (format-all--buffer-easy executable "-"))))
+    (:format (format-all--buffer-easy executable "-")))
+
+  (define-format-all-formatter pyformat
+    (:executable "pyformat")
+    (:install)
+    (:languages "Python")
+    (:features)
+    (:format (format-all--buffer-easy executable))))
 
 (use-package full-ack)
 
