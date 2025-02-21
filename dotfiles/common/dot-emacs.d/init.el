@@ -97,7 +97,7 @@
 
 (use-package bazel
   :hook ((bazel-mode-hook
-          . (lambda () (add-hook 'before-save-hook 'bazel-mode-buildifier)))))
+          . (lambda () (add-hook 'before-save-hook 'bazel-buildifier)))))
 
 (use-package better-defaults
   :config
