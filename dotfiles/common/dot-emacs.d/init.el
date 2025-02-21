@@ -188,7 +188,7 @@
                     ("JSON" (deno))
                     ("JavaScript" (deno))
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
-                    ("Python" (black))
+                    ("Python" (pyformat))
                     ("SCSS" (prettier . ,prettier-flags))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn" "-sr"))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
