@@ -230,7 +230,16 @@
          ("C-c C-l k" . gptel-set-api-key)
          ("C-c C-l m" . gptel-switch-model)
          ("C-c C-l n" . gptel-next-response)
-         ("C-c C-l p" . gptel-previous-response)))
+         ("C-c C-l p" . gptel-previous-response)
+         ("C-c C-l r" . gptel-rewrite)
+         ("C-c C-l a" . gptel)
+         ("C-c C-l d" . gptel-describe-model)
+         ("C-c C-l e" . gptel-edit-context)
+         ("C-c C-l h" . gptel-help))
+  :hook ((gptel-post-stream-hook . gptel-auto-scroll)
+         (gptel-post-response-functions . gptel-end-of-response))
+  :config
+  (setq gptel-default-mode 'text-mode))
 
 (use-package graphviz-dot-mode
   :init
