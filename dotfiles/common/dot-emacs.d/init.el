@@ -181,7 +181,6 @@
   (let ((prettier-flags '("--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--quote-props=preserve"  "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict")))
     (setq-default format-all-formatters
                   `(
-                    ("Bazel" (buildifier))
                     ("C++" (clang-format))
                     ("Emacs Lisp" (emacs-lisp))
                     ("Graphviz" (nop))
