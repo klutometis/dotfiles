@@ -223,7 +223,6 @@
 (use-package full-ack)
 
 (use-package gptel
-  :ensure t
   :bind (("C-c C-l s" . gptel-send)
          ("C-c C-l c" . gptel-clear)
          ("C-c C-l i" . gptel-insert)
