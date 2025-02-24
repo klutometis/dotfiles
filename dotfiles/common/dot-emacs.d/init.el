@@ -188,7 +188,7 @@
                     ("JSON" (deno))
                     ("JavaScript" (deno))
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
-                    ("Python" (pyformat))
+                    ("Python" (black))
                     ("SCSS" (prettier . ,prettier-flags))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn" "-sr"))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
@@ -220,25 +220,50 @@
     (:features)
     (:format (format-all--buffer-easy executable))))
 
+;;; Activate dark-mode in terminal.
+(use-package frame
+  :straight nil
+  :custom
+  (frame-background-mode 'dark)
+  :hook
+  (after-init . frame-set-background-mode))
+
 (use-package full-ack)
 
 (use-package gptel
-  :bind (("C-c C-l s" . gptel-send)
-         ("C-c C-l c" . gptel-clear)
-         ("C-c C-l i" . gptel-insert)
-         ("C-c C-l k" . gptel-set-api-key)
-         ("C-c C-l m" . gptel-switch-model)
-         ("C-c C-l n" . gptel-next-response)
-         ("C-c C-l p" . gptel-previous-response)
-         ("C-c C-l r" . gptel-rewrite)
-         ("C-c C-l a" . gptel)
-         ("C-c C-l d" . gptel-describe-model)
-         ("C-c C-l e" . gptel-edit-context)
-         ("C-c C-l h" . gptel-help))
+  :bind (("C-c t s" . gptel-send)
+         ("C-c t r" . gptel-rewrite)
+         ("C-c t a" . gptel-add)
+         ("C-c t f" . gptel-add-file)
+         ("C-c t x" . gptel-context-remove-all)
+         ("C-c t m" . gptel-menu)
+         ("C-c t g" . gptel))
+  :custom
+  (gptel-default-mode 'text-mode)
+  (gptel-model 'gpt-4o)
+  (gptel-track-media t)
   :hook ((gptel-post-stream-hook . gptel-auto-scroll)
-         (gptel-post-response-functions . gptel-end-of-response))
+         (gptel-post-response-functions . gptel-end-of-response)
+         (gptel-mode . (lambda ()
+                         (add-hook 'after-change-functions
+                                   (lambda (beg end len)
+                                     (check-and-save-gptel-buffer))
+                                   nil t))))
   :config
-  (setq gptel-default-mode 'text-mode))
+  (defun save-gptel-buffer-with-timestamp ()
+    "Save the current gptel buffer to a directory with a timestamped filename."
+    (interactive)
+    (let ((directory "~/prg/gptel/")  ; Specify your desired directory here
+          (filename (format-time-string "gptel-%Y%m%d-%H%M%S.txt")))
+      (write-region (point-min) (point-max) (concat directory filename))
+      (message "Buffer saved as %s" (concat directory filename))))
+
+  (defun check-and-save-gptel-buffer ()
+    "Check if the gptel buffer token count exceeds a limit and save it."
+    (when (and (derived-mode-p 'gptel-mode)
+               (> (buffer-size) 30000))  ; Adjust the token count threshold as needed
+      (save-gptel-buffer-with-timestamp)
+      (message "Buffer saved due to exceeding token limit."))))
 
 (use-package graphviz-dot-mode
   :init
@@ -382,7 +407,24 @@
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
 
-(use-package python
+;;; Make pulse more readable in terminal.
+(use-package pulse
+  :custom-face
+  (pulse-highlight-start-face
+   ((((class color) (min-colors 88) (background dark))
+     :background "navy" :foreground "white" :extend t)
+    (((class color) (min-colors 88) (background light))
+     :background "light goldenrod yellow" :extend t)
+    (t :inherit secondary-selection)))
+  (pulse-highlight-face
+   ((((class color) (min-colors 88) (background dark))
+     :background "navy" :foreground "white" :extend t)
+    (((class color) (min-colors 88) (background light))
+     :background "light goldenrod yellow" :extend t)
+    (t :inherit secondary-selection))))
+
+(use-package python-mode
+  :bind (:map python-ts-mode-map ("C-c C-l" . nil))
   :config
   ;; Let's go 4 to be congruent with `black`.
   (setq python-indent-offset 4))
