@@ -457,6 +457,14 @@
 
 (use-package transient)
 
+(use-package transpose-frame
+  :bind (("C-c w t" . transpose-frame)
+         ("C-c w f" . flip-frame)
+         ("C-c w F" . flop-frame)
+         ("C-c w r" . rotate-frame)
+         ("C-c w c" . rotate-frame-clockwise)
+         ("C-c w a" . rotate-frame-anticlockwise)))
+
 (use-package which-key
   :config
   (which-key-mode))
