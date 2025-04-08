@@ -61,8 +61,8 @@
         (window-buffer (previous-window)) (window-buffer (next-window)))))
 
 (define-key minibuffer-local-map
-  (kbd "C-c TAB") (lambda () (interactive)
-                    (insert (buffer-name (current-buffer-not-mini)))))
+            (kbd "C-c TAB") (lambda () (interactive)
+                              (insert (buffer-name (current-buffer-not-mini)))))
 
 ;;; Typed text replaces selection.
 (delete-selection-mode t)
@@ -218,7 +218,8 @@ point reaches the beginning or end of the buffer, stop there."
  ("C-c o" . occur)
  ("C-c p" . pwd)
  ("C-c u" . kill-line-backward)
- ("C-c w" . select-next-subword)
+ ;; Let's try to reclaim this for transpose-frame.
+ ;; ("C-c w" . select-next-subword)
  ("C-h" . kill-whole-line)
  ("C-o" . smart-open-line-above)
  ("C-x C-f" . helm-find-files)
