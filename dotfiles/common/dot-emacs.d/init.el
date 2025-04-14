@@ -28,19 +28,14 @@
 (use-package ace-window
   :bind ("C-x o" . ace-window)
   :init
-  ;; Redefine the action keys so we can select windows with the
-  ;; home-row.
   (setq aw-dispatch-alist
-        '((?x aw-delete-window " Ace - Delete Window")
-          (?m aw-swap-window " Ace - Swap Window")
-          (?n aw-flip-window)
+        '((?d aw-delete-window " Ace - Delete Window")
+          (?s aw-swap-window " Ace - Swap Window")
+          (?f aw-flip-window " Ace - Flip Window")
           (?v aw-split-window-vert " Ace - Split Vert Window")
-          (?b aw-split-window-horz " Ace - Split Horz Window")
-          (?i delete-other-windows " Ace - Maximize Window")
-          (?o delete-other-windows)))
-  ;; On second thought, let's use home-row keys which are not already
-  ;; defined in aw-dispatch-list.
-  (setq aw-keys '(?a ?e ?u ?i ?d ?h ?t ?s))
+          (?h aw-split-window-horz " Ace - Split Horz Window")
+          (?m delete-other-windows " Ace - Maximize Window")))
+  (setq aw-keys '(?a ?o ?e ?i ?h ?t ?n ?s))
 
   :config
   ;; Otherwise, the dimming makes the screens unreadable.
@@ -122,6 +117,8 @@
   (setq compilation-ask-about-save nil)
   (setq compilation-always-kill t))
 
+(use-package deferred)
+
 (use-package desktop
   :config
   (desktop-save-mode 1)
@@ -181,6 +178,7 @@
   (let ((prettier-flags '("--print-width=80" "--tab-width=2" "--use-tabs=false" "--semi=true" "--single-quote=true" "--quote-props=preserve"  "--bracket-spacing=false" "--trailing-comma=all" "--arrow-parens=always" "--embedded-language-formatting=off" "--bracket-same-line=true" "--single-attribute-per-line=false" "--jsx-single-quote=false" "--plugins=google3Plugin" "--html-whitespace-sensitivity=strict")))
     (setq-default format-all-formatters
                   `(
+                    ("Bazel" (buildifier))
                     ("C++" (clang-format))
                     ("Emacs Lisp" (emacs-lisp))
                     ("Graphviz" (nop))
@@ -188,7 +186,7 @@
                     ("JSON" (deno))
                     ("JavaScript" (deno))
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
-                    ("Python" (black))
+                    ("Python" (pyformat))
                     ("SCSS" (prettier . ,prettier-flags))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn" "-sr"))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
@@ -226,7 +224,7 @@
   :custom
   (frame-background-mode 'dark)
   :hook
-  (after-init . frame-set-background-mode))
+  (after-init . (lambda () (mapc 'frame-set-background-mode (frame-list)))))
 
 (use-package full-ack)
 
@@ -263,7 +261,18 @@
     (when (and (derived-mode-p 'gptel-mode)
                (> (buffer-size) 30000))  ; Adjust the token count threshold as needed
       (save-gptel-buffer-with-timestamp)
-      (message "Buffer saved due to exceeding token limit."))))
+      (message "Buffer saved due to exceeding token limit.")))
+
+  (defun remove-code-fence (response)
+    (let ((lines (split-string response "\n")))
+      (if (and (>= (length lines) 2)
+               (string-match-p "^```" (car lines))
+               (string-match-p "^```" (car (last lines))))
+          (string-join (cdr (butlast lines)) "\n")
+        response)))
+
+  (add-hook 'gptel-post-response-functions #'remove-code-fence)
+  (add-hook 'gptel-post-rewrite-functions #'remove-code-fence))
 
 (use-package graphviz-dot-mode
   :init
@@ -327,9 +336,9 @@
   (keyfreq-mode 1)           ;; Enable keyfreq-mode
   (keyfreq-autosave-mode 1)) ;; Automatically save frequency data
 
-
 (use-package language-id
   :config
+  (push '("Bazel" (bazel-mode (language-id--file-name-regexp "BUILD"))) language-id--definitions)
   (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions)
   (push '("Slidev" (markdown-mode (language-id--file-name-regexp "slides\\.md"))) language-id--definitions))
 
@@ -430,14 +439,22 @@
   (setq python-indent-offset 4))
 
 (use-package savehist
+  :custom
+  (savehist-save-minibuffer-history t)
+  (savehist-additional-variables
+   '(minibuffer-history
+     compile-history
+     extended-command-history
+     kill-ring
+     search-ring
+     regexp-search-ring
+     log-edit-comment-ring
+     helm-M-x-input-history
+     helm-find-files-history
+     helm-grep-history))
+  (savehist-file "~/.emacs.d/savehist")
+  ;; (savehist-autosave-interval 600) ; optional CPU fix
   :config
-  (setq savehist-save-minibuffer-history 1)
-  (setq savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring compile-history log-edit-comment-ring
-                    helm-M-x-input-history helm-find-files-history helm-grep-history))
-  (setq savehist-file "~/.emacs.d/savehist")
-  ;; Hack to attempt to deal with 100% CPU every couple minutes.
-  ;; (setq savehist-autosave-interval 600)
   (savehist-mode 1))
 
 (use-package sort
@@ -512,3 +529,8 @@
 
 (use-package yasnippet-snippets
   :after yasnippet)
+
+;;; Load a host-specific file, if one exists.
+(let ((host-file (format "~/.emacs.d/%s.el" system-name)))
+  (if (file-exists-p host-file)
+      (load host-file)))
