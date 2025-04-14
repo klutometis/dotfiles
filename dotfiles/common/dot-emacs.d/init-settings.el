@@ -74,11 +74,6 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
-;;; Load a host-specific file, if one exists.
-(let ((host-file (format "~/.emacs.d/%s.el" system-name)))
-  (if (file-exists-p host-file)
-      (load host-file)))
-
 ;;; Thanks,
 ;;; <http://www.masteringemacs.org/articles/2011/07/20/searching-buffers-occur-mode/>.
 (defun get-buffers-matching-mode (mode)
