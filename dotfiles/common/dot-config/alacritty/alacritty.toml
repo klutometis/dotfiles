@@ -1,0 +1,30 @@
+[font]
+size = 6.0  # or try 6.0 or 7.0 depending on match
+
+[font.normal]
+family = "Misc Fixed"
+style = "SemiCondensed"
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
+
+[colors.normal]
+black   = "#000000"
+red     = "#ff7c4d"
+green   = "#22ff00"
+yellow  = "#ffcc00"
+blue    = "#3399ff"
+magenta = "#ff61df"
+cyan    = "#00ffff"
+white   = "#888888"
+
+[colors.bright]
+black   = "#000000"
+red     = "#ff7c4d"
+green   = "#22ff00"
+yellow  = "#ffcc00"
+blue    = "#3399ff"
+magenta = "#ff61df"
+cyan    = "#00ffff"
+white   = "#ffffff"
