@@ -2,6 +2,10 @@
 
 zmodload zsh/mathfunc
 
+[[ -r /sys/class/power_supply/BAT0/energy_now ]] || {
+  echo "No battery"; exit 0
+}
+
 # According to power_supply.h: All voltages, currents, charges,
 # energies, time and temperatures in uV, µA, µAh, µWh, seconds and
 # tenths of degree Celsius unless otherwise stated.
@@ -19,13 +23,12 @@ float power=$(cat /sys/class/power_supply/BAT0/power_now)
 # float rate=$(( power * voltage / 1e7 ))
 rate=$power
 
-# I really wanted to use electric plug (🔌) and battery (🔋), but they aren't
-# supported by my terminal font; even alternating (⏦) and direct current (⎓)
-# would have sufficed, but they're similarly unsupported.
 declare -A STATES
-STATES=(Charging "(C)"
-        Discharging ""
-        Unknown "(C)")
+STATES=(
+  Charging    "⚡"
+  Discharging "🔋"
+  Unknown     "🔌"
+)
 
 state=$(cat /sys/class/power_supply/BAT0/status)
 
