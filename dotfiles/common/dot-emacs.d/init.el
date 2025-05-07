@@ -99,6 +99,10 @@
   ;;; Don't flash on bell, after all.
   (setq visible-bell nil))
 
+(use-package clipetty
+  :config
+  (global-clipetty-mode 1))
+
 (use-package combobulate
   :bind (("C-<M-a>" . combobulate-navigate-beginning-of-defun))
   :custom
