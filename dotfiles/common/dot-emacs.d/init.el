@@ -160,6 +160,7 @@
   ;; Enable terminal mouse tracking
   (mouse-wheel-follow-mouse t)
   (mouse-wheel-scroll-amount '(1 ((shift) . 5))) ;; optional
+
   :config
   ;; Enable mouse support in terminal
   (xterm-mouse-mode 1)
@@ -167,10 +168,20 @@
   ;; Show the column-number in addition to row-number
   (column-number-mode 1)
 
+  (defun toggle-terminal-mouse ()
+    (interactive)
+    (if (bound-and-true-p xterm-mouse-mode)
+        (progn
+          (xterm-mouse-mode -1)
+          (message "Mouse disabled. Alacritty copy/paste restored."))
+      (xterm-mouse-mode 1)
+      (message "Mouse enabled in Emacs.")))
+
   :bind (("C-c ?"     . help-for-help)
          ("M-z"       . zap-to-char)
          ("C-<M-z>"   . zap-up-to-char)
-         ("C-c m"     . chmod-current-file))
+         ("C-c m"     . chmod-current-file)
+         ("C-c M-m" . toggle-terminal-mouse))
 
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
