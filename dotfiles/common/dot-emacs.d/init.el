@@ -140,7 +140,7 @@
 (use-package emacs
   :init
   ;; Configure input-decode-map for terminal Meta + Arrow keys
-  (when (not (display-graphic-p))
+  (unless (display-graphic-p)
     (define-key input-decode-map "\e[1;3A" [M-up])
     (define-key input-decode-map "\e[1;3B" [M-down])
     (define-key input-decode-map "\e[1;3C" [M-right])
@@ -148,12 +148,30 @@
     (define-key input-decode-map "\e[1;9A" [C-M-a])
     (define-key input-decode-map "\e[1;9Z" [C-M-z]))
 
+  (defun chmod-current-file (mode)
+    "Chmod the current file to the specified MODE."
+    (interactive "sMode: ")
+    (let ((filename (buffer-file-name)))
+      (when filename
+        (call-process "chmod" nil 0 nil mode filename)
+        (message "Chmodded %s to %s" filename mode))))
+
+  :custom
+  ;; Enable terminal mouse tracking
+  (mouse-wheel-follow-mouse t)
+  (mouse-wheel-scroll-amount '(1 ((shift) . 5))) ;; optional
   :config
-  ;; Show the column-number in addition to the row-number in the
-  ;; status-bar.
+  ;; Enable mouse support in terminal
+  (xterm-mouse-mode 1)
+
+  ;; Show the column-number in addition to row-number
   (column-number-mode 1)
-  :bind (("M-z" . zap-to-char)
-         ("C-<M-z>" . zap-up-to-char))
+
+  :bind (("C-c ?"     . help-for-help)
+         ("M-z"       . zap-to-char)
+         ("C-<M-z>"   . zap-up-to-char)
+         ("C-c m"     . chmod-current-file))
+
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
 
