@@ -293,6 +293,24 @@
           (string-join (cdr (butlast lines)) "\n")
         response)))
 
+  (defun gptel-replace-buffer-with-overlay ()
+    "Replace current buffer contents with text from GPTel overlay."
+    (interactive)
+    (let* ((ovs (overlays-in (point-min) (point-max)))
+           (target (car ovs))
+           (content
+            (cond
+             ((overlay-get target 'display)
+              (format "%s" (overlay-get target 'display)))
+             ((and (overlay-start target) (overlay-end target))
+              (buffer-substring-no-properties
+               (overlay-start target)
+               (overlay-end target)))
+             (t (user-error "No usable overlay content found")))))
+      (erase-buffer)
+      (insert content)
+      (message "Replaced buffer contents with overlay text.")))
+
   (add-hook 'gptel-post-response-functions #'remove-code-fence)
   (add-hook 'gptel-post-rewrite-functions #'remove-code-fence))
 
