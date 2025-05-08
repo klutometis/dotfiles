@@ -1,9 +1,8 @@
+;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
+       (expand-file-name "straight/repos/straight.el/bootstrap.el"
+                         user-emacs-directory))
       (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
@@ -14,16 +13,25 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; Disable package.el in favor of straight.el
 (setq package-enable-at-startup nil)
 
+;; Use `use-package` with straight.el integration by default
 (straight-use-package 'use-package)
-
 (setq straight-use-package-by-default t)
+
+;;; Automatically update all straight.el packages on Emacs startup.
+(add-hook 'emacs-startup-hook #'straight-pull-all)
 
 ;; Load a separate file containing all global settings and functions;
 ;; front-loading to enjoy the function definitions when configuring packages
 ;; below.
 (load "~/.emacs.d/init-settings.el")
+
+(let ((secrets (expand-file-name "init-secrets.el" user-emacs-directory)))
+  (if (file-readable-p secrets)
+      (load secrets nil 'nomessage)
+    (warn "⚠️init-secrets.el not found or unreadable. Did you run `git-crypt unlock`?")))
 
 (use-package ace-window
   :bind ("C-x o" . ace-window)
@@ -275,6 +283,7 @@
   (gptel-track-media t)
   :hook ((gptel-post-stream-hook . gptel-auto-scroll)
          (gptel-post-response-functions . gptel-end-of-response)
+         (gptel-post-rewrite-functions . remove-code-fence)
          (gptel-mode . (lambda ()
                          (add-hook 'after-change-functions
                                    (lambda (beg end len)
@@ -296,13 +305,20 @@
       (save-gptel-buffer-with-timestamp)
       (message "Buffer saved due to exceeding token limit.")))
 
-  (defun remove-code-fence (response)
-    (let ((lines (split-string response "\n")))
-      (if (and (>= (length lines) 2)
-               (string-match-p "^```" (car lines))
-               (string-match-p "^```" (car (last lines))))
-          (string-join (cdr (butlast lines)) "\n")
-        response)))
+  (defun gptel-cleanup-code-fences (beg end)
+    "Remove Markdown-style code fences (like ```python) from GPTel rewrite response.
+This operates in-place on the rewritten region between BEG and END."
+    (save-excursion
+      ;; Remove trailing fence if present
+      (goto-char end)
+      (forward-line 0) ; Move to beginning of the last line
+      (when (looking-at "^```\\s-*$")
+        (delete-region (line-beginning-position) (1+ (line-end-position)))) ; Remove line and newline
+
+      ;; Remove leading fence if present
+      (goto-char beg)
+      (when (looking-at "^```.*$")
+        (delete-region (line-beginning-position) (1+ (line-end-position))))))
 
   (defun gptel-replace-buffer-with-overlay ()
     "Replace current buffer contents with text from GPTel overlay."
@@ -322,8 +338,10 @@
       (insert content)
       (message "Replaced buffer contents with overlay text.")))
 
-  (add-hook 'gptel-post-response-functions #'remove-code-fence)
-  (add-hook 'gptel-post-rewrite-functions #'remove-code-fence))
+  (setq gptel-model 'gemini-2.5-pro-preview-03-25
+        gptel-backend (gptel-make-gemini "Gemini"
+                        :key gemini-api-key
+                        :stream t)))
 
 (use-package graphviz-dot-mode
   :init
