@@ -289,6 +289,8 @@
                                    (lambda (beg end len)
                                      (check-and-save-gptel-buffer))
                                    nil t))))
+  :custom-face
+  (gptel-context-highlight-face ((t (:weight bold :background "#2a2f4a"))))
   :config
   (defun save-gptel-buffer-with-timestamp ()
     "Save the current gptel buffer to a directory with a timestamped filename."
