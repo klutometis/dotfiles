@@ -290,7 +290,9 @@
                                      (check-and-save-gptel-buffer))
                                    nil t))))
   :custom-face
-  (gptel-context-highlight-face ((t (:weight bold :background "#2a2f4a"))))
+  (gptel-context-highlight-face ((t (:weight bold :background "#2a2f4a" :extend t))))
+  (gptel-rewrite-highlight-face ((t (:weight bold :background "#1f3a24" :extend t))))
+
   :config
   (defun save-gptel-buffer-with-timestamp ()
     "Save the current gptel buffer to a directory with a timestamped filename."
@@ -343,7 +345,9 @@ This operates in-place on the rewritten region between BEG and END."
   (setq gptel-model 'gemini-2.5-pro-preview-03-25
         gptel-backend (gptel-make-gemini "Gemini"
                         :key gemini-api-key
-                        :stream t)))
+                        :stream t))
+
+  (setq gptel-api-key openai-api-key))
 
 (use-package graphviz-dot-mode
   :init
