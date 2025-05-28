@@ -19,6 +19,7 @@
 ;; Use `use-package` with straight.el integration by default
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
+(setq package-install-upgrade-built-in t)
 
 ;;; Automatically update all straight.el packages on Emacs startup.
 (add-hook 'emacs-startup-hook #'straight-pull-all)
@@ -32,6 +33,9 @@
   (if (file-readable-p secrets)
       (load secrets nil 'nomessage)
     (warn "⚠️init-secrets.el not found or unreadable. Did you run `git-crypt unlock`?")))
+
+;;; Load transient early and eagerly.
+(use-package transient :demand t)
 
 (use-package ace-window
   :bind ("C-x o" . ace-window)
@@ -189,7 +193,10 @@
          ("M-z"       . zap-to-char)
          ("C-<M-z>"   . zap-up-to-char)
          ("C-c m"     . chmod-current-file)
-         ("C-c M-m" . toggle-terminal-mouse))
+         ("C-c M-m" . toggle-terminal-mouse)
+         ;; Get rid of suspension (messes with tmux).
+         ("C-z" . nil)
+         ("C-x C-z" . nil))
 
   :hook
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
@@ -227,7 +234,7 @@
                     ("JSON" (deno))
                     ("JavaScript" (deno))
                     ("Markdown" (prettier "--print-width=80" "--prose-wrap=always"))
-                    ("Python" (pyformat))
+                    ("Python" (pyformat "-s" "4"))
                     ("SCSS" (prettier . ,prettier-flags))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn" "-sr"))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
@@ -490,6 +497,8 @@ This operates in-place on the rewritten region between BEG and END."
   :hook ((emacs-lisp-mode . paredit-mode)
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
+
+(use-package poetry)
 
 ;;; Make pulse more readable in terminal.
 (use-package pulse
