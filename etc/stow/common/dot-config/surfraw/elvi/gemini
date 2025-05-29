@@ -1,0 +1,25 @@
+#!/bin/sh
+# elvis: gemini -- Launch Gemini (https://gemini.google.com)
+
+. surfraw || exit 1
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0
+Description:
+  Opens Gemini (https://gemini.google.com) in your browser.
+
+  Currently, Gemini does not support prompt or chat search via URL.
+EOF
+    w3_global_usage
+}
+
+w3_config
+w3_parse_args "$@"
+
+if test -z "$w3_args"; then
+    w3_browse_url "https://gemini.google.com/"
+else
+    # Gemini doesn’t support query URLs yet, so ignore input for now.
+    w3_browse_url "https://gemini.google.com/"
+fi

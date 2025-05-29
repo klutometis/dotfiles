@@ -1,0 +1,16 @@
+# Generic "search anything" with dmenu (all elvi)
+super + g
+    q
+
+# Curried searches using --engine
+super + shift + g
+    q --engine=google
+
+super + shift + m
+    q --engine=maps
+
+super + shift + h
+    q --engine=github
+
+super + shift + y
+    q --engine=youtube

@@ -1,0 +1,24 @@
+#!/bin/sh
+# elvis: buganizer    -- View your assigned bugs in Buganizer
+. surfraw || exit 1
+
+w3_usage_hook () {
+  cat <<EOF
+Usage: $w3_argv0 [search terms...]
+Description:
+  Search Buganizer for open bugs assigned to you.
+EOF
+  w3_global_usage
+}
+
+w3_config
+w3_parse_args "$@"
+
+BASE_URL="https://b.corp.google.com/issues?q="
+
+if test -z "$w3_args"; then
+  w3_browse_url "${BASE_URL}assignee:me%20status:open"
+else
+  qstring=$(w3_url_of_arg "$w3_args")
+  w3_browse_url "${BASE_URL}assignee:me%20status:open%20$query"
+fi
