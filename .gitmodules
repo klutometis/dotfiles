@@ -4,3 +4,6 @@
 [submodule "prg/build-with-ai/pre-commit"]
 	path = prg/build-with-ai/pre-commit
 	url = https://github.com/klutometis/pre-commit.git
+[submodule "prg/q"]
+	path = prg/q
+	url = git@github.com:klutometis/q.git
