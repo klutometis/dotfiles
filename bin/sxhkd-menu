@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ROFI_CMD=${ROFI_CMD:-rofi -dmenu -i -p "sxhkd bindings"}
+
+awk '
+  /^[^ ]/ { if (cmd) print keys " → " cmd; keys=$0; cmd="" }
+  /^[ ]/  { cmd = cmd " " $0 }
+  END     { if (cmd) print keys " → " cmd }
+' ~/.config/sxhkd/sxhkdrc | $ROFI_CMD

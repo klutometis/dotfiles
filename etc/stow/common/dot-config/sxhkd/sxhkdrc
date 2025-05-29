@@ -1,16 +1,42 @@
-# Generic "search anything" with dmenu (all elvi)
+# Generic q launcher (dmenu selection)
+super + shift + q
+    ~/bin/q
+
+# Direct elvi (mnemonically aligned)
+super + c
+    sr calendar
+
 super + g
-    q
+    ~/bin/q --engine=google
 
-# Curried searches using --engine
-super + shift + g
-    q --engine=google
+super + m
+    ~/bin/q --engine=moma
 
-super + shift + m
-    q --engine=maps
+super + s
+    ~/bin/q --engine=codesearch
 
-super + shift + h
-    q --engine=github
+super + h
+    ~/bin/q --engine=github --type=code
 
-super + shift + y
-    q --engine=youtube
+super + b
+    ~/bin/q --engine=buganizer
+
+# Bookmarks
+super + a
+    sr chatgpt
+
+super + e
+    sr gemini
+
+super + l
+    sr gmail
+
+super + t
+    sr chat
+
+super + y
+    sr memegen
+
+# Show all sxhkd bindings in rofi
+super + question
+    sxhkd-menu
