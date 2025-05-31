@@ -1,27 +1,70 @@
-# Generic q launcher (dmenu selection)
+# Generic q launcher (rofi selection)
 super + shift + q
     ~/bin/q
 
-# Direct elvi (mnemonically aligned)
-super + c
-    sr calendar
+# Show all sxhkd bindings in rofi
+super + question
+    sxhkd-menu
 
+# Direct elvi launchers
 super + g
     ~/bin/q --engine=google
+
+super + shift + g
+    sr google $(xclip -o -selection primary)
+
+super + ctrl + g
+    sr google $(xclip -o -selection clipboard)
 
 super + m
     ~/bin/q --engine=moma
 
+super + shift + m
+    sr moma $(xclip -o -selection primary)
+
+super + ctrl + m
+    sr moma $(xclip -o -selection clipboard)
+
 super + s
     ~/bin/q --engine=codesearch
+
+super + shift + s
+    sr codesearch $(xclip -o -selection primary)
+
+super + ctrl + s
+    sr codesearch $(xclip -o -selection clipboard)
 
 super + h
     ~/bin/q --engine=github --type=code
 
+super + shift + h
+    sr github -t=code $(xclip -o -selection primary)
+
+super + ctrl + h
+    sr github -t=code $(xclip -o -selection clipboard)
+
 super + b
     ~/bin/q --engine=buganizer
 
-# Bookmarks
+super + shift + b
+    sr buganizer $(xclip -o -selection primary)
+
+super + ctrl + b
+    sr buganizer $(xclip -o -selection clipboard)
+
+super + Return
+    ~/bin/q --engine=plain
+
+super + shift + Return
+    sr plain $(xclip -o -selection primary)
+
+super + ctrl + Return
+    sr plain $(xclip -o -selection clipboard)
+
+# Bookmark elvi (no query)
+super + c
+    sr calendar
+
 super + a
     sr chatgpt
 
@@ -36,7 +79,3 @@ super + t
 
 super + y
     sr memegen
-
-# Show all sxhkd bindings in rofi
-super + question
-    sxhkd-menu
