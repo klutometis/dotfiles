@@ -53,8 +53,34 @@
   ;; Otherwise, the dimming makes the screens unreadable.
   (set-face-foreground 'aw-background-face "gray100"))
 
+(use-package aider
+  :bind ("C-c A" . aider-transient-menu)
+  :custom
+  (aider-args '("--model" "gemini/gemini-2.5-pro-preview-06-05" "--thinking-tokens" "32k"))
+  :config
+  (setenv "GEMINI_API_KEY"
+          (auth-source-pick-first-password
+           :host "gemini.google.com"
+           :user "apikey")))
+
+(use-package aidermacs
+  :bind (("C-c M-a" . aidermacs-transient-menu))
+  :custom
+  (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
+  (aidermacs-extra-args '("--thinking-tokens" "32k"))
+  :config
+  (setenv "GEMINI_API_KEY"
+          (auth-source-pick-first-password
+           :host "gemini.google.com"
+           :user "apikey")))
+
 (use-package ansi-color
   :hook (compilation-filter . ansi-color-compilation-filter))
+
+(use-package auth-source-pass
+  :config
+  (auth-source-pass-enable))
+
 
 (use-package auto-package-update
   :config
@@ -203,6 +229,10 @@
 
 (use-package embark)
 
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package find-dired
   :bind (("C-c f" . find-grep-dired)
          ("C-c n" . find-name-dired))
@@ -348,6 +378,33 @@ This operates in-place on the rewritten region between BEG and END."
       (erase-buffer)
       (insert content)
       (message "Replaced buffer contents with overlay text.")))
+
+  ;; Tool: Create a file
+  (gptel-make-tool
+   :name "create_file"
+   :function
+   (lambda (path filename content)
+     (let ((dir (if (string-empty-p path)
+                    default-directory
+                  (expand-file-name path)))
+           (filename (string-trim filename)))
+       (let ((full-path (expand-file-name filename dir)))
+         (with-temp-buffer
+           (insert content)
+           (write-file full-path))
+         (format "✅ Created file: %s\n📂 In directory: %s" filename dir))))
+   :description "Create a new file with the specified content."
+   :args (list
+          '(:name "path"
+                  :type string
+                  :description "Directory where the file will be created (leave blank for current dir).")
+          '(:name "filename"
+                  :type string
+                  :description "Name of the file to create.")
+          '(:name "content"
+                  :type string
+                  :description "Text content to write."))
+   :category "filesystem")
 
   (setq gptel-model 'gemini-2.5-pro-preview-03-25
         gptel-backend (gptel-make-gemini "Gemini"
