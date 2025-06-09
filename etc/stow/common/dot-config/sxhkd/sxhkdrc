@@ -1,5 +1,5 @@
 # Generic q launcher (rofi selection)
-super + shift + q
+super + q
     ~/bin/q
 
 # Show all sxhkd bindings in rofi
@@ -52,14 +52,14 @@ super + shift + b
 super + ctrl + b
     sr buganizer $(xclip -o -selection clipboard)
 
-super + Return
-    ~/bin/q --engine=plain
+super + w
+    ~/bin/q --engine=W
 
-super + shift + Return
-    sr plain $(xclip -o -selection primary)
+super + shift + w
+    sr W $(xclip -o -selection primary)
 
-super + ctrl + Return
-    sr plain $(xclip -o -selection clipboard)
+super + ctrl + w
+    sr W $(xclip -o -selection clipboard)
 
 # Bookmark elvi (no query)
 super + c
