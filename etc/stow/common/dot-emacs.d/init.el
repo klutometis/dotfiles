@@ -1,3 +1,10 @@
+;; Setup for straight.el with GitHub mirror overrides
+(setq straight-recipe-repositories
+      '(("melpa"    . "https://github.com/melpa/melpa")
+        ("gnu-elpa" . "https://github.com/emacsmirror/gnu_elpa")
+        ("nongnu"   . "https://github.com/emacsmirror/nongnu_elpa")
+        ("straight" . "https://github.com/radian-software/straight.el")))
+
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -13,15 +20,28 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; Disable package.el in favor of straight.el
+;; Don't use package.el
 (setq package-enable-at-startup nil)
 
-;; Use `use-package` with straight.el integration by default
+;; Integrate use-package with straight.el
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 (setq package-install-upgrade-built-in t)
 
-;;; Automatically update all straight.el packages on Emacs startup.
+;; Override nongnu-elpa and gnu-elpa repo URLs
+(straight-use-package
+ '(nongnu-elpa
+   :type git
+   :host github
+   :repo "emacsmirror/nongnu_elpa"))
+
+(straight-use-package
+ '(gnu-elpa
+   :type git
+   :host github
+   :repo "emacsmirror/gnu_elpa"))
+
+;; Optional: auto-update all packages on Emacs startup
 (add-hook 'emacs-startup-hook #'straight-pull-all)
 
 ;; Load a separate file containing all global settings and functions;
@@ -73,6 +93,8 @@
           (auth-source-pick-first-password
            :host "gemini.google.com"
            :user "apikey")))
+
+(use-package all-the-icons)
 
 (use-package ansi-color
   :hook (compilation-filter . ansi-color-compilation-filter))
