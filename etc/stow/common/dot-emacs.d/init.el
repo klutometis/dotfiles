@@ -1,10 +1,3 @@
-;; Setup for straight.el with GitHub mirror overrides
-(setq straight-recipe-repositories
-      '(("melpa"    . "https://github.com/melpa/melpa")
-        ("gnu-elpa" . "https://github.com/emacsmirror/gnu_elpa")
-        ("nongnu"   . "https://github.com/emacsmirror/nongnu_elpa")
-        ("straight" . "https://github.com/radian-software/straight.el")))
-
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -27,19 +20,6 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 (setq package-install-upgrade-built-in t)
-
-;; Override nongnu-elpa and gnu-elpa repo URLs
-(straight-use-package
- '(nongnu-elpa
-   :type git
-   :host github
-   :repo "emacsmirror/nongnu_elpa"))
-
-(straight-use-package
- '(gnu-elpa
-   :type git
-   :host github
-   :repo "emacsmirror/gnu_elpa"))
 
 ;; Optional: auto-update all packages on Emacs startup
 (add-hook 'emacs-startup-hook #'straight-pull-all)
