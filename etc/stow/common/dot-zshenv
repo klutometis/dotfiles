@@ -1,2 +1,5 @@
 path=(~/bin $path)
 . "$HOME/.cargo/env"
+
+# uv
+export PATH="/home/danenberg/.local/bin:$PATH"

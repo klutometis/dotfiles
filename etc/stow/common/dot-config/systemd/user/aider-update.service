@@ -1,0 +1,6 @@
+[Unit]
+Description=Upgrade aider-chat nightly
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/bin/pipx upgrade aider-install && %h/.local/bin/aider-install'
