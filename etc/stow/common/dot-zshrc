@@ -35,6 +35,11 @@ export LANG=en_US.UTF-8         # Language environment
 export LESS='-i'                # Case-insensitive search in `less`
 export XCOMPOSEFILE=~/.Xcompose # Compose file for custom key sequences
 
+# Fix for compose issues
+export XMODIFIERS='@im=none'
+export GTK_IM_MODULE=xim
+export QT_IM_MODULE=xim
+
 # ========================
 # History Configuration
 # ========================
