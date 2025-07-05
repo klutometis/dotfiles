@@ -11,9 +11,7 @@
 
 # http://jblevins.org/notes/git-colors
 [color]
- branch = auto
- diff = auto
- status = auto
+ pager = false
 
 [alias]
  ci = commit
@@ -27,3 +25,4 @@
 
 [status]
  relativePaths = false
+

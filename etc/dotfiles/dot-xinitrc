@@ -20,4 +20,4 @@ xrandr --dpi 96
 autorandr --change --default standalone
 fc-list > /dev/null  # Warm up fontconfig
 alacritty &
-exec stumpwm
+exec bspwm
