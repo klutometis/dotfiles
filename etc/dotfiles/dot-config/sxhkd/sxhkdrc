@@ -1,3 +1,67 @@
+#
+# wm independent hotkeys
+#
+
+# terminal emulator
+super + Return
+	urxvt
+
+# program launcher
+super + @space
+	dmenu_run
+
+# reload sxhkd configuration
+super + Escape
+	pkill -USR1 -x sxhkd
+
+#
+# bspwm essentials
+#
+
+# quit/restart bspwm
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# close and kill
+super + {_,shift + }w
+	bspc node -{c,k}
+
+# toggle monocle layout (maximize)
+super + f
+	bspc desktop -l next
+
+# swap with biggest window
+super + shift + Return
+	bspc node -s biggest.window
+
+#
+# focus/swap windows
+#
+
+# focus/swap windows in given direction
+super + {_,shift + }{Left,Down,Up,Right}
+	bspc node -{f,s} {west,south,north,east}
+
+# focus next/previous window in current desktop
+super + {_,shift + }Tab
+	bspc node -f {next,prev}.local.!hidden.window
+
+#
+# desktop management
+#
+
+# focus or send to desktop 1-9
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# focus next/previous desktop
+super + ctrl + {Left,Right}
+	bspc desktop -f {prev,next}.local
+
+#
+# surfraw bindings
+#
+
 # Generic q launcher (rofi selection)
 super + q
     ~/bin/q
@@ -52,13 +116,13 @@ super + shift + b
 super + ctrl + b
     sr buganizer $(xclip -o -selection clipboard)
 
-super + w
+super + u
     ~/bin/q --engine=W
 
-super + shift + w
+super + shift + u
     sr W $(xclip -o -selection primary)
 
-super + ctrl + w
+super + ctrl + u
     sr W $(xclip -o -selection clipboard)
 
 # Bookmark elvi (no query)
