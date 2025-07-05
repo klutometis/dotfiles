@@ -1,7 +1,0 @@
-source .screenrc-default
-
-# Check battery status every ten seconds.
-backtick 2 60 60 battery
-
-# Status line with battery
-hardstatus string '%{= kw}%-Lw%{+s}%n%f* %t%{-}%+Lw %L=%0`%5L> %=%2` | %1`'

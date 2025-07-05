@@ -1,0 +1,7 @@
+! Universal bracket remapping - applies to any keyboard
+! Thanks, Olin; thanks, Kragen:
+! <http://canonical.org/~kragen/setting-up-keyboard.html>
+keycode 18 = 9 braceleft
+keycode 19 = 0 braceright
+keycode 20 = parenleft bracketleft
+keycode 21 = parenright bracketright

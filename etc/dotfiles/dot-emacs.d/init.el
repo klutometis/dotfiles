@@ -56,23 +56,27 @@
 (use-package aider
   :bind ("C-c A" . aider-transient-menu)
   :custom
-  (aider-args '("--model" "gemini/gemini-2.5-pro-preview-06-05" "--thinking-tokens" "32k"))
-  :config
-  (setenv "GEMINI_API_KEY"
-          (auth-source-pick-first-password
-           :host "gemini.google.com"
-           :user "apikey")))
+  (aider-args '("--model" "gemini/gemini-2.5-pro-preview-06-05" "--thinking-tokens" "32k")))
 
 (use-package aidermacs
   :bind (("C-c M-a" . aidermacs-transient-menu))
   :custom
   (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
   (aidermacs-extra-args '("--thinking-tokens" "32k"))
+  (aidermacs-default-chat-mode 'ask)
   :config
   (setenv "GEMINI_API_KEY"
           (auth-source-pick-first-password
            :host "gemini.google.com"
-           :user "apikey")))
+           :user "api-key"))
+  (setenv "OPENAI_API_KEY"
+          (auth-source-pick-first-password
+           :host "platform.openai.com"
+           :user "api-key"))
+  (setenv "ANTHROPIC_API_KEY"
+          (auth-source-pick-first-password
+           :host "console.anthropic.com"
+           :user "api-key")))
 
 (use-package all-the-icons)
 
@@ -82,7 +86,6 @@
 (use-package auth-source-pass
   :config
   (auth-source-pass-enable))
-
 
 (use-package auto-package-update
   :config
@@ -412,12 +415,10 @@ This operates in-place on the rewritten region between BEG and END."
                   :description "Text content to write."))
    :category "filesystem")
 
-  (setq gptel-model 'gemini-2.5-pro-preview-03-25
-        gptel-backend (gptel-make-gemini "Gemini"
-                        :key gemini-api-key
-                        :stream t))
-
-  (setq gptel-api-key openai-api-key))
+  (setq gptel-backends
+        (list
+         (gptel-make-openai "OpenAI" :stream t)
+         (gptel-make-gemini "Gemini" :stream t))))
 
 (use-package graphviz-dot-mode
   :init
