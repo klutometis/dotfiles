@@ -1,32 +1,32 @@
 [user]
-  name = Peter Danenberg
-  email = github@pcd.la
-  
+ name = Peter Danenberg
+ email = github@pcd.la
+
 [include]
-  # For corp-specific setting, e.g. email.
-  path = ~/.gitconfig-email
+ # For corp-specific setting, e.g. email.
+ path = ~/.gitconfig-email
 
 [github]
-  user = klutometis
+ user = klutometis
 
 # http://jblevins.org/notes/git-colors
 [color]
-  branch = auto
-  diff = auto
-  status = auto
+ branch = auto
+ diff = auto
+ status = auto
 
 [alias]
-  ci = commit
-  co = checkout
-  st = status
-  sub = submodule
-  up = update
-  ls = ls-files
-  # http://coderwall.com/p/euwpig?i=3&p=1&t=git
-  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+ ci = commit
+ co = checkout
+ st = status
+ sub = submodule
+ up = update
+ ls = ls-files
+ # http://coderwall.com/p/euwpig?i=3&p=1&t=git
+ lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 
 [status]
-  relativePaths = false
+ relativePaths = false
 
 [core]
-  pager = less -i -R
+ pager = less -i -R
