@@ -12,6 +12,8 @@ if [ -d ~/etc/X11/xorg.conf.d ]; then
     sudo chown root:root /etc/X11/xorg.conf.d/*
     sudo chmod 644 /etc/X11/xorg.conf.d/*
     echo "X11 configs deployed successfully"
+    echo "  - Carbon laptop keyboard config"
+    echo "  - Happy Hacking Keyboard config"
 else
     echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
 fi
