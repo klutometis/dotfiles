@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-source ~/.xinitrc-default
-alacritty &
-exec stumpwm

@@ -8,5 +8,5 @@
 	path = prg/q
 	url = git@github.com:klutometis/q.git
 [submodule "etc/stow/common/dot-password-store"]
-	path = etc/stow/common/dot-password-store
+	path = etc/dotfiles/dot-password-store
 	url = git@github.com:klutometis/password-store.git

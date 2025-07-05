@@ -1,4 +1,6 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
+
+# X11 setup
 xset s blank
 xset s 600
 xset dpms 1200 1800 2400
@@ -7,10 +9,15 @@ setxkbmap us -variant dvorak
 [ -f ~/.zshrc ] && . ~/.zshrc
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
+
+# Background services
 xscreensaver -nosplash &
-# autocutsel -f -s CLIPBOARD
-# autocutsel -f -s PRIMARY
 sxhkd &
 redshift-palo-alto &
-# /usr/bin/xscreensaver -nosplash &
-# ~/bin/redshift-mountain-view &
+
+# StumpWM setup
+xrandr --dpi 96
+autorandr --change --default standalone
+fc-list > /dev/null  # Warm up fontconfig
+alacritty &
+exec stumpwm
