@@ -1,6 +1,6 @@
 [user]
   name = Peter Danenberg
-  email = pcd@roxygen.org
+  email = github@pcd.la
   
 [include]
   # For corp-specific setting, e.g. email.
