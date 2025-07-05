@@ -1,1 +1,1 @@
-etc/stow/common/dot-emacs.d/init-secrets.el filter=git-crypt diff=git-crypt
+etc/dotfiles/dot-emacs.d/init-secrets.el filter=git-crypt diff=git-crypt
