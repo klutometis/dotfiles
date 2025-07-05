@@ -1,9 +1,6 @@
-[font]
-size = 6.0  # or try 6.0 or 7.0 depending on match
-
 [font.normal]
-family = "Misc Fixed"
-style = "SemiCondensed"
+family = "Fixed6x13"
+style = "Regular"
 
 [colors.primary]
 background = "#000000"

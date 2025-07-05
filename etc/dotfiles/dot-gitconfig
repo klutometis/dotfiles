@@ -27,6 +27,3 @@
 
 [status]
  relativePaths = false
-
-[core]
- pager = less -i -R
