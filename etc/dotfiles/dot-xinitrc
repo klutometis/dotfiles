@@ -9,7 +9,6 @@ xset s blank
 xset s 600
 xset dpms 1200 1800 2400
 xsetroot -solid black
-setxkbmap us -variant dvorak
 [ -f ~/.zshrc ] && . ~/.zshrc
 [ -f ~/.xprofile ] && . ~/.xprofile
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
