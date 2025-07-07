@@ -25,6 +25,10 @@ echo "$(date): Setting up display" >> "$LOGFILE"
 xrandr --dpi 96
 autorandr --change --default standalone
 
+# Log keyboard state before EXWM
+echo "$(date): Keyboard state before EXWM:" >> "$LOGFILE"
+setxkbmap -query >> "$LOGFILE" 2>&1
+
 # Start EXWM
 echo "$(date): Starting EXWM" >> "$LOGFILE"
 exec dbus-launch --exit-with-session emacs --init-directory=$HOME/.emacs-exwm.d 2>&1 | tee -a "$LOGFILE"
