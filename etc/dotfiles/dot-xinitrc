@@ -29,6 +29,9 @@ autorandr --change --default standalone
 echo "$(date): Keyboard state before EXWM:" >> "$LOGFILE"
 setxkbmap -query >> "$LOGFILE" 2>&1
 
+# Set keyboard options for internal keyboard specifically
+setxkbmap -device 13 -option caps:ctrl_modifier,compose:menu
+
 # Start EXWM
 echo "$(date): Starting EXWM" >> "$LOGFILE"
 exec dbus-launch --exit-with-session emacs --init-directory=$HOME/.emacs-exwm.d 2>&1 | tee -a "$LOGFILE"
