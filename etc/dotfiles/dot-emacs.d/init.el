@@ -276,7 +276,6 @@
                     ("Python" (pyformat "-s" "2"))
                     ("SCSS" (prettier . ,prettier-flags))
                     ("Shell" (shfmt "-i" "2" "-ci" "-bn" "-sr"))
-                    ("Shell" (shfmt "-i" "2" "-ci" "-bn"))
                     ("Slidev" (prettier))
                     ("TypeScript" (prettier . ,prettier-flags))
                     ("YAML" (prettier))
