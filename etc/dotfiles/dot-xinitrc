@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Logging setup
+LOGFILE="/tmp/xinitrc.log"
+echo "$(date): Starting xinitrc" > "$LOGFILE"
+
 # X11 setup
 xset s blank
 xset s 600
@@ -11,13 +15,17 @@ setxkbmap us -variant dvorak
 [ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
 # Background services
+echo "$(date): Starting background services" >> "$LOGFILE"
 xscreensaver -nosplash &
 sxhkd &
+tmux new -A -s work &
 redshift-palo-alto &
 
-# StumpWM setup
+# Display setup
+echo "$(date): Setting up display" >> "$LOGFILE"
 xrandr --dpi 96
 autorandr --change --default standalone
-fc-list > /dev/null  # Warm up fontconfig
-alacritty &
-exec bspwm
+
+# Start EXWM
+echo "$(date): Starting EXWM" >> "$LOGFILE"
+exec dbus-launch --exit-with-session emacs --init-directory=$HOME/.emacs-exwm.d 2>&1 | tee -a "$LOGFILE"
