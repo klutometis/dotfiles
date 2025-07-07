@@ -16,7 +16,6 @@ xsetroot -solid black
 # Background services
 echo "$(date): Starting background services" >> "$LOGFILE"
 xscreensaver -nosplash &
-sxhkd &
 tmux new -A -s work &
 redshift-palo-alto &
 

@@ -184,3 +184,46 @@ bindsym $mod+p mode "resize"
 bar {
         status_command i3status
 }
+
+# Custom launcher and surfraw bindings (converted from sxhkd)
+# Generic q launcher (rofi selection)
+bindsym $mod+q exec ~/bin/q
+
+# Show all sxhkd bindings in rofi
+bindsym $mod+Shift+slash exec sxhkd-menu
+
+# Direct elvi launchers
+bindsym $mod+g exec ~/bin/q --engine=google
+bindsym $mod+Shift+g exec sr google $(xclip -o -selection primary)
+bindsym $mod+Ctrl+g exec sr google $(xclip -o -selection clipboard)
+
+bindsym $mod+m exec ~/bin/q --engine=moma
+bindsym $mod+Shift+m exec sr moma $(xclip -o -selection primary)
+bindsym $mod+Ctrl+m exec sr moma $(xclip -o -selection clipboard)
+
+# Web search (changed from 's' to 'w' to avoid conflict)
+bindsym $mod+w exec ~/bin/q --engine=codesearch
+bindsym $mod+Shift+w exec sr codesearch $(xclip -o -selection primary)
+bindsym $mod+Ctrl+w exec sr codesearch $(xclip -o -selection clipboard)
+
+# Issues/code (changed from 'h' to 'i' to avoid conflict)
+bindsym $mod+i exec ~/bin/q --engine=github --type=code
+bindsym $mod+Shift+i exec sr github -t=code $(xclip -o -selection primary)
+bindsym $mod+Ctrl+i exec sr github -t=code $(xclip -o -selection clipboard)
+
+bindsym $mod+b exec ~/bin/q --engine=buganizer
+bindsym $mod+Shift+b exec sr buganizer $(xclip -o -selection primary)
+bindsym $mod+Ctrl+b exec sr buganizer $(xclip -o -selection clipboard)
+
+# Reference/Wikipedia (changed from 'u' to 'r' to avoid conflict)
+bindsym $mod+r exec ~/bin/q --engine=W
+bindsym $mod+Shift+r exec sr W $(xclip -o -selection primary)
+bindsym $mod+Ctrl+r exec sr W $(xclip -o -selection clipboard)
+
+# Bookmark elvi (no query)
+bindsym $mod+c exec sr calendar
+bindsym $mod+f exec sr chatgpt
+bindsym $mod+x exec sr gemini
+bindsym $mod+l exec sr gmail
+bindsym $mod+z exec sr chat
+bindsym $mod+y exec sr memegen
