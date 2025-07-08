@@ -24,8 +24,16 @@ echo "$(date): Setting up display" >> "$LOGFILE"
 xrandr --dpi 96
 autorandr --change --default standalone
 
-# Log keyboard state before i3
-echo "$(date): Keyboard state before i3:" >> "$LOGFILE"
+# Log keyboard state before explicit setup
+echo "$(date): Keyboard state before explicit setup:" >> "$LOGFILE"
+setxkbmap -query >> "$LOGFILE" 2>&1
+
+# Explicitly set keyboard layout to ensure it sticks
+echo "$(date): Setting keyboard layout explicitly" >> "$LOGFILE"
+setxkbmap -layout us -variant dvorak -option caps:ctrl_modifier,compose:menu >> "$LOGFILE" 2>&1
+
+# Log keyboard state after explicit setup
+echo "$(date): Keyboard state after explicit setup:" >> "$LOGFILE"
 setxkbmap -query >> "$LOGFILE" 2>&1
 
 # Start i3
