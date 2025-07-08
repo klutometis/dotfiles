@@ -79,40 +79,35 @@
                         (string= "gimp" exwm-instance-name))
                 (exwm-workspace-rename-buffer exwm-title))))
 
-  ;; Global keybindings can be defined with `exwm-input-global-keys'.
-  ;; Here are a few examples:
+  ;; Make EXWM completely transparent - ONLY s-t prefixed commands
   (setq exwm-input-global-keys
         `(
-          ;; Bind "s-r" to exit char-mode and fullscreen mode.
-          ([?\s-r] . exwm-reset)
-          ;; Bind "s-w" to switch workspace interactively.
-          ([?\s-w] . exwm-workspace-switch)
-          ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+          ;; Universal prefix s-t for EXWM management (Dvorak-friendly)
+          (,(kbd "s-t r") . exwm-reset)
+          (,(kbd "s-t w") . exwm-workspace-switch)
+          (,(kbd "s-t &") . (lambda (command)
+                             (interactive (list (read-shell-command "$ ")))
+                             (start-process-shell-command command nil command)))
+          (,(kbd "s-t x") . (lambda (command)
+                             (interactive (list (read-shell-command "M-x ")))
+                             (start-process-shell-command command nil command)))
+          (,(kbd "s-t l") . (lambda ()
+                             (interactive)
+                             (start-process "" nil "/usr/bin/slock")))
+          
+          ;; Workspace switching with s-t prefix
           ,@(mapcar (lambda (i)
-                      `(,(kbd (format "s-%d" i)) .
+                      `(,(kbd (format "s-t %d" i)) .
                         (lambda ()
                           (interactive)
                           (exwm-workspace-switch-create ,i))))
-                    (number-sequence 0 9))
-          ;; Bind "s-&" to launch applications ('M-&' also works if the output
-          ;; buffer does not bother you).
-          ([?\s-&] . (lambda (command)
-                       (interactive (list (read-shell-command "$ ")))
-                       (start-process-shell-command command nil command)))
-          ;; Bind "s-<f2>" to "slock", a simple X display locker.
-          ([s-f2] . (lambda ()
-                      (interactive)
-                      (start-process "" nil "/usr/bin/slock")))))
+                    (number-sequence 0 9))))
 
   ;; To add a key binding only available in line-mode, simply define it in
   ;; `exwm-mode-map'.  The following example shortens 'C-c q' to 'C-q'.
   (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
 
-  ;; The following example demonstrates how to use simulation keys to mimic
-  ;; the behavior of Emacs.  The value of `exwm-input-simulation-keys` is a
-  ;; list of cons cells (SRC . DEST), where SRC is the key sequence you press
-  ;; and DEST is what EXWM actually sends to application.  Note that both SRC
-  ;; and DEST should be key sequences (vector or string).
+  ;; Simulation keys for line-mode (when EXWM has control)
   (setq exwm-input-simulation-keys
         '(
           ;; movement
@@ -134,6 +129,11 @@
           ([?\C-y] . [?\C-v])
           ;; search
           ([?\C-s] . [?\C-f])))
+
+  ;; Make terminals start in char-mode by default
+  (setq exwm-manage-configurations
+        '(((string= exwm-class-name "Alacritty")
+           char-mode t)))
 
   ;; You can hide the minibuffer and echo area when they're not used, by
   ;; uncommenting the following line.
