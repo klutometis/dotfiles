@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;; Code used in the demos at https://karthinks.com/software/avy-can-do-anything
 ;; Tweak as desired.
 
