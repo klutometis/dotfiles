@@ -28,26 +28,6 @@ autorandr --change --default standalone
 echo "$(date): Keyboard state before explicit setup:" >> "$LOGFILE"
 setxkbmap -query >> "$LOGFILE" 2>&1
 
-# Debug: Show all input devices to check MatchProduct
-echo "$(date): Available input devices:" >> "$LOGFILE"
-xinput list >> "$LOGFILE" 2>&1
-
-# Debug: Check if X11 config is being loaded
-echo "$(date): X11 config directory contents:" >> "$LOGFILE"
-ls -la /etc/X11/xorg.conf.d/ >> "$LOGFILE" 2>&1
-
-# Remove the hard-coded setxkbmap - let X11 config handle it
-# setxkbmap -layout us -variant dvorak -option caps:ctrl_modifier,compose:menu >> "$LOGFILE" 2>&1
-
-# Log keyboard state after X11 should have applied configs
-echo "$(date): Keyboard state after X11 config:" >> "$LOGFILE"
-setxkbmap -query >> "$LOGFILE" 2>&1
-
-# Force keyboard options right before i3
-echo "$(date): Setting keyboard options explicitly before i3" >> "$LOGFILE"
-setxkbmap -option caps:ctrl_modifier,compose:menu >> "$LOGFILE" 2>&1
-setxkbmap -query >> "$LOGFILE" 2>&1
-
 # Start i3
 echo "$(date): Starting i3" >> "$LOGFILE"
 exec i3 2>&1 | tee -a "$LOGFILE"
