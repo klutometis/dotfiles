@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;; Copy filename to the clipboard; from
 ;;; <http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/>.
 (defun copy-file-name-to-clipboard ()
