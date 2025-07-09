@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# X11 session initialization
+#
+# NOTE: Keyboard configuration moved to ~/.xprofile as a workaround.
+# The X11 InputClass approach in 99-keyboard-happy-hacking.conf was
+# working initially but getting overridden by something in the stack.
+
 # Logging setup
 LOGFILE="/tmp/xinitrc.log"
 echo "$(date): Starting xinitrc" > "$LOGFILE"
@@ -11,21 +17,25 @@ xset dpms 1200 1800 2400
 xsetroot -solid black
 [ -f ~/.zshrc ] && . ~/.zshrc
 [ -f ~/.xprofile ] && . ~/.xprofile
-[ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
 # Background services
 echo "$(date): Starting background services" >> "$LOGFILE"
 xscreensaver -nosplash &
-tmux new -A -s work &
+alacritty -e tmux new -A -s work &
 redshift-palo-alto &
+
+# Start Chrome with different profiles
+echo "$(date): Starting Chrome windows" >> "$LOGFILE"
+chrome --profile-directory="work-profile" &
+chrome --profile-directory="personal-profile" &
 
 # Display setup
 echo "$(date): Setting up display" >> "$LOGFILE"
 xrandr --dpi 96
 autorandr --change --default standalone
 
-# Log keyboard state before explicit setup
-echo "$(date): Keyboard state before explicit setup:" >> "$LOGFILE"
+# Log keyboard state after setup
+echo "$(date): Final keyboard state:" >> "$LOGFILE"
 setxkbmap -query >> "$LOGFILE" 2>&1
 
 # Start i3

@@ -64,6 +64,8 @@
   (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
   (aidermacs-extra-args '("--thinking-tokens" "32k"))
   (aidermacs-default-chat-mode 'ask)
+  ;; Disruptive, for some reason to force-show diff; maybe can call manually.
+  (aidermacs-show-diff-after-change nil)
   :config
   (setenv "GEMINI_API_KEY"
           (auth-source-pick-first-password
