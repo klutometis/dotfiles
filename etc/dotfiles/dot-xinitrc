@@ -21,13 +21,7 @@ xsetroot -solid black
 # Background services
 echo "$(date): Starting background services" >> "$LOGFILE"
 xscreensaver -nosplash &
-alacritty -e tmux new -A -s work &
 redshift-palo-alto &
-
-# Start Chrome with different profiles
-echo "$(date): Starting Chrome windows" >> "$LOGFILE"
-chrome --profile-directory="work-profile" &
-chrome --profile-directory="personal-profile" &
 
 # Display setup
 echo "$(date): Setting up display" >> "$LOGFILE"
