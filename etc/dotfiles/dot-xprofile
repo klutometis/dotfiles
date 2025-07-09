@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# X11 profile - hardware and environment setup
+# This runs regardless of how X11 is started
+
+# Logging setup
+XPROFILE_LOGFILE="/tmp/xprofile.log"
+echo "$(date): Starting xprofile" > "$XPROFILE_LOGFILE"
+
+# Apply custom key mappings
+echo "$(date): Applying xmodmap" >> "$XPROFILE_LOGFILE"
+[ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
+
+# Apply keyboard-specific layouts
+echo "$(date): Applying keyboard-specific layouts" >> "$XPROFILE_LOGFILE"
+./bin/set-keyboard-options.sh >> "$XPROFILE_LOGFILE" 2>&1
+
+echo "$(date): xprofile setup complete" >> "$XPROFILE_LOGFILE"
