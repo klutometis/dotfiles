@@ -1,5 +1,36 @@
-path=(~/bin $path)
-. "$HOME/.cargo/env"
+# ========================
+# Environment Variables and PATH
+# ========================
+# Available to all shells (interactive, non-interactive, scripts)
 
-# uv
-export PATH="/home/danenberg/.local/bin:$PATH"
+# PATH Configuration
+path=
+path+=$HOME/bin
+path+=/usr/local/sbin
+path+=/usr/sbin
+path+=/sbin
+path+=/usr/local/bin
+path+=/usr/bin
+path+=/bin
+path+=$HOME/.npm-global/bin
+path+=$HOME/.cargo/bin
+path+=$HOME/.local/bin
+path+=$HOME/.rbenv/bin
+[[ -d $PYENV_ROOT/bin ]] && path+=$PYENV_ROOT/bin
+export PATH
+
+# Environment Variables
+export EDITOR='emacs-wait'
+export LANG=en_US.UTF-8
+export LESS='-i'
+export XCOMPOSEFILE=~/.Xcompose
+export XMODIFIERS='@im=none'
+export GTK_IM_MODULE=xim
+export QT_IM_MODULE=xim
+
+# Tool-specific environment
+export NVM_DIR="$HOME/.nvm"
+export PYENV_ROOT="$HOME/.pyenv"
+
+# Load environment files
+. "$HOME/.cargo/env"

@@ -1,5 +1,18 @@
 # Conventions
 
+## Build Documentation and Scripts
+
+For build instructions and automation:
+
+- **Documentation**: Place detailed build instructions in `var/build/NAME.md`
+- **Scripts**: Place the corresponding automated build script in `bin/build/NAME.sh`
+
+For example:
+- `var/build/emacs.md` - detailed instructions for building Emacs
+- `bin/build/emacs.sh` - automated script that implements those instructions
+
+The script should be a distillation of the documentation in executable form.
+
 ## Git Commit Messages
 
 Use the following format for commit messages:

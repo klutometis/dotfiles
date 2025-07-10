@@ -7,12 +7,12 @@
 XPROFILE_LOGFILE="/tmp/xprofile.log"
 echo "$(date): Starting xprofile" > "$XPROFILE_LOGFILE"
 
-# Apply custom key mappings
-echo "$(date): Applying xmodmap" >> "$XPROFILE_LOGFILE"
-[ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
-
-# Apply keyboard-specific layouts
+# Apply keyboard-specific layouts first
 echo "$(date): Applying keyboard-specific layouts" >> "$XPROFILE_LOGFILE"
 ./bin/set-keyboard-options.sh >> "$XPROFILE_LOGFILE" 2>&1
+
+# Then apply custom key mappings (after setxkbmap)
+echo "$(date): Applying xmodmap" >> "$XPROFILE_LOGFILE"
+[ -e ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
 echo "$(date): xprofile setup complete" >> "$XPROFILE_LOGFILE"
