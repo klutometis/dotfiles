@@ -21,6 +21,23 @@
 (setq straight-use-package-by-default t)
 (setq package-install-upgrade-built-in t)
 
+;; Just discard changes in dirty repos (gptel, for instance, is
+;; perpetually dirty).
+(defun my-straight-auto-discard-advice (orig-func local-repo)
+  "Automatically discard changes in straight repos without prompting."
+  (let ((status (let ((straight--process-trim nil))
+                  (straight--process-output
+                   "git" "-c" "status.branch=false"
+                   "status" "--short"))))
+    (if (string-empty-p status)
+        t  ; Clean worktree, proceed normally
+      ;; Dirty worktree - automatically discard changes
+      (straight--output "Auto-discarding changes in repository %S" local-repo)
+      (and (straight--process-output "git" "reset" "--hard")
+           (straight--process-output "git" "clean" "-ffd")))))
+
+(advice-add 'straight-vc-git--ensure-worktree :override #'my-straight-auto-discard-advice)
+
 ;; Optional: auto-update all packages on Emacs startup
 (add-hook 'emacs-startup-hook #'straight-pull-all)
 
