@@ -52,13 +52,13 @@ super + shift + b
 super + ctrl + b
     sr buganizer $(xclip -o -selection clipboard)
 
-super + u
+super + w
     ~/bin/q --engine=W
 
-super + shift + u
+super + shift + w
     sr W $(xclip -o -selection primary)
 
-super + ctrl + u
+super + ctrl + w
     sr W $(xclip -o -selection clipboard)
 
 # Bookmark elvi (no query)
