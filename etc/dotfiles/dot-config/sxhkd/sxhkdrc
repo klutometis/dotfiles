@@ -25,22 +25,22 @@ super + shift + m
 super + ctrl + m
     sr moma $(xclip -o -selection clipboard)
 
-super + s
+super + c
     ~/bin/q --engine=codesearch
 
-super + shift + s
+super + shift + c
     sr codesearch $(xclip -o -selection primary)
 
-super + ctrl + s
+super + ctrl + c
     sr codesearch $(xclip -o -selection clipboard)
 
-super + h
+super + k
     ~/bin/q --engine=github --type=code
 
-super + shift + h
+super + shift + k
     sr github -t=code $(xclip -o -selection primary)
 
-super + ctrl + h
+super + ctrl + k
     sr github -t=code $(xclip -o -selection clipboard)
 
 super + b
@@ -62,20 +62,20 @@ super + ctrl + u
     sr W $(xclip -o -selection clipboard)
 
 # Bookmark elvi (no query)
-super + c
+super + d
     sr calendar
 
-super + a
+super + j
     sr chatgpt
 
-super + e
+super + r
     sr gemini
 
 super + l
     sr gmail
 
-super + t
+super + p
     sr chat
 
-super + y
+super + f
     sr memegen
