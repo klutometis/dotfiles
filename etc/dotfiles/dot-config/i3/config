@@ -114,7 +114,7 @@ bindsym $mod+a focus parent
 bindsym $mod+q exec --no-startup-id ~/bin/q
 
 # Show all sxhkd bindings in rofi (you may need to update this command)
-bindsym $mod+question exec --no-startup-id sxhkd-menu
+bindsym $mod+shift+slash exec --no-startup-id sxhkd-menu
 
 # Direct elvi launchers
 bindsym $mod+g exec --no-startup-id ~/bin/q --engine=google
@@ -138,6 +138,10 @@ bindsym $mod+Control+k exec --no-startup-id sr github -t=code $(xclip -o -select
 bindsym $mod+b exec --no-startup-id ~/bin/q --engine=buganizer
 bindsym $mod+Shift+b exec --no-startup-id sr buganizer $(xclip -o -selection primary)
 bindsym $mod+Control+b exec --no-startup-id sr buganizer $(xclip -o -selection clipboard)
+
+bindsym $mod+w exec --no-startup-id ~/bin/q --engine=W
+bindsym $mod+Shift+w exec --no-startup-id sr W $(xclip -o -selection primary)
+bindsym $mod+Control+w exec --no-startup-id sr W $(xclip -o -selection clipboard)
 
 # Bookmark elvi (no query)
 bindsym $mod+d exec --no-startup-id sr calendar
