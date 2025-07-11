@@ -70,13 +70,8 @@
   ;; Otherwise, the dimming makes the screens unreadable.
   (set-face-foreground 'aw-background-face "gray100"))
 
-(use-package aider
-  :bind ("C-c A" . aider-transient-menu)
-  :custom
-  (aider-args '("--model" "gemini/gemini-2.5-pro-preview-06-05" "--thinking-tokens" "32k")))
-
 (use-package aidermacs
-  :bind (("C-c M-a" . aidermacs-transient-menu))
+  :bind (("C-c A" . aidermacs-transient-menu))
   :custom
   (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
   (aidermacs-extra-args '("--thinking-tokens" "32k"))
