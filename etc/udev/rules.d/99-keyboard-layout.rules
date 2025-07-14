@@ -1,0 +1,2 @@
+# Trigger on all input devices being added
+ACTION=="add", SUBSYSTEM=="input", RUN+="/bin/su - danenberg -c '/home/danenberg/bin/set-keyboard-options.sh'"
