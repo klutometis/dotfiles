@@ -18,6 +18,24 @@ else
     echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
 fi
 
+# udev rules for keyboard layout
+if [ -d ~/etc/udev/rules.d ]; then
+    echo "Copying udev rules..."
+    sudo cp ~/etc/udev/rules.d/* /etc/udev/rules.d/
+    sudo chown root:root /etc/udev/rules.d/*
+    sudo chmod 644 /etc/udev/rules.d/*
+    echo "udev rules deployed successfully"
+    echo "  - Keyboard layout rules"
+    
+    # Reload udev rules and trigger for existing devices
+    echo "Reloading udev rules..."
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger --subsystem-match=input
+    echo "udev rules reloaded and triggered"
+else
+    echo "No udev rules found in ~/etc/udev/rules.d/"
+fi
+
 # Font configuration for bitmapped fonts
 echo "Configuring fonts for bitmapped font support..."
 

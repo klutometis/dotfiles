@@ -8,18 +8,37 @@
 # activated correctly but then overridden somewhere else in the stack.
 # After days of debugging, this runtime approach proved more reliable.
 
+# Add logging for udev debugging (before X11 check)
+if [ -n "$ACTION" ]; then
+    logger -t "keyboard-setup" "udev triggered script - ACTION=$ACTION, DISPLAY=$DISPLAY"
+else
+    logger -t "keyboard-setup" "manually triggered script - DISPLAY=$DISPLAY"
+fi
+
+# Script now runs as user via su, so X11 environment should be available
+
+# Set DISPLAY if not already set (needed for udev context)
+# When run via udev, the script doesn't inherit DISPLAY even with su
+if [ -z "$DISPLAY" ]; then
+    export DISPLAY=:0
+fi
+
+# Track if any layouts were applied
+LAYOUT_APPLIED=false
+
 set_keyboard_layout() {
   local device_name="$1"
   local layout="$2"
   local variant="$3"
   local options="$4"
 
-  # Find device ID by name
-  local device_id=$(xinput list | grep "$device_name" | grep -o 'id=[0-9]*' | cut -d= -f2)
+  # Find device ID by name, but only keyboard slaves
+  local device_id=$(xinput list | grep "$device_name" | grep "slave  keyboard" | grep -o 'id=[0-9]*' | cut -d= -f2)
 
   if [ -n "$device_id" ]; then
     echo "Setting keyboard layout for '$device_name' (ID: $device_id)"
     setxkbmap -device "$device_id" -layout "$layout" -variant "$variant" -option "$options"
+    LAYOUT_APPLIED=true
   else
     echo "Device '$device_name' not found, skipping..."
   fi
@@ -31,7 +50,19 @@ set_keyboard_layout "Topre Corporation HHKB Professional" "us" "dvorak" "compose
 # Apply settings for Carbon internal keyboard
 set_keyboard_layout "AT Translated Set 2 keyboard" "us" "dvorak" "caps:ctrl_modifier,compose:prsc"
 
-# Apply global fallback (for any devices not specifically configured)
-setxkbmap -layout us -variant dvorak -option terminate:ctrl_alt_bksp
+# Apply settings for HHKB-Studio1 (swap all alt/win keys, compose on right alt)
+set_keyboard_layout "HHKB-Studio1 Keyboard" "us" "dvorak" "altwin:swap_alt_win,compose:ralt"
+
+# Apply global fallback only if no specific layouts were applied
+if [ "$LAYOUT_APPLIED" = false ]; then
+    echo "No specific keyboards found, applying global fallback"
+    setxkbmap -layout us -variant dvorak -option terminate:ctrl_alt_bksp
+fi
 
 echo "Keyboard layouts applied successfully"
+
+# Apply custom key mappings (after setxkbmap)
+if [ -e ~/.Xmodmap ]; then
+    echo "Applying xmodmap..."
+    xmodmap ~/.Xmodmap
+fi
