@@ -66,9 +66,9 @@
           (?m delete-other-windows " Ace - Maximize Window")))
   (setq aw-keys '(?a ?o ?e ?i ?h ?t ?n ?s))
 
-  :config
-  ;; Otherwise, the dimming makes the screens unreadable.
-  (set-face-foreground 'aw-background-face "gray100"))
+  :custom-face
+  (aw-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold))))
+  (aw-minibuffer-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold)))))
 
 (use-package aidermacs
   :bind (("C-c A" . aidermacs-transient-menu))
