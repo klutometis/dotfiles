@@ -71,11 +71,11 @@
   (aw-minibuffer-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold)))))
 
 (use-package aidermacs
-  :bind (("C-c A" . aidermacs-transient-menu)
-         ("C-c M" . aidermacs-switch-top-models))
+  :bind (("C-c A" . aidermacs-transient-menu))
   :custom
   (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
-  (aidermacs-extra-args '("--think-tokens" "32k"))
+  ;; No global thinking budget; set per-model when needed
+  (aidermacs-extra-args '())
   (aidermacs-default-chat-mode 'ask)
   ;; Disruptive, for some reason to force-show diff; maybe can call manually.
   (aidermacs-show-diff-after-change nil)
@@ -93,66 +93,58 @@
            :host "console.anthropic.com"
            :user "api-key"))
 
-  ;; Top model switching functions
-  ;; Models scraped from https://aider.chat/docs/leaderboards/ (top per vendor as of 2025-01)
-  ;; TODO: Write function to automatically scrape and update these configurations
-  (defun aidermacs-switch-to-o3-pro ()
-    "Switch to OpenAI o3-pro with high reasoning effort."
-    (interactive)
-    (aidermacs--send-command "/model o3-pro")
-    (aidermacs--send-command "/weak-model gpt-4.1-mini")
-    (aidermacs--send-command "/reasoning-effort high"))
+  (defun aidermacs-change-model-advice (original-function &optional arg)
+    "Around advice for `aidermacs-change-model'.
+Presents a curated list of top models. If the user selects
+'Browse all...', it falls back to the original function."
+    (if arg
+        ;; If called with a prefix arg (for weak model), just run the original.
+        (funcall original-function arg)
+      ;; Otherwise, show our enhanced menu.
+      (let* ((models '(("🥇 OpenAI o3-pro (84.9%)" . ("o3-pro" "reasoning-effort" "high" "gpt-4.1-mini"))
+                       ("🥈 Gemini 2.5 Pro (83.1%)" . ("gemini/gemini-2.5-pro-preview-06-05" "think-tokens" "32k" "gemini/gemini-2.5-flash-preview-04-17"))
+                       ("🥉 Claude Opus 4 (72.0%)" . ("anthropic/claude-opus-4-20250514" nil nil "anthropic/claude-3-5-haiku-20241022"))
+                       ("---" . :separator)
+                       ("➕ Browse all available models..." . :browse)))
+             (choice (completing-read "Select model: " models nil t)))
+        (if-let ((model-config (cdr (assoc choice models))))
+            (cond
+             ((eq model-config :browse)
+              ;; User chose to browse, so call the original function.
+              (funcall original-function))
+             ((eq model-config :separator)
+              ;; Re-prompt if they select the separator.
+              (call-interactively 'aidermacs-change-model))
+             (t
+              ;; User selected a top model, so we set it directly.
+              (let ((model-name    (nth 0 model-config))
+                    (setting-type  (nth 1 model-config))
+                    (setting-value (nth 2 model-config))
+                    (weak-model    (nth 3 model-config)))
+                (aidermacs--send-command (format "/model %s" model-name))
+                (aidermacs--send-command (format "/weak-model %s" weak-model))
+                (when setting-type
+                  (aidermacs--send-command (format "/%s %s" setting-type setting-value)))
+                (message "Switched to %s (weak: %s) with %s %s" model-name weak-model setting-type (or setting-value ""))))
+             ;; User cancelled with C-g.
+             (message "Model selection cancelled.")))))
 
-  (defun aidermacs-switch-to-gemini-thinking ()
-    "Switch to Gemini 2.5 Pro with 32k thinking tokens."
-    (interactive)
-    (aidermacs--send-command "/model gemini/gemini-2.5-pro-preview-06-05")
-    (aidermacs--send-command "/weak-model gemini/gemini-2.5-flash-preview-04-17")
-    (aidermacs--send-command "/think-tokens 32k"))
+    (advice-add 'aidermacs-change-model :around #'aidermacs-change-model-advice)
 
-  (defun aidermacs-switch-to-claude-opus ()
-    "Switch to Claude Opus with 32k thinking tokens."
-    (interactive)
-    (aidermacs--send-command "/model anthropic/claude-opus-4-20250514")
-    (aidermacs--send-command "/weak-model anthropic/claude-3-5-haiku-20241022")
-    (aidermacs--send-command "/think-tokens 32k"))
+    ;; Utility functions for reasoning settings
+    (defun aidermacs-toggle-thinking-tokens ()
+      "Toggle thinking tokens between different levels or disable."
+      (interactive)
+      (let ((current-setting (completing-read "Thinking tokens: " '("32k" "8k" "4k" "1k" "0") nil t "32k")))
+        (aidermacs--send-command (format "/think-tokens %s" current-setting))
+        (message "Set thinking tokens to %s" current-setting)))
 
-  (defun aidermacs-switch-top-models ()
-    "Switch between top 3 models with appropriate reasoning settings.
-Models scraped from https://aider.chat/docs/leaderboards/ (top per vendor as of 2025-01):
-- OpenAI o3-pro (84.9% accuracy)
-- Gemini 2.5 Pro Preview 06-05 (83.1% accuracy)  
-- Claude Opus 4-20250514 (72.0% accuracy)"
-    (interactive)
-    (let* ((models '(("OpenAI o3-pro (84.9% accuracy)" . ("o3-pro" "reasoning-effort" "high" "gpt-4.1-mini"))
-                     ("Gemini 2.5 Pro Preview (83.1% accuracy)" . ("gemini/gemini-2.5-pro-preview-06-05" "think-tokens" "32k" "gemini/gemini-2.5-flash-preview-04-17"))
-                     ("Claude Opus 4 (72.0% accuracy)" . ("anthropic/claude-opus-4-20250514" "think-tokens" "32k" "anthropic/claude-3-5-haiku-20241022"))))
-           (choice (completing-read "Select model: " models nil t))
-           (model-config (cdr (assoc choice models))))
-      (when model-config
-        (let ((model-name (nth 0 model-config))
-              (setting-type (nth 1 model-config))
-              (setting-value (nth 2 model-config))
-              (weak-model (nth 3 model-config)))
-          (aidermacs--send-command (format "/model %s" model-name))
-          (aidermacs--send-command (format "/weak-model %s" weak-model))
-          (aidermacs--send-command (format "/%s %s" setting-type setting-value))
-          (message "Switched to %s (weak: %s) with %s %s" model-name weak-model setting-type setting-value)))))
-
-  ;; Utility functions for reasoning settings
-  (defun aidermacs-toggle-thinking-tokens ()
-    "Toggle thinking tokens between different levels or disable."
-    (interactive)
-    (let ((current-setting (completing-read "Thinking tokens: " '("32k" "8k" "4k" "1k" "0") nil t "32k")))
-      (aidermacs--send-command (format "/think-tokens %s" current-setting))
-      (message "Set thinking tokens to %s" current-setting)))
-
-  (defun aidermacs-set-reasoning-effort ()
-    "Set reasoning effort level."
-    (interactive)
-    (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
-      (aidermacs--send-command (format "/reasoning-effort %s" effort))
-      (message "Set reasoning effort to %s" effort))))
+    (defun aidermacs-set-reasoning-effort ()
+      "Set reasoning effort level."
+      (interactive)
+      (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
+        (aidermacs--send-command (format "/reasoning-effort %s" effort))
+        (message "Set reasoning effort to %s" effort)))))
 
 (use-package all-the-icons)
 
