@@ -77,6 +77,22 @@ echo "Rebuilding font cache..."
 sudo fc-cache -f -v > /dev/null 2>&1
 echo "Font cache rebuilt"
 
+# GTK key theme configuration
+echo "Configuring GTK key theme..."
+# Note: While we have GTK key theme configs in dotfiles:
+#   - ~/.gtkrc-2.0: gtk-key-theme-name = "Emacs"
+#   - ~/.config/gtk-3.0/settings.ini: gtk-key-theme-name = Emacs
+# Some GTK3 applications (e.g. Chrome) don't respect the config files.
+# Per https://wiki.archlinux.org/title/GTK#Keyboard_shortcuts:
+# "desktop environments and applications can override these settings"
+# and GSettings takes precedence over settings.ini in many cases.
+if command -v gsettings &> /dev/null; then
+    gsettings set org.gnome.desktop.interface gtk-key-theme "Emacs"
+    echo "GTK3 Emacs key theme set via gsettings"
+else
+    echo "Warning: gsettings not found - GTK3 Emacs key theme may not work in some applications"
+fi
+
 # Other system configs as needed
 # sudo cp ~/etc/dictd.conf /etc/dictd.conf
 
