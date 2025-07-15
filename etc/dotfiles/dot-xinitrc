@@ -22,6 +22,7 @@ xsetroot -solid black
 echo "$(date): Starting background services" >> "$LOGFILE"
 xscreensaver -nosplash &
 redshift-palo-alto &
+sxhkd &
 
 # Display setup
 echo "$(date): Setting up display" >> "$LOGFILE"
@@ -31,6 +32,12 @@ autorandr --change --default standalone
 # Log keyboard state after setup
 echo "$(date): Final keyboard state:" >> "$LOGFILE"
 setxkbmap -query >> "$LOGFILE" 2>&1
+
+# Start applications
+echo "$(date): Starting applications" >> "$LOGFILE"
+google-chrome --profile-directory=work-profile --window-name=chrome-work &
+google-chrome --profile-directory=personal-profile --window-name=chrome-personal &
+alacritty --title 'terminal' -e tmux new -A -s work &
 
 # Start i3
 echo "$(date): Starting i3" >> "$LOGFILE"

@@ -30,11 +30,8 @@ exec --no-startup-id dex --autostart --environment i3
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
-# Load workspace layout and start applications
+# Load workspace layout
 exec --no-startup-id "i3-msg 'workspace 1; append_layout ~/.config/i3/workspace.json'"
-exec --no-startup-id "sleep 1; google-chrome --profile-directory=work-profile --window-name=chrome-work"
-exec --no-startup-id "sleep 1; google-chrome --profile-directory=personal-profile --window-name=chrome-personal"
-exec --no-startup-id "sleep 2; alacritty --title 'terminal' -e tmux new -A -s work"
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -108,48 +105,6 @@ bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
-
-# Application launchers (converted from sxhkdrc)
-# Generic q launcher (rofi selection)
-bindsym $mod+q exec --no-startup-id ~/bin/q
-
-# Show all sxhkd bindings in rofi (you may need to update this command)
-bindsym $mod+shift+slash exec --no-startup-id sxhkd-menu
-
-# Direct elvi launchers
-bindsym $mod+g exec --no-startup-id ~/bin/q --engine=google
-bindsym $mod+Shift+g exec --no-startup-id sr google $(xclip -o -selection primary)
-bindsym $mod+Control+g exec --no-startup-id sr google $(xclip -o -selection clipboard)
-
-bindsym $mod+m exec --no-startup-id ~/bin/q --engine=moma
-bindsym $mod+Shift+m exec --no-startup-id sr moma $(xclip -o -selection primary)
-bindsym $mod+Control+m exec --no-startup-id sr moma $(xclip -o -selection clipboard)
-
-# codesearch (using c for "code")
-bindsym $mod+c exec --no-startup-id ~/bin/q --engine=codesearch
-bindsym $mod+Shift+c exec --no-startup-id sr codesearch $(xclip -o -selection primary)
-bindsym $mod+Control+c exec --no-startup-id sr codesearch $(xclip -o -selection clipboard)
-
-# github (using k for "code repository")
-bindsym $mod+k exec --no-startup-id ~/bin/q --engine=github --type=code
-bindsym $mod+Shift+k exec --no-startup-id sr github -t=code $(xclip -o -selection primary)
-bindsym $mod+Control+k exec --no-startup-id sr github -t=code $(xclip -o -selection clipboard)
-
-bindsym $mod+b exec --no-startup-id ~/bin/q --engine=buganizer
-bindsym $mod+Shift+b exec --no-startup-id sr buganizer $(xclip -o -selection primary)
-bindsym $mod+Control+b exec --no-startup-id sr buganizer $(xclip -o -selection clipboard)
-
-bindsym $mod+w exec --no-startup-id ~/bin/q --engine=W
-bindsym $mod+Shift+w exec --no-startup-id sr W $(xclip -o -selection primary)
-bindsym $mod+Control+w exec --no-startup-id sr W $(xclip -o -selection clipboard)
-
-# Bookmark elvi (no query)
-bindsym $mod+d exec --no-startup-id sr calendar
-bindsym $mod+j exec --no-startup-id sr chatgpt
-bindsym $mod+r exec --no-startup-id sr gemini
-bindsym $mod+l exec --no-startup-id sr gmail
-bindsym $mod+p exec --no-startup-id sr chat
-bindsym $mod+f exec --no-startup-id sr memegen
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.

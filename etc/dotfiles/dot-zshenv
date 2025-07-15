@@ -24,9 +24,23 @@ export EDITOR='emacs-wait'
 export LANG=en_US.UTF-8
 export LESS='-i'
 export XCOMPOSEFILE=~/.Xcompose
-export XMODIFIERS='@im=none'
-export GTK_IM_MODULE=xim
-export QT_IM_MODULE=xim
+
+# Input Method configuration
+# These were previously set to enable XIM (X Input Method) for complex text input:
+#   XMODIFIERS='@im=none'
+#   GTK_IM_MODULE=xim
+#   QT_IM_MODULE=xim
+# 
+# We explicitly unset them because:
+# 1. XIM intercepts Compose key sequences, breaking them in terminals
+# 2. We only use Western languages with Compose, not CJK input methods
+# 3. Chrome and other apps work fine without XIM
+# 
+# If you need CJK input in the future, set these per-application:
+#   GTK_IM_MODULE=xim QT_IM_MODULE=xim <application>
+unset XMODIFIERS
+unset GTK_IM_MODULE
+unset QT_IM_MODULE
 
 # Tool-specific environment
 export NVM_DIR="$HOME/.nvm"
