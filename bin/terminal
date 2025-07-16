@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec alacritty --title 'terminal' -e tmux new -A -s work "$@"
