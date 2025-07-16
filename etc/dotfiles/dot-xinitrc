@@ -35,9 +35,9 @@ setxkbmap -query >> "$LOGFILE" 2>&1
 
 # Start applications
 echo "$(date): Starting applications" >> "$LOGFILE"
-google-chrome --profile-directory=work-profile --window-name=chrome-work &
-google-chrome --profile-directory=personal-profile --window-name=chrome-personal &
-alacritty --title 'terminal' -e tmux new -A -s work &
+chrome-work &
+chrome-personal &
+terminal &
 
 # Start i3
 echo "$(date): Starting i3" >> "$LOGFILE"
