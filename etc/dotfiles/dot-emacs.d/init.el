@@ -23,7 +23,7 @@
 
 ;; Just discard changes in dirty repos (gptel, for instance, is
 ;; perpetually dirty).
-(defun my-straight-auto-discard-advice (orig-func local-repo)
+(defun my-straight-auto-discard-advice (local-repo)
   "Automatically discard changes in straight repos without prompting."
   (let ((status (let ((straight--process-trim nil))
                   (straight--process-output
@@ -34,7 +34,8 @@
       ;; Dirty worktree - automatically discard changes
       (straight--output "Auto-discarding changes in repository %S" local-repo)
       (and (straight--process-output "git" "reset" "--hard")
-           (straight--process-output "git" "clean" "-ffd")))))
+           (straight--process-output "git" "clean" "-ffd"))
+      t)))  ; Return t after discarding changes
 
 (advice-add 'straight-vc-git--ensure-worktree :override #'my-straight-auto-discard-advice)
 
@@ -71,7 +72,8 @@
   (aw-minibuffer-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold)))))
 
 (use-package aidermacs
-  :bind (("C-c A" . aidermacs-transient-menu))
+  :bind (("C-c A" . aidermacs-transient-menu)
+         ("C-c M" . aidermacs-change-model-leaderboard))
   :custom
   (aidermacs-default-chat-mode 'ask)
   ;; Disruptive, for some reason to force-show diff; maybe can call manually.
@@ -91,58 +93,51 @@
            :host "console.anthropic.com"
            :user "api-key"))
 
-  (defun aidermacs-change-model-advice (original-function &optional arg)
-    "Around advice for `aidermacs-change-model'.
-Presents a curated list of top models. If the user selects
-'Browse all...', it falls back to the original function."
-    (if arg
-        ;; If called with a prefix arg (for weak model), just run the original.
-        (funcall original-function arg)
-      ;; Otherwise, show our enhanced menu.
-      (let* ((models '(("🥇 OpenAI o3-pro (84.9%)" . ("o3-pro" "reasoning-effort" "high" "gpt-4.1-mini"))
-                       ("🥈 Gemini 2.5 Pro (83.1%)" . ("gemini/gemini-2.5-pro-preview-06-05" "think-tokens" "32k" "gemini/gemini-2.5-flash-preview-04-17"))
-                       ("🥉 Claude Opus 4 (72.0%)" . ("anthropic/claude-opus-4-20250514" nil nil "anthropic/claude-3-5-haiku-20241022"))
-                       ("---" . :separator)
-                       ("➕ Browse all available models..." . :browse)))
-             (choice (completing-read "Select model: " models nil t)))
-        (if-let ((model-config (cdr (assoc choice models))))
-            (cond
-             ((eq model-config :browse)
-              ;; User chose to browse, so call the original function.
-              (funcall original-function))
-             ((eq model-config :separator)
-              ;; Re-prompt if they select the separator.
-              (call-interactively 'aidermacs-change-model))
-             (t
-              ;; User selected a top model, so we set it directly.
-              (let ((model-name    (nth 0 model-config))
-                    (setting-type  (nth 1 model-config))
-                    (setting-value (nth 2 model-config))
-                    (weak-model    (nth 3 model-config)))
-                (aidermacs--send-command (format "/model %s" model-name))
-                (aidermacs--send-command (format "/weak-model %s" weak-model))
-                (when setting-type
-                  (aidermacs--send-command (format "/%s %s" setting-type setting-value)))
-                (message "Switched to %s (weak: %s) with %s %s" model-name weak-model setting-type (or setting-value ""))))
-             ;; User cancelled with C-g.
-             (message "Model selection cancelled.")))))
+  (defun aidermacs-change-model-leaderboard ()
+    "Select a model from the aidermacs leaderboard or browse all models."
+    (interactive)
+    (let* ((models '(("🥇 OpenAI o3-pro (84.9%)" . ("o3-pro" "reasoning-effort" "high" "gpt-4.1-mini"))
+                     ("🥈 Gemini 2.5 Pro (83.1%)" . ("gemini/gemini-2.5-pro-preview-06-05" "think-tokens" "32k" "gemini/gemini-2.5-flash-preview-04-17"))
+                     ("🥉 Claude Opus 4 (72.0%)" . ("anthropic/claude-opus-4-20250514" nil nil "anthropic/claude-3-5-haiku-20241022"))
+                     ("---" . :separator)
+                     ("➕ Browse all available models..." . :browse)))
+           (choice (completing-read "Select model: " models nil t)))
+      (if-let ((model-config (cdr (assoc choice models))))
+          (cond
+           ((eq model-config :browse)
+            ;; User chose to browse, so call the original function.
+            (call-interactively 'aidermacs-change-model))
+           ((eq model-config :separator)
+            ;; Re-prompt if they select the separator.
+            (call-interactively 'aidermacs-change-model-leaderboard))
+           (t
+            ;; User selected a top model, so we set it directly.
+            (let ((model-name    (nth 0 model-config))
+                  (setting-type  (nth 1 model-config))
+                  (setting-value (nth 2 model-config))
+                  (weak-model    (nth 3 model-config)))
+              (aidermacs--send-command (format "/model %s" model-name))
+              (aidermacs--send-command (format "/weak-model %s" weak-model))
+              (when setting-type
+                (aidermacs--send-command (format "/%s %s" setting-type setting-value)))
+              (message "Switched to %s (weak: %s) with %s %s" model-name weak-model setting-type (or setting-value "")))))
+        ;; User cancelled with C-g.
+        (message "Model selection cancelled."))))
 
-    (advice-add 'aidermacs-change-model :around #'aidermacs-change-model-advice)
+  ;; Utility functions for reasoning settings
+  (defun aidermacs-toggle-thinking-tokens ()
+    "Toggle thinking tokens between different levels or disable."
+    (interactive)
+    (let ((current-setting (completing-read "Thinking tokens: " '("32k" "8k" "4k" "1k" "0") nil t "32k")))
+      (aidermacs--send-command (format "/think-tokens %s" current-setting))
+      (message "Set thinking tokens to %s" current-setting)))
 
-    ;; Utility functions for reasoning settings
-    (defun aidermacs-toggle-thinking-tokens ()
-      "Toggle thinking tokens between different levels or disable."
-      (interactive)
-      (let ((current-setting (completing-read "Thinking tokens: " '("32k" "8k" "4k" "1k" "0") nil t "32k")))
-        (aidermacs--send-command (format "/think-tokens %s" current-setting))
-        (message "Set thinking tokens to %s" current-setting)))
-
-    (defun aidermacs-set-reasoning-effort ()
-      "Set reasoning effort level."
-      (interactive)
-      (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
-        (aidermacs--send-command (format "/reasoning-effort %s" effort))
-        (message "Set reasoning effort to %s" effort)))))
+  (defun aidermacs-set-reasoning-effort ()
+    "Set reasoning effort level."
+    (interactive)
+    (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
+      (aidermacs--send-command (format "/reasoning-effort %s" effort))
+      (message "Set reasoning effort to %s" effort))))
 
 (use-package all-the-icons)
 
