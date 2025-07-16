@@ -73,11 +73,9 @@
 (use-package aidermacs
   :bind (("C-c A" . aidermacs-transient-menu))
   :custom
-  (aidermacs-default-model "gemini/gemini-2.5-pro-preview-06-05")
-  ;; No global thinking budget; set per-model when needed
-  (aidermacs-extra-args '())
   (aidermacs-default-chat-mode 'ask)
   ;; Disruptive, for some reason to force-show diff; maybe can call manually.
+  (aidermacs-extra-args '("--chat-mode=ask"))
   (aidermacs-show-diff-after-change nil)
   :config
   (setenv "GEMINI_API_KEY"
