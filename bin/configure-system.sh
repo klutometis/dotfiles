@@ -93,6 +93,41 @@ else
     echo "Warning: gsettings not found - GTK3 Emacs key theme may not work in some applications"
 fi
 
+# Privoxy ad blocking setup
+echo "Setting up privoxy ad blocking lists..."
+if command -v privoxy &> /dev/null; then
+    # Create build directory if it doesn't exist
+    BUILD_DIR="$HOME/build"
+    mkdir -p "$BUILD_DIR"
+    
+    # Clone or update privoxy-blocklist
+    if [ ! -d "$BUILD_DIR/privoxy-blocklist" ]; then
+        echo "Cloning privoxy-blocklist..."
+        git clone https://github.com/Andrwe/privoxy-blocklist.git "$BUILD_DIR/privoxy-blocklist"
+    else
+        echo "Updating privoxy-blocklist..."
+        cd "$BUILD_DIR/privoxy-blocklist"
+        git pull
+    fi
+    
+    cd "$BUILD_DIR/privoxy-blocklist"
+    
+    # Run twice - first time initializes config files
+    echo "Initializing privoxy blocklist configuration..."
+    sudo ./privoxy-blocklist.sh -f attribute_global_name -f attribute_global_exact -f attribute_global_contain -f attribute_global_startswith -f attribute_global_endswith -f class_global -f id_global || true
+    
+    echo "Applying privoxy blocklist filters..."
+    sudo ./privoxy-blocklist.sh -f attribute_global_name -f attribute_global_exact -f attribute_global_contain -f attribute_global_startswith -f attribute_global_endswith -f class_global -f id_global
+    
+    # Restart privoxy to apply changes
+    echo "Restarting privoxy..."
+    sudo systemctl restart privoxy || sudo service privoxy restart || true
+    
+    echo "Privoxy ad blocking setup complete"
+else
+    echo "Warning: privoxy not installed - skipping ad blocking setup"
+fi
+
 # Other system configs as needed
 # sudo cp ~/etc/dictd.conf /etc/dictd.conf
 
