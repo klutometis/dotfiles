@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""
+PAC Personal Server - Routes all traffic through privoxy
+Usage: pac-personal [port]
+"""
+import http.server
+import socketserver
+import sys
+
+def main():
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8001
+
+    class ReusableTCPServer(socketserver.ThreadingTCPServer):
+        allow_reuse_address = True
+
+    class SimpleHandler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == '/pac.js' or self.path == '/':
+                pac_content = 'function FindProxyForURL(url, host) { return "PROXY 127.0.0.1:8118"; }'
+                
+                try:
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/x-ns-proxy-autoconfig')
+                    self.end_headers()
+                    self.wfile.write(pac_content.encode('utf-8'))
+                except BrokenPipeError:
+                    # Client disconnected, just log and move on
+                    self.log_message("Client disconnected during response")
+            else:
+                self.send_error(404)
+
+    with ReusableTCPServer(("", port), SimpleHandler) as httpd:
+        print(f"Serving simple PAC at http://localhost:{port}/pac.js")
+        httpd.serve_forever()
+
+if __name__ == "__main__":
+    main()

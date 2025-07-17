@@ -1,1 +1,2 @@
 etc/dotfiles/dot-emacs.d/init-secrets.el filter=git-crypt diff=git-crypt
+etc/dotfiles/dot-env-secrets filter=git-crypt diff=git-crypt
