@@ -1,0 +1,42 @@
+// vim:ts=4:sw=4:et
+{
+    // Left side - Chrome windows in stacked layout
+    "layout": "stacked",
+    "percent": 0.5,
+    "type": "con",
+    "nodes": [
+        {
+            "name": "chrome-work",
+            "percent": 0.5,
+            "swallows": [
+                {
+                    "title": "^chrome-work$"
+                }
+            ],
+            "type": "con"
+        },
+        {
+            "name": "chrome-personal", 
+            "percent": 0.5,
+            "swallows": [
+                {
+                    "title": "^chrome-personal$"
+                }
+            ],
+            "type": "con"
+        }
+    ]
+}
+
+{
+    // Right side - Terminal
+    "name": "terminal",
+    "percent": 0.5,
+    "swallows": [
+        {
+            "title": "^terminal$"
+        }
+    ],
+    "type": "con"
+}
+
