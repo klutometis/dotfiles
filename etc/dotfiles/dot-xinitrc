@@ -22,22 +22,19 @@ xset s 600
 xset dpms 1200 1800 2400
 xsetroot -solid black
 
+# Display setup
+echo "$(date): Setting up display"
+xrandr --dpi 96
+autorandr --change --default standalone
+
 # Keyboard configuration
 set-keyboard-options.sh
-
-# Add delay for keyboard changes to propagate
-sleep 0.5
 
 # Background services
 echo "$(date): Starting background services"
 xscreensaver -nosplash &
 redshift-palo-alto &
-sxhkd &
-
-# Display setup
-echo "$(date): Setting up display"
-xrandr --dpi 96
-autorandr --change --default standalone
+sxhkd -m -1 &
 
 # Log keyboard state after setup
 echo "$(date): Final keyboard state:"
@@ -48,7 +45,6 @@ echo "$(date): Starting PAC servers"
 # Kill any existing PAC servers
 pkill -f pac-work || true
 pkill -f pac-personal || true
-sleep 0.5  # Give them time to release ports
 
 pac-work &
 pac-personal &
