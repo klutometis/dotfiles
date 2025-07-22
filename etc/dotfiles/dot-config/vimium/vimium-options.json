@@ -1,5 +1,5 @@
 {
-  "keyMappings": "map <a-l> closeTabsOnLeft               # Alt+L → Close all tabs to the left\nmap <a-r> closeTabsOnRight              # Alt+R → Close all tabs to the right\nmap <a-o> closeOtherTabs                # Alt+O → Close all other tabs\nmap U scrollFullPageUp\nmap D scrollFullPageDown\n\nmap F LinkHints.activateModeToOpenInNewForegroundTab   # F → Open link in new tab and switch to it\nmap yd LinkHints.activateModeToDownloadLink            # y+d → \"Download\" link (if download attribute is present)",
+  "keyMappings": "map <c-a-l> closeTabsOnLeft               # Ctrl+Alt+L → Close all tabs to the left\nmap <c-a-r> closeTabsOnRight              # Ctrl+Alt+R → Close all tabs to the right\nmap <a-o> closeOtherTabs                # Alt+O → Close all other tabs\nmap U scrollFullPageUp\nmap D scrollFullPageDown\n\nmap F LinkHints.activateModeToOpenInNewForegroundTab   # F → Open link in new tab and switch to it\nmap yd LinkHints.activateModeToDownloadLink            # y+d → \"Download\" link (if download attribute is present)",
   "linkHintCharacters": "oaeunsthid",
   "regexFindMode": true,
   "grabBackFocus": true,
