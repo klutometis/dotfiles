@@ -47,11 +47,6 @@
 ;; below.
 (load "~/.emacs.d/init-settings.el")
 
-(let ((secrets (expand-file-name "init-secrets.el" user-emacs-directory)))
-  (if (file-readable-p secrets)
-      (load secrets nil 'nomessage)
-    (warn "⚠️init-secrets.el not found or unreadable. Did you run `git-crypt unlock`?")))
-
 ;;; Load transient early and eagerly.
 (use-package transient :demand t)
 
@@ -80,19 +75,6 @@
   (aidermacs-extra-args '("--chat-mode=ask"))
   (aidermacs-show-diff-after-change nil)
   :config
-  (setenv "GEMINI_API_KEY"
-          (auth-source-pick-first-password
-           :host "gemini.google.com"
-           :user "api-key"))
-  (setenv "OPENAI_API_KEY"
-          (auth-source-pick-first-password
-           :host "platform.openai.com"
-           :user "api-key"))
-  (setenv "ANTHROPIC_API_KEY"
-          (auth-source-pick-first-password
-           :host "console.anthropic.com"
-           :user "api-key"))
-
   (defun aidermacs-change-model-leaderboard ()
     "Select a model from the aidermacs leaderboard or browse all models."
     (interactive)
