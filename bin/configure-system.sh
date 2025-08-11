@@ -93,6 +93,19 @@ else
     echo "Warning: gsettings not found - GTK3 Emacs key theme may not work in some applications"
 fi
 
+# Configure Downloads directory
+echo "Configuring Downloads directory redirection..."
+mkdir -p ~/var/web
+
+if [ -d ~/Downloads ] || [ -L ~/Downloads ]; then
+    echo "Removing existing ~/Downloads..."
+    rm -rf ~/Downloads
+fi
+
+echo "Creating symlink ~/Downloads -> ~/var/web..."
+ln -sf ~/var/web ~/Downloads
+echo "Downloads directory configured to use ~/var/web"
+
 # Privoxy ad blocking setup
 echo "Setting up privoxy ad blocking lists..."
 if command -v privoxy &> /dev/null; then
