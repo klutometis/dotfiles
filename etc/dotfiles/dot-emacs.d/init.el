@@ -106,6 +106,12 @@
         ;; User cancelled with C-g.
         (message "Model selection cancelled."))))
 
+  ;; Custom enthusiastic accept-change function
+  (defun aidermacs-accept-change ()
+    "Send an enthusiastic acceptance to aidermacs."
+    (interactive)
+    (aidermacs--send-command "/code Let's go!"))
+
   ;; Utility functions for reasoning settings
   (defun aidermacs-toggle-thinking-tokens ()
     "Toggle thinking tokens between different levels or disable."
@@ -582,18 +588,16 @@ This operates in-place on the rewritten region between BEG and END."
               (unbind-key "C-c C-s" markdown-mode-map)))))
 
 (use-package midnight
-  :config
-  (setq clean-buffer-list-delay-general 7)
-  (midnight-delay-set 'midnight-delay 0)
-  (setq
-   clean-buffer-list-delay-general 1
-   clean-buffer-list-kill-regexps '("^[*].*"))
-  (push "*compilation*" clean-buffer-list-kill-never-buffer-names)
-  (push "notes" clean-buffer-list-kill-never-buffer-names)
-  (push "TODO" clean-buffer-list-kill-never-buffer-names)
-  (add-hook 'midnight-hook
-            (lambda () (interactive)
-              (desktop-save desktop-dirname))))
+  :init
+  (midnight-mode 1)
+  :custom
+  (midnight-delay 0)
+  (clean-buffer-list-delay-general 1)
+  (clean-buffer-list-kill-regexps '(".*"))
+  (clean-buffer-list-kill-never-buffer-names '("*compilation*"))
+  (clean-buffer-list-kill-never-regexps '("^\\*aidermacs"))
+  :hook
+  (midnight . (lambda () (desktop-save desktop-dirname))))
 
 (use-package paredit
   :bind (:map paredit-mode-map
