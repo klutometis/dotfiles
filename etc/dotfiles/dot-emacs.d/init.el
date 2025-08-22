@@ -13,9 +13,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; Don't use package.el
-(setq package-enable-at-startup nil)
-
 ;; Integrate use-package with straight.el
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
