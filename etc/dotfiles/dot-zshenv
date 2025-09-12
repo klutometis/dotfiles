@@ -49,3 +49,4 @@ export PYENV_ROOT="$HOME/.pyenv"
 # Load environment files
 . "$HOME/.cargo/env"
 [ -f ~/.env-secrets ] && source ~/.env-secrets
+. "$HOME/.rokit/env"
