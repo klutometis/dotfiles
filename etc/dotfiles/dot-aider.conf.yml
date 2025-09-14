@@ -1,2 +1,3 @@
-read: ~/CONVENTIONS.md
 auto-commits: false
+mcp-servers-file: /home/danenberg/etc/mcp.json
+read: ~/CONVENTIONS.md
