@@ -18,13 +18,14 @@ export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
 export HISTSIZE=1000000
 export SAVEHIST=1000000
 
+setopt APPEND_HISTORY
 setopt EXTENDED_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
 setopt HIST_VERIFY
-setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 
