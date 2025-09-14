@@ -5,6 +5,94 @@ set -e
 
 echo "Deploying system configuration files..."
 
+# =============================================================================
+# Package Installation Section
+# =============================================================================
+
+echo "Checking and installing system packages..."
+
+# Install sxhkd if not present
+if ! command -v sxhkd &> /dev/null; then
+    echo "Installing sxhkd..."
+    sudo apt-get update
+    sudo apt-get install -y sxhkd
+fi
+
+# =============================================================================
+# Python Tools Installation (via uv)
+# =============================================================================
+
+echo "Setting up Python tools via uv..."
+
+# Install uv if not present
+if ! command -v uv &> /dev/null; then
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+# Install/update aider-ce from git
+echo "Installing aider-ce (Community Edition)..."
+uv tool install --force git+https://github.com/dwash96/aider-ce.git
+
+# =============================================================================
+# Directory Symlinks Configuration
+# =============================================================================
+
+echo "Configuring standard directory symlinks..."
+
+# Create target directories
+mkdir -p ~/var/{doc,music,pictures,videos,templates,public,web}
+
+# Function to create symlink safely
+create_directory_symlink() {
+    local source="$1"
+    local target="$2"
+    
+    if [ -L "$source" ]; then
+        # It's already a symlink, check if it points to the right place
+        current_target=$(readlink "$source")
+        if [ "$current_target" = "$target" ]; then
+            echo "  ✓ $source already linked to $target"
+        else
+            echo "  Updating symlink $source -> $target"
+            rm "$source"
+            ln -sf "$target" "$source"
+        fi
+    elif [ -d "$source" ]; then
+        # It's a real directory, move contents and create symlink
+        echo "  Moving contents from $source to $target"
+        if [ "$(ls -A $source)" ]; then
+            # Directory has contents
+            mv "$source"/* "$target"/ 2>/dev/null || true
+            mv "$source"/.* "$target"/ 2>/dev/null || true
+        fi
+        rmdir "$source"
+        ln -sf "$target" "$source"
+        echo "  Created symlink $source -> $target"
+    else
+        # Doesn't exist, create symlink
+        ln -sf "$target" "$source"
+        echo "  Created symlink $source -> $target"
+    fi
+}
+
+# Create all the symlinks
+echo "Setting up directory symlinks..."
+create_directory_symlink ~/Desktop ~/
+create_directory_symlink ~/Documents ~/var/doc
+create_directory_symlink ~/Music ~/var/music
+create_directory_symlink ~/Pictures ~/var/pictures
+create_directory_symlink ~/Videos ~/var/videos
+create_directory_symlink ~/Templates ~/var/templates
+create_directory_symlink ~/Public ~/var/public
+create_directory_symlink ~/Downloads ~/var/web  # This one should already exist
+
+echo "Directory symlinks configured"
+
+# =============================================================================
+# X11 Configuration
+# =============================================================================
+
 # X11 configs
 if [ -d ~/etc/X11/xorg.conf.d ]; then
     echo "Copying X11 configuration files..."
@@ -17,6 +105,14 @@ if [ -d ~/etc/X11/xorg.conf.d ]; then
 else
     echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
 fi
+
+# =============================================================================
+# udev Rules
+# =============================================================================
+
+# =============================================================================
+# udev Rules
+# =============================================================================
 
 # udev rules for keyboard layout
 if [ -d ~/etc/udev/rules.d ]; then
@@ -77,15 +173,12 @@ echo "Rebuilding font cache..."
 sudo fc-cache -f -v > /dev/null 2>&1
 echo "Font cache rebuilt"
 
+# =============================================================================
+# GTK Configuration
+# =============================================================================
+
 # GTK key theme configuration
 echo "Configuring GTK key theme..."
-# Note: While we have GTK key theme configs in dotfiles:
-#   - ~/.gtkrc-2.0: gtk-key-theme-name = "Emacs"
-#   - ~/.config/gtk-3.0/settings.ini: gtk-key-theme-name = Emacs
-# Some GTK3 applications (e.g. Chrome) don't respect the config files.
-# Per https://wiki.archlinux.org/title/GTK#Keyboard_shortcuts:
-# "desktop environments and applications can override these settings"
-# and GSettings takes precedence over settings.ini in many cases.
 if command -v gsettings &> /dev/null; then
     gsettings set org.gnome.desktop.interface gtk-key-theme "Emacs"
     echo "GTK3 Emacs key theme set via gsettings"
@@ -93,18 +186,9 @@ else
     echo "Warning: gsettings not found - GTK3 Emacs key theme may not work in some applications"
 fi
 
-# Configure Downloads directory
-echo "Configuring Downloads directory redirection..."
-mkdir -p ~/var/web
-
-if [ -d ~/Downloads ] || [ -L ~/Downloads ]; then
-    echo "Removing existing ~/Downloads..."
-    rm -rf ~/Downloads
-fi
-
-echo "Creating symlink ~/Downloads -> ~/var/web..."
-ln -sf ~/var/web ~/Downloads
-echo "Downloads directory configured to use ~/var/web"
+# =============================================================================
+# Privoxy Ad Blocking
+# =============================================================================
 
 # Privoxy ad blocking setup
 echo "Setting up privoxy ad blocking lists..."
@@ -141,8 +225,9 @@ else
     echo "Warning: privoxy not installed - skipping ad blocking setup"
 fi
 
-# Other system configs as needed
-# sudo cp ~/etc/dictd.conf /etc/dictd.conf
-
+echo ""
 echo "System configuration deployment complete!"
-echo "You may need to restart X11 for changes to take effect."
+echo "You may need to:"
+echo "  1. Restart X11 for keyboard changes to take effect"
+echo "  2. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
+echo "  3. Source your shell configuration for PATH updates"
