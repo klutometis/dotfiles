@@ -1,1 +1,2 @@
 etc/dotfiles/dot-env-secrets filter=git-crypt diff=git-crypt
+etc/dotfiles/dot-env.mcp filter=git-crypt diff=git-crypt
