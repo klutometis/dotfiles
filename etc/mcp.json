@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "openmemory": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "openmemory"
+      ],
+      "env": {
+        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
+        "CLIENT_NAME": "openmemory"
+      }
+    },
+    "firecrawl-mcp": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": "$FIRECRAWL_API_KEY"
+      }
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["envmcp", "npx", "-y", "@mkusaka/mcp-shell-server"]
+    },
+    "linkup": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "uvx",
+        "mcp-search-linkup"
+      ],
+      "env": {
+        "LINKUP_API_KEY": "$LINKUP_API_KEY"
+      }
+    }
+  }
+}
