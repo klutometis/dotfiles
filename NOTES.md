@@ -46,6 +46,81 @@
 
 **Implementation**: Used `set -a` / `set +a` in `.env-secrets` to automatically export all variable assignments without repetitive `export` keywords.
 
+## 2025-09-14 - MCP Configuration Security and Environment Variable Substitution
+
+### Decision: Use envmcp wrapper with git-crypt encrypted environment files
+
+**Context**: Needed secure API key management for MCP server configurations without exposing credentials in version control.
+
+**The Problem:**
+- MCP configurations require API keys for services (OpenMemory, Firecrawl, Linkup, etc.)
+- Hardcoding keys in JSON configs creates security risks
+- Most MCP clients don't support `${env:VARIABLE_NAME}` syntax yet
+- Need to share configurations while keeping credentials secure
+
+**Solutions Investigated:**
+
+**❌ Native Environment Variable Substitution**
+- `${env:VARIABLE_NAME}` syntax doesn't work in Claude Desktop, Cursor
+- Feature requested but not implemented in most MCP clients
+- Works in VS Code's `launch.json`/`tasks.json` but not MCP configs
+- GitHub issues: VS Code (#264448, #245237), Cursor (#79639)
+
+**✅ envmcp Package**
+- Lightweight wrapper (11.5 kB, 611 weekly downloads)  
+- Loads variables from `.env.mcp` files
+- Substitutes `$VARIABLE_NAME` in command arguments
+- Works with existing MCP server environment variable expectations
+- Syntax: `npx envmcp [options] command [args...]`
+
+**⚖️ mcpipe Package**
+- Feature-rich wrapper (24.3 kB, 33 weekly downloads)
+- Includes all envmcp functionality PLUS debugging features
+- Debug JSON-RPC messages, tool name prefixing, process monitoring  
+- Better for development/debugging, overkill for production
+
+**Final Implementation:**
+
+**1. Encrypted Environment File** (`~/etc/dotfiles/dot-env.mcp`):
+```bash
+# MCP-specific environment variables (git-crypt encrypted)
+ANTHROPIC_API_KEY="..."
+FIRECRAWL_API_KEY="..."
+LINKUP_API_KEY="..."
+OPENMEMORY_API_KEY="..."
+```
+
+**2. Clean MCP Configuration** (`~/etc/mcp.json`):
+```json
+{
+  "mcpServers": {
+    "openmemory": {
+      "command": "npx",
+      "args": ["envmcp", "npx", "-y", "openmemory"],
+      "env": {
+        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
+        "CLIENT_NAME": "openmemory"
+      }
+    }
+  }
+}
+```
+
+**Benefits Achieved:**
+- ✅ **Security**: API keys encrypted by git-crypt, never exposed in plain text
+- ✅ **Shareable**: MCP configuration can be safely committed to version control
+- ✅ **Standard**: Uses familiar `.env` file approach developers expect
+- ✅ **Compatibility**: Works with existing MCP servers expecting environment variables
+- ✅ **Maintainable**: Clear separation of secrets and configuration
+
+**Key Insights:**
+- `envmcp` substitutes variables in the `env` section, not just command args
+- Git-crypt pattern must be added BEFORE creating encrypted files
+- GNU stow manages the dotfile → home directory symlink (`~/.env.mcp`)
+- Solution works immediately while waiting for native MCP client support
+
+**Recommendation:** Use `envmcp` for production (lightweight, focused), `mcpipe` for debugging complex MCP communication issues.
+
 ## 2025-01-11 - Web Search API Comparison for MCP Servers
 
 ### Decision: Comprehensive analysis of top web search APIs for AI applications
