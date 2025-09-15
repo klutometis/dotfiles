@@ -18,6 +18,20 @@ if ! command -v sxhkd &> /dev/null; then
     sudo apt-get install -y sxhkd
 fi
 
+# Install surfraw if not present
+if ! command -v surfraw &> /dev/null; then
+    echo "Installing surfraw..."
+    sudo apt-get update
+    sudo apt-get install -y surfraw
+fi
+
+# Install rofi if not present
+if ! command -v rofi &> /dev/null; then
+    echo "Installing rofi..."
+    sudo apt-get update
+    sudo apt-get install -y rofi
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
