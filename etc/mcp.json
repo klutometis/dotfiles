@@ -25,9 +25,9 @@
         "FIRECRAWL_API_KEY": "$FIRECRAWL_API_KEY"
       }
     },
-    "shell": {
-      "command": "npx",
-      "args": ["envmcp", "npx", "-y", "@mkusaka/mcp-shell-server"]
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git"]
     },
     "linkup": {
       "command": "npx",
