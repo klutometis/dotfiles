@@ -1,3 +1,35 @@
+## 2025-01-12 - MCP Server Configuration Expansion
+
+### Decision: Added filesystem and shell MCP servers to configuration
+
+**Context**: Extended MCP server capabilities by adding two new essential servers for file operations and shell command execution.
+
+**New MCP Servers Added:**
+
+**1. Filesystem Server** (`@modelcontextprotocol/server-filesystem`):
+- Provides file system access capabilities
+- Default path: `/home/user` 
+- Enables reading, writing, and managing files through MCP
+
+**2. Shell Server** (`@mkusaka/mcp-shell-server`):
+- Enables execution of shell commands via MCP
+- Provides system-level command execution capabilities
+- Useful for automation and system administration tasks
+
+**Implementation Details:**
+- Added both servers to `etc/mcp.json` configuration
+- Maintained alphabetical order in `mcpServers` section
+- Followed existing configuration patterns for consistency
+- Both servers use standard npm package installation approach
+
+**Benefits:**
+- ✅ **File Operations**: Direct file system access through MCP protocol
+- ✅ **Shell Commands**: Execute system commands programmatically  
+- ✅ **Automation**: Enhanced capabilities for system automation tasks
+- ✅ **Consistency**: Maintains existing configuration structure and patterns
+
+**Integration**: Servers work alongside existing MCP configuration including encrypted environment variables via `envmcp` wrapper established in previous session.
+
 ## 2025-08-11 - Downloads Directory Reorganization  
 
 ### Decision: Move Downloads to ~/var/web with symlink compatibility
