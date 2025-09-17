@@ -1,16 +1,15 @@
 {
   "mcpServers": {
-    "openmemory": {
+    "context7": {
       "command": "npx",
       "args": [
         "envmcp",
         "npx",
         "-y",
-        "openmemory"
+        "@upstash/context7-mcp"
       ],
       "env": {
-        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
-        "CLIENT_NAME": "openmemory"
+        "CONTEXT7_API_KEY": "$CONTEXT7_API_KEY"
       }
     },
     "firecrawl-mcp": {
@@ -24,6 +23,16 @@
       "env": {
         "FIRECRAWL_API_KEY": "$FIRECRAWL_API_KEY"
       }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "$HOME"
+      ]
     },
     "git": {
       "command": "uvx",
@@ -39,6 +48,40 @@
       "env": {
         "LINKUP_API_KEY": "$LINKUP_API_KEY"
       }
+    },
+    "openmemory": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "openmemory"
+      ],
+      "env": {
+        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
+        "CLIENT_NAME": "openmemory"
+      }
+    },
+    "perplexity": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "perplexity-mcp"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "$PERPLEXITY_API_KEY"
+      }
+    },
+    "shell": {
+      "command": "npx",
+      "args": [
+        "envmcp",
+        "npx",
+        "-y",
+        "@mkusaka/mcp-shell-server"
+      ]
     }
   }
 }

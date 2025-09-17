@@ -3,6 +3,9 @@
 
 set -e
 
+# Configuration flags
+ENABLE_KEYBOARD_CONFIG=${ENABLE_KEYBOARD_CONFIG:-false}
+
 echo "Deploying system configuration files..."
 
 # =============================================================================
@@ -107,43 +110,90 @@ echo "Directory symlinks configured"
 # X11 Configuration
 # =============================================================================
 
-# X11 configs
-if [ -d ~/etc/X11/xorg.conf.d ]; then
-    echo "Copying X11 configuration files..."
-    sudo cp ~/etc/X11/xorg.conf.d/* /etc/X11/xorg.conf.d/
-    sudo chown root:root /etc/X11/xorg.conf.d/*
-    sudo chmod 644 /etc/X11/xorg.conf.d/*
-    echo "X11 configs deployed successfully"
-    echo "  - Carbon laptop keyboard config"
-    echo "  - Happy Hacking Keyboard config"
+if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
+    # X11 configs
+    if [ -d ~/etc/X11/xorg.conf.d ]; then
+        echo "Copying X11 configuration files..."
+        sudo cp ~/etc/X11/xorg.conf.d/* /etc/X11/xorg.conf.d/
+        sudo chown root:root /etc/X11/xorg.conf.d/*
+        sudo chmod 644 /etc/X11/xorg.conf.d/*
+        echo "X11 configs deployed successfully"
+        echo "  - Carbon laptop keyboard config"
+        echo "  - Happy Hacking Keyboard config"
+    else
+        echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
+    fi
 else
-    echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
+    echo "Skipping X11 keyboard configuration (ENABLE_KEYBOARD_CONFIG=false)"
 fi
 
 # =============================================================================
 # udev Rules
 # =============================================================================
 
+if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
+    # udev rules for keyboard layout
+    if [ -d ~/etc/udev/rules.d ]; then
+        echo "Copying udev rules..."
+        sudo cp ~/etc/udev/rules.d/* /etc/udev/rules.d/
+        sudo chown root:root /etc/udev/rules.d/*
+        sudo chmod 644 /etc/udev/rules.d/*
+        echo "udev rules deployed successfully"
+        echo "  - Keyboard layout rules"
+        
+        # Reload udev rules and trigger for existing devices
+        echo "Reloading udev rules..."
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --subsystem-match=input
+        echo "udev rules reloaded and triggered"
+    else
+        echo "No udev rules found in ~/etc/udev/rules.d/"
+    fi
+else
+    echo "Skipping udev keyboard rules (ENABLE_KEYBOARD_CONFIG=false)"
+fi
+
 # =============================================================================
-# udev Rules
+# DHCP Client Configuration
 # =============================================================================
 
-# udev rules for keyboard layout
-if [ -d ~/etc/udev/rules.d ]; then
-    echo "Copying udev rules..."
-    sudo cp ~/etc/udev/rules.d/* /etc/udev/rules.d/
-    sudo chown root:root /etc/udev/rules.d/*
-    sudo chmod 644 /etc/udev/rules.d/*
-    echo "udev rules deployed successfully"
-    echo "  - Keyboard layout rules"
+echo "Configuring DHCP client domain search..."
+
+DHCLIENT_CONF="/etc/dhcp/dhclient.conf"
+
+# Check if DHCP_DOMAIN_SEARCH is set in environment
+if [ -n "$DHCP_DOMAIN_SEARCH" ]; then
+    DOMAIN_SEARCH_LINE="supersede domain-search $DHCP_DOMAIN_SEARCH;"
     
-    # Reload udev rules and trigger for existing devices
-    echo "Reloading udev rules..."
-    sudo udevadm control --reload-rules
-    sudo udevadm trigger --subsystem-match=input
-    echo "udev rules reloaded and triggered"
+    # Check if the configuration already exists
+    if [ -f "$DHCLIENT_CONF" ]; then
+        if grep -q "supersede domain-search" "$DHCLIENT_CONF"; then
+            echo "DHCP domain-search configuration already exists"
+        else
+            echo "Adding domain-search configuration to dhclient.conf..."
+            echo "" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+            echo "# Custom domain search configuration" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+            echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+            echo "Domain-search configuration added"
+            
+            # Restart DHCP client to apply changes
+            echo "Restarting DHCP client..."
+            sudo dhclient -r && sudo dhclient
+            echo "DHCP client restarted"
+        fi
+    else
+        echo "Creating dhclient.conf with domain-search configuration..."
+        echo "# Custom domain search configuration" | sudo tee "$DHCLIENT_CONF" > /dev/null
+        echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+        echo "dhclient.conf created with domain-search configuration"
+        
+        # Restart DHCP client to apply changes
+        echo "Restarting DHCP client..."
+        sudo dhclient -r && sudo dhclient
+        echo "DHCP client restarted"
+    fi
 else
-    echo "No udev rules found in ~/etc/udev/rules.d/"
+    echo "DHCP_DOMAIN_SEARCH not set - skipping domain search configuration"
 fi
 
 # Font configuration for bitmapped fonts
@@ -242,6 +292,12 @@ fi
 echo ""
 echo "System configuration deployment complete!"
 echo "You may need to:"
-echo "  1. Restart X11 for keyboard changes to take effect"
-echo "  2. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
-echo "  3. Source your shell configuration for PATH updates"
+if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
+    echo "  1. Restart X11 for keyboard changes to take effect"
+    echo "  2. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
+    echo "  3. Source your shell configuration for PATH updates"
+else
+    echo "  1. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
+    echo "  2. Source your shell configuration for PATH updates"
+    echo "  Note: Keyboard configuration was skipped (set ENABLE_KEYBOARD_CONFIG=true to enable)"
+fi
