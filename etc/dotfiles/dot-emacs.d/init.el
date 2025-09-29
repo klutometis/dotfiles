@@ -371,19 +371,18 @@
   (gptel-default-mode 'text-mode)
   (gptel-model 'gpt-4o)
   (gptel-track-media t)
+  (gptel-include-reasoning t)
+  (gptel-confirm-tool-calls nil)
+  (gptel-include-tool-results t)
   :hook ((gptel-post-stream-hook . gptel-auto-scroll)
-         (gptel-post-response-functions . gptel-end-of-response)
-         (gptel-post-rewrite-functions . remove-code-fence)
-         (gptel-mode . (lambda ()
-                         (add-hook 'after-change-functions
-                                   (lambda (beg end len)
-                                     (check-and-save-gptel-buffer))
-                                   nil t))))
+         (gptel-post-response-functions . gptel-end-of-response))
   :custom-face
   (gptel-context-highlight-face ((t (:weight bold :background "#2a2f4a" :extend t))))
   (gptel-rewrite-highlight-face ((t (:weight bold :background "#1f3a24" :extend t))))
 
   :config
+  (require 'gptel-integrations)
+
   (defun save-gptel-buffer-with-timestamp ()
     "Save the current gptel buffer to a directory with a timestamped filename."
     (interactive)
@@ -432,37 +431,20 @@ This operates in-place on the rewritten region between BEG and END."
       (insert content)
       (message "Replaced buffer contents with overlay text.")))
 
-  ;; Tool: Create a file
-  (gptel-make-tool
-   :name "create_file"
-   :function
-   (lambda (path filename content)
-     (let ((dir (if (string-empty-p path)
-                    default-directory
-                  (expand-file-name path)))
-           (filename (string-trim filename)))
-       (let ((full-path (expand-file-name filename dir)))
-         (with-temp-buffer
-           (insert content)
-           (write-file full-path))
-         (format "✅ Created file: %s\n📂 In directory: %s" filename dir))))
-   :description "Create a new file with the specified content."
-   :args (list
-          '(:name "path"
-                  :type string
-                  :description "Directory where the file will be created (leave blank for current dir).")
-          '(:name "filename"
-                  :type string
-                  :description "Name of the file to create.")
-          '(:name "content"
-                  :type string
-                  :description "Text content to write."))
-   :category "filesystem")
-
   (setq gptel-backends
         (list
-         (gptel-make-openai "OpenAI" :stream t)
-         (gptel-make-gemini "Gemini" :stream t))))
+         (gptel-make-anthropic "Claude"
+           :stream t
+           :key (getenv "ANTHROPIC_API_KEY")
+           :request-params '(:thinking (:type "enabled" :budget_tokens 24000)))
+         (gptel-make-openai "OpenAI"
+           :stream t
+           :key (getenv "OPENAI_API_KEY")
+           :request-params '(:thinking (:type "enabled" :budget_tokens 24000)))
+         (gptel-make-gemini "Gemini"
+           :stream t
+           :key (getenv "GOOGLE_API_KEY")
+           :request-params '(:thinking (:type "enabled" :budget_tokens 24000))))))
 
 (use-package graphviz-dot-mode
   :init
@@ -583,6 +565,32 @@ This operates in-place on the rewritten region between BEG and END."
           . (lambda ()
               (auto-fill-mode 1)
               (unbind-key "C-c C-s" markdown-mode-map)))))
+
+(use-package mcp
+  :config
+  (defun load-mcp-servers-from-json (json-file)
+    "Load MCP server configuration from JSON file and convert to mcp-hub-servers format."
+    (let* ((json-object-type 'alist)
+           (json-array-type 'list)
+           (json-key-type 'string)
+           (json-data (json-read-file json-file))
+           (servers (cdr (assoc "mcpServers" json-data))))
+      (mapcar (lambda (server)
+                (let* ((name (car server))
+                       (config (cdr server))
+                       (command (cdr (assoc "command" config)))
+                       (args (cdr (assoc "args" config)))
+                       (env (cdr (assoc "env" config))))
+                  `(,name . (:command ,command
+                                      :args ,args
+                                      ,@(when env
+                                          `(:env (,@(mapcan (lambda (pair)
+                                                              (list (intern (concat ":" (car pair)))
+                                                                    (cdr pair)))
+                                                            env))))))))
+              servers)))
+
+  (setq mcp-hub-servers (load-mcp-servers-from-json "~/etc/mcp.json")))
 
 (use-package midnight
   :init
