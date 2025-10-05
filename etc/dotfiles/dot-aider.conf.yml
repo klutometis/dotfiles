@@ -4,3 +4,4 @@ read: ~/CONVENTIONS.md
 model: anthropic/claude-sonnet-4-5-20250929
 weak-model: anthropic/claude-3-5-haiku-20241022
 chat-mode: ask
+thinking-tokens: 32000
