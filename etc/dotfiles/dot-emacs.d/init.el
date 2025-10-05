@@ -69,7 +69,6 @@
   :custom
   (aidermacs-default-chat-mode 'ask)
   ;; Disruptive, for some reason to force-show diff; maybe can call manually.
-  (aidermacs-extra-args '("--chat-mode=ask"))
   (aidermacs-show-diff-after-change nil)
   :config
   (defun aidermacs-change-model-leaderboard ()
