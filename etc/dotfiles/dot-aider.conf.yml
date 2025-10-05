@@ -28,9 +28,3 @@ chat-mode: ask
 # Enable extended reasoning with 32K thinking tokens
 # Allows the model to show its reasoning process for complex problems
 thinking-tokens: 32000
-
-# Bypass model capability validation checks
-# Needed because aider's model database hasn't been updated to recognize
-# that claude-sonnet-4-5-20250929 supports thinking_tokens
-# Without this, aider shows: "Warning: model does not support 'thinking_tokens'"
-check-model-accepts-settings: false
