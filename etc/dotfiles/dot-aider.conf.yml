@@ -9,9 +9,9 @@ auto-commits: false
 # MCP allows aider to connect to external tools and data sources
 mcp-servers-file: /home/danenberg/etc/mcp.json
 
-# Read conventions file on startup
+# Read agent instructions file on startup
 # This file contains project-specific guidelines for commits, build docs, etc.
-read: ~/CONVENTIONS.md
+read: ~/AGENTS.md
 
 # Primary model for complex tasks and code generation
 # Using Claude Sonnet 4.5 (latest reasoning model)
