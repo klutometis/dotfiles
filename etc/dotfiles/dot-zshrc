@@ -46,9 +46,9 @@ setopt NO_NOMATCH
 # Tool Initialization (interactive only)
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-[ -d "$HOME/.rbenv" ] && eval "$(rbenv init -)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+command -v rbenv >/dev/null 2>&1 && eval "$(rbenv init -)"
+command -v pyenv >/dev/null 2>&1 && eval "$(pyenv init -)"
+command -v pyenv >/dev/null 2>&1 && eval "$(pyenv virtualenv-init -)"
 
 # Host-Specific Configuration
 if [ -f ~/.$(hostname -s).sh ]; then
