@@ -1,7 +1,36 @@
+# Aider Configuration File
+# See: https://aider.chat/docs/config/aider_conf.html
+
+# Disable automatic git commits after each change
+# Allows manual control over when changes are committed
 auto-commits: false
+
+# Path to MCP (Model Context Protocol) servers configuration
+# MCP allows aider to connect to external tools and data sources
 mcp-servers-file: /home/danenberg/etc/mcp.json
+
+# Read conventions file on startup
+# This file contains project-specific guidelines for commits, build docs, etc.
 read: ~/CONVENTIONS.md
+
+# Primary model for complex tasks and code generation
+# Using Claude Sonnet 4.5 (latest reasoning model)
 model: anthropic/claude-sonnet-4-5-20250929
+
+# Weak model for simple tasks like commit messages
+# Using Claude 3.5 Haiku (faster, cheaper for routine operations)
 weak-model: anthropic/claude-3-5-haiku-20241022
+
+# Chat mode setting: "ask" mode waits for approval before making changes
+# Alternative: "code" mode makes changes immediately
 chat-mode: ask
+
+# Enable extended reasoning with 32K thinking tokens
+# Allows the model to show its reasoning process for complex problems
 thinking-tokens: 32000
+
+# Bypass model capability validation checks
+# Needed because aider's model database hasn't been updated to recognize
+# that claude-sonnet-4-5-20250929 supports thinking_tokens
+# Without this, aider shows: "Warning: model does not support 'thinking_tokens'"
+check-model-accepts-settings: false
