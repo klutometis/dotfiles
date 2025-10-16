@@ -1,0 +1,16 @@
+# Aider Configuration File - OpenAI Profile
+# See: https://aider.chat/docs/config/aider_conf.html
+# Profile-specific settings for OpenAI models
+
+# Primary model for complex tasks and code generation
+# Using GPT-5 Mini (fast, cost-efficient with reasoning support)
+model: gpt-5-mini
+
+# Weak model for simple tasks like commit messages
+# Using GPT-5 Nano (fastest, most cost-efficient)
+weak-model: gpt-5-nano
+
+# Enable high reasoning effort for OpenAI models
+# OpenAI models use reasoning-effort (not thinking-tokens like Claude/Gemini)
+# Options: low, medium, high
+reasoning-effort: high

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Wrapper script for aider that uses Claude profile
+
+# Find the real aider binary (not this script)
+REAL_AIDER=$(which -a aider | grep -v "$(dirname "$0")" | head -1)
+
+exec "$REAL_AIDER" -c ~/.aider.conf.claude.yml "$@"

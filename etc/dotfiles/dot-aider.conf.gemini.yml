@@ -1,0 +1,15 @@
+# Aider Configuration File - Gemini Profile
+# See: https://aider.chat/docs/config/aider_conf.html
+# Profile-specific settings for Gemini models
+
+# Primary model for complex tasks and code generation
+# Using Gemini Flash Latest (always points to latest stable version)
+model: gemini/gemini-flash-latest
+
+# Weak model for simple tasks like commit messages
+# Using Gemini Flash Lite Latest (always points to latest stable version)
+weak-model: gemini/gemini-flash-lite-latest
+
+# Enable extended reasoning with 32K thinking tokens
+# Allows the model to show its reasoning process for complex problems
+thinking-tokens: 32000

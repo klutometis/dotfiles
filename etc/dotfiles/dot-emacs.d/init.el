@@ -65,43 +65,12 @@
 
 (use-package aidermacs
   :bind (("C-c A" . aidermacs-transient-menu)
-         ("C-c M" . aidermacs-change-model-leaderboard))
+         ("C-c M" . aidermacs-select-profile))
   :custom
-  (aidermacs-default-chat-mode 'ask)
+  (aidermacs-program "aider-claude")
   ;; Disruptive, for some reason to force-show diff; maybe can call manually.
   (aidermacs-show-diff-after-change nil)
   :config
-  (defun aidermacs-change-model-leaderboard ()
-    "Select a model from the aidermacs leaderboard or browse all models."
-    (interactive)
-    (let* ((models '(("🥇 OpenAI o3-pro (84.9%)" . ("o3-pro" "reasoning-effort" "high" "gpt-4.1-mini"))
-                     ("🥈 Gemini 2.5 Pro (83.1%)" . ("gemini/gemini-2.5-pro-preview-06-05" "think-tokens" "32k" "gemini/gemini-2.5-flash-preview-04-17"))
-                     ("🥉 Claude Opus 4 (72.0%)" . ("anthropic/claude-opus-4-20250514" nil nil "anthropic/claude-3-5-haiku-20241022"))
-                     ("---" . :separator)
-                     ("➕ Browse all available models..." . :browse)))
-           (choice (completing-read "Select model: " models nil t)))
-      (if-let ((model-config (cdr (assoc choice models))))
-          (cond
-           ((eq model-config :browse)
-            ;; User chose to browse, so call the original function.
-            (call-interactively 'aidermacs-change-model))
-           ((eq model-config :separator)
-            ;; Re-prompt if they select the separator.
-            (call-interactively 'aidermacs-change-model-leaderboard))
-           (t
-            ;; User selected a top model, so we set it directly.
-            (let ((model-name    (nth 0 model-config))
-                  (setting-type  (nth 1 model-config))
-                  (setting-value (nth 2 model-config))
-                  (weak-model    (nth 3 model-config)))
-              (aidermacs--send-command (format "/model %s" model-name))
-              (aidermacs--send-command (format "/weak-model %s" weak-model))
-              (when setting-type
-                (aidermacs--send-command (format "/%s %s" setting-type setting-value)))
-              (message "Switched to %s (weak: %s) with %s %s" model-name weak-model setting-type (or setting-value "")))))
-        ;; User cancelled with C-g.
-        (message "Model selection cancelled."))))
-
   ;; Custom enthusiastic accept-change function
   (defun aidermacs-accept-change ()
     "Send an enthusiastic acceptance to aidermacs."
@@ -121,7 +90,18 @@
     (interactive)
     (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
       (aidermacs--send-command (format "/reasoning-effort %s" effort))
-      (message "Set reasoning effort to %s" effort))))
+      (message "Set reasoning effort to %s" effort)))
+
+  (defun aidermacs-select-profile ()
+    "Select an aider configuration profile (Claude, Gemini, or OpenAI)."
+    (interactive)
+    (let* ((profiles '(("🔵 Claude (Sonnet 4.5 + Haiku 4.5)" . "aider-claude")
+                       ("🟢 Gemini (Flash + Flash Lite)" . "aider-gemini")
+                       ("🟠 OpenAI (GPT-5 Mini + Nano)" . "aider-gpt")))
+           (choice (completing-read "Select aider profile: " profiles nil t)))
+      (let ((program (cdr (assoc choice profiles))))
+        (setq aidermacs-program program)
+        (message "Switched to %s" choice)))))
 
 (use-package all-the-icons)
 
@@ -610,6 +590,39 @@ This operates in-place on the rewritten region between BEG and END."
   :hook ((emacs-lisp-mode . paredit-mode)
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
+
+(use-package monet
+  :straight (:type git :host github :repo "stevemolitor/monet"))
+
+;; for eat terminal backend:
+(use-package eat
+  :straight (:type git
+                   :host codeberg
+                   :repo "akib/emacs-eat"
+                   :files ("*.el" ("term" "term/*.el") "*.texi"
+                           "*.ti" ("terminfo/e" "terminfo/e/*")
+                           ("terminfo/65" "terminfo/65/*")
+                           ("integration" "integration/*")
+                           (:exclude ".dir-locals.el" "*-tests.el"))))
+
+;; for vterm terminal backend:
+(use-package vterm :straight t)
+
+;; install claude-code.el, using :depth 1 to reduce download size:
+(use-package claude-code
+  :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main" :depth 1
+                   :files ("*.el" (:exclude "images/*")))
+  :bind-keymap
+  ("C-c C" . claude-code-command-map) ;; C-c followed by uppercase C
+  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
+  :bind
+  (:repeat-map my-claude-code-map ("M" . claude-code-cycle-mode))
+  :config
+  ;; optional IDE integration with Monet
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+  (monet-mode 1)
+
+  (claude-code-mode))
 
 (use-package poetry)
 
