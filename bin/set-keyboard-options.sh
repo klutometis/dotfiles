@@ -73,7 +73,7 @@ EOF
 set_keyboard_layout "Topre Corporation HHKB Professional" "us" "dvorak" "compose:rwin"
 
 # Apply settings for Carbon internal keyboard
-set_keyboard_layout "AT Translated Set 2 keyboard" "us" "dvorak" "caps:ctrl_modifier,compose:prsc"
+set_keyboard_layout "AT Translated Set 2 keyboard" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
 
 # Apply settings for HHKB-Studio1 (swap all alt/win keys, compose on right alt)
 set_keyboard_layout "HHKB-Studio1 Keyboard" "us" "dvorak" "altwin:swap_alt_win,compose:ralt-<"

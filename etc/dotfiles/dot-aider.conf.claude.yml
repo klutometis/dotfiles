@@ -1,0 +1,15 @@
+# Aider Configuration File - Claude Profile
+# See: https://aider.chat/docs/config/aider_conf.html
+# Profile-specific settings for Claude models
+
+# Primary model for complex tasks and code generation
+# Using Claude Sonnet 4.5 (latest reasoning model)
+model: anthropic/claude-sonnet-4-5
+
+# Weak model for simple tasks like commit messages
+# Using Claude Haiku 4.5 (faster, cheaper, with extended thinking support)
+weak-model: anthropic/claude-haiku-4-5
+
+# Enable extended reasoning with 32K thinking tokens
+# Allows the model to show its reasoning process for complex problems
+thinking-tokens: 32000

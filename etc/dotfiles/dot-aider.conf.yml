@@ -1,5 +1,6 @@
-# Aider Configuration File
+# Aider Configuration File - Base Configuration
 # See: https://aider.chat/docs/config/aider_conf.html
+# This file contains common settings shared across all profiles
 
 # Disable automatic git commits after each change
 # Allows manual control over when changes are committed
@@ -13,18 +14,11 @@ mcp-servers-file: /home/danenberg/etc/mcp.json
 # This file contains project-specific guidelines for commits, build docs, etc.
 read: ~/AGENTS.md
 
-# Primary model for complex tasks and code generation
-# Using Claude Sonnet 4.5 (latest reasoning model)
-model: anthropic/claude-sonnet-4-5-20250929
-
-# Weak model for simple tasks like commit messages
-# Using Claude 3.5 Haiku (faster, cheaper for routine operations)
-weak-model: anthropic/claude-3-5-haiku-20241022
-
 # Chat mode setting: "ask" mode waits for approval before making changes
 # Alternative: "code" mode makes changes immediately
 chat-mode: ask
 
-# Enable extended reasoning with 32K thinking tokens
-# Allows the model to show its reasoning process for complex problems
-thinking-tokens: 32000
+# Enable automatic testing after changes to create compile/bug-fix cycles
+# Aider will auto-detect test commands or prompt when needed
+# You can also set test-cmd explicitly: test-cmd: "pytest" or "make test"
+auto-test: true
