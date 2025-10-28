@@ -1,3 +1,40 @@
+## 2025-10-28 - MCP Proxy Environment Variable Configuration Fix
+
+### Decision: Remove API key env fields from mcp-proxy servers.json, rely on systemd --pass-environment
+
+**Context**: The mcp-proxy service was repeatedly restarting in aider, and MCP servers were receiving HTTP 401 errors due to missing API keys.
+
+**Problems Identified:**
+
+**1. Binary Shadowing Issue:**
+- `bin/mcp-proxy` was shadowing the real mcp-proxy binary
+- Client instances spawned new servers instead of connecting to the running daemon on port 3100
+- Solution: Deleted `bin/mcp-proxy` to allow proper connection to daemon
+
+**2. Environment Variable Passing:**
+- MCP servers (openmemory, firecrawl, linkup, context7, perplexity) were getting HTTP 401 errors
+- API keys from `~/.env.mcp` weren't being passed through to the servers
+- The `env` fields in `~/.config/mcp-proxy/servers.json` weren't receiving the environment variables
+
+**Root Cause:**
+The `env` fields in `servers.json` were trying to reference environment variables, but mcp-proxy wasn't substituting them. The systemd service's `--pass-environment` flag is designed to handle this automatically.
+
+**Solution:**
+- Removed all `env` fields containing API key references from `servers.json` (CONTEXT7_API_KEY, FIRECRAWL_API_KEY, LINKUP_API_KEY, OPENMEMORY_API_KEY, PERPLEXITY_API_KEY)
+- Let the systemd service's `--pass-environment` flag pass through all variables from `~/.env.mcp`
+- Preserved literal configuration values (e.g., `"CLIENT_NAME": "openmemory"` in openmemory server config)
+
+**Key Insight:**
+The `--pass-environment` flag in the systemd service (`etc/dotfiles/dot-config/systemd/user/mcp-proxy.service`) automatically makes environment variables available to all spawned MCP servers. Explicitly declaring them in the `env` section of `servers.json` was redundant and caused issues.
+
+**Benefits:**
+- ✅ **Stability**: mcp-proxy daemon runs without repeatedly restarting
+- ✅ **Simplicity**: Cleaner configuration without redundant env declarations
+- ✅ **Security**: API keys remain in encrypted `~/.env.mcp` file
+- ✅ **Reliability**: All MCP servers now receive proper authentication
+
+**Integration**: Works seamlessly with the envmcp wrapper and git-crypt encrypted environment variables established in previous sessions.
+
 ## 2025-01-12 - MCP Server Configuration Expansion
 
 ### Decision: Added filesystem and shell MCP servers to configuration

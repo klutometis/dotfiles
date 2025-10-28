@@ -10,7 +10,7 @@ import sys
 import os
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 18000
     
     pac_url = os.environ.get('CORP_PAC_URL')
     if not pac_url:

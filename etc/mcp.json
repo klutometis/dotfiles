@@ -1,68 +1,28 @@
 {
   "mcpServers": {
     "context7": {
-      "command": "npx",
-      "args": [
-        "envmcp",
-        "npx",
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "env": {
-        "CONTEXT7_API_KEY": "$CONTEXT7_API_KEY"
-      }
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/context7/sse"]
     },
-    "firecrawl-mcp": {
-      "command": "npx",
-      "args": [
-        "envmcp",
-        "npx",
-        "-y",
-        "firecrawl-mcp"
-      ],
-      "env": {
-        "FIRECRAWL_API_KEY": "$FIRECRAWL_API_KEY"
-      }
+    "firecrawl": {
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/firecrawl/sse"]
     },
     "git": {
-      "command": "uvx",
-      "args": ["mcp-server-git"]
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/git/sse"]
     },
     "linkup": {
-      "command": "npx",
-      "args": [
-        "envmcp",
-        "uvx",
-        "mcp-search-linkup"
-      ],
-      "env": {
-        "LINKUP_API_KEY": "$LINKUP_API_KEY"
-      }
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/linkup/sse"]
     },
     "openmemory": {
-      "command": "npx",
-      "args": [
-        "envmcp",
-        "npx",
-        "-y",
-        "openmemory"
-      ],
-      "env": {
-        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
-        "CLIENT_NAME": "openmemory"
-      }
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/openmemory/sse"]
     },
     "perplexity": {
-      "command": "npx",
-      "args": [
-        "envmcp",
-        "npx",
-        "-y",
-        "perplexity-mcp"
-      ],
-      "env": {
-        "PERPLEXITY_API_KEY": "$PERPLEXITY_API_KEY"
-      }
+      "command": "mcp-proxy",
+      "args": ["http://127.0.0.1:3100/servers/perplexity/sse"]
     }
   }
 }

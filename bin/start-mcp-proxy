@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+# Wrapper to run mcp-proxy server with full shell environment
+# This ensures nvm, rbenv, pyenv, and all environment variables are available
+# Started automatically from ~/.xinitrc
+
+# Load environment (including nvm, rbenv, pyenv)
+source "$HOME/.zshenv"
+
+# Load MCP-specific environment variables
+source "$HOME/.env.mcp"
+
+# Run mcp-proxy with same config as systemd service
+# Use full path to avoid calling ourselves
+exec mcp-proxy \
+    --port 3100 \
+    --host 127.0.0.1 \
+    --pass-environment \
+    --named-server-config ~/.config/mcp-proxy/servers.json
