@@ -1,0 +1,12 @@
+[Unit]
+Description=MCP Proxy Server - Aggregate Multiple MCP Servers
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=%h/bin/start-mcp-proxy
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "transportType": "stdio"
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "transportType": "stdio"
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git"],
+      "transportType": "stdio"
+    },
+    "linkup": {
+      "command": "uvx",
+      "args": ["mcp-search-linkup"],
+      "transportType": "stdio"
+    },
+    "openmemory": {
+      "command": "npx",
+      "args": ["-y", "openmemory"],
+      "env": {
+        "CLIENT_NAME": "openmemory"
+      },
+      "transportType": "stdio"
+    },
+    "perplexity": {
+      "command": "npx",
+      "args": ["-y", "perplexity-mcp"],
+      "transportType": "stdio"
+    }
+  }
+}

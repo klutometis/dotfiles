@@ -51,6 +51,7 @@ fi
 echo "Installing aider-ce (Community Edition)..."
 uv tool install --force git+https://github.com/dwash96/aider-ce.git
 
+
 # =============================================================================
 # Directory Symlinks Configuration
 # =============================================================================

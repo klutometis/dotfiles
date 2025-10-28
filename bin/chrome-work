@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec google-chrome --profile-directory=work-profile --window-name=chrome-work --proxy-pac-url="http://localhost:8000/pac.js" "$@"
+exec google-chrome --profile-directory=work-profile --window-name=chrome-work --proxy-pac-url="http://localhost:18000/pac.js" "$@"
