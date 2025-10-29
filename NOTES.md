@@ -1,3 +1,47 @@
+## 2025-10-29 - Aider Configuration: YOLO Mode and Tool Usage Guidelines
+
+### Decision: Enable yes-always mode and add guidance for efficient tool usage
+
+**Context**: User wanted to streamline aider workflow by eliminating confirmation prompts and preventing redundant tool usage.
+
+**Changes Made:**
+
+**1. YOLO Mode Activation:**
+- Enabled `yes-always: true` in `~/etc/dotfiles/dot-aider.conf.yml`
+- Eliminates all confirmation prompts - aider will proceed immediately with changes
+- "Living dangerously" mode for faster iteration
+- Trade-off: Speed vs. safety (relying on git for rollback if needed)
+
+**2. Updated AGENTS.md Guidelines:**
+
+**Problem:** LLMs were using shell MCP unnecessarily:
+- Running `cat` on files already in aider's context (wasting tokens/money)
+- Using `cat >` to rewrite entire files instead of surgical SEARCH/REPLACE blocks
+- Shell commands for operations aider handles natively
+
+**Solution:** Added "Working with Aider" section to AGENTS.md:
+- **Files in context**: Edit directly with SEARCH/REPLACE blocks, don't shell cat them
+- **Surgical edits**: Use aider's search/replace for modifications, not full file rewrites
+- **Shell MCP fallback**: Only for things aider can't do (tests, git, packages, system state)
+- Key principle: "Shell MCP is powerful but expensive in context. Use aider's native features when available."
+
+**3. Streamlined Git Guidelines:**
+- Removed verbose examples and explanations from commit message section
+- Kept only essential format and key guidelines
+- Saves context window for more important content
+
+**The Irony:**
+Immediately after writing guidelines saying "don't use cat > to rewrite files already in context," I violated my own rule by using `cat > ~/AGENTS.md` instead of proper SEARCH/REPLACE blocks. Classic "do as I say, not as I do" moment. 😅
+
+**Benefits:**
+- ✅ **Faster workflow**: No confirmation prompts with YOLO mode
+- ✅ **Cost savings**: Avoiding redundant shell commands for file operations
+- ✅ **Better scaling**: Surgical edits work for large files, full rewrites don't
+- ✅ **Clearer guidelines**: AGENTS.md now explicitly guides tool selection
+- ✅ **Leaner docs**: Trimmed git section saves context tokens
+
+**Key Insight:** The shell MCP server is powerful but should be used judiciously. When files are already in aider's context, using shell commands to read/write them is wasteful. Aider's SEARCH/REPLACE blocks are designed exactly for this use case and scale much better.
+
 ## 2025-10-28 - MCP Proxy Environment Variable Configuration Fix
 
 ### Decision: Remove API key env fields from mcp-proxy servers.json, rely on systemd --pass-environment

@@ -27,3 +27,11 @@ auto-test: true
 # We're using the shell MCP server instead, which provides shell command execution
 # Having both enabled would create redundant/conflicting suggestions
 suggest-shell-commands: false
+
+# Disable detection and offering to add URLs to chat (default: true)
+# We're relying on the firecrawl MCP server for web scraping and URL handling
+detect-urls: false
+
+# YOLO MODE: Always say yes to every confirmation 🚀
+# No more hand-holding, we're living dangerously now!
+yes-always: true
