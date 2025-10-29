@@ -22,3 +22,8 @@ chat-mode: ask
 # Aider will auto-detect test commands or prompt when needed
 # You can also set test-cmd explicitly: test-cmd: "pytest" or "make test"
 auto-test: true
+
+# Disable aider's built-in shell command suggestions (default: true)
+# We're using the shell MCP server instead, which provides shell command execution
+# Having both enabled would create redundant/conflicting suggestions
+suggest-shell-commands: false
