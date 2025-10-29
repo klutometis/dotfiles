@@ -1,5 +1,15 @@
 # Conventions
 
+## Working with Aider
+
+When working in an aider session, use aider's built-in capabilities first:
+
+- **Files in context**: If a file is already added to the chat, edit it directly using search/replace blocks. Don't use shell commands to read or rewrite it.
+- **Shell MCP fallback**: Use shell commands only for things aider can't do natively: running tests, checking system state, git operations, installing packages, etc.
+- **Surgical edits**: For file modifications, use aider's search/replace blocks rather than rewriting entire files with `cat >`.
+
+The shell MCP is powerful but expensive in context. Use aider's native features when available.
+
 ## Build Documentation and Scripts
 
 For build instructions and automation:
@@ -15,46 +25,27 @@ The script should be a distillation of the documentation in executable form.
 
 ## Git Commit Messages
 
-A commit message is a public record of a change that should clearly communicate:
-1.  **What** change is being made.
-2.  **Why** the change is being made.
-
-Future developers (including your future self) will rely on this information to understand the history of the project. A well-written message provides context that the code alone cannot.
-
-Use the following format for commit messages:
+Write commit messages that explain **what** changed and **why**. Use this format:
 
 ```
-One-line summary of the change
+One-line summary (50 chars, imperative mood)
 
-- A brief description of the problem being solved.
-- Detailed points about what was changed and why this is the best approach.
-- Any relevant context, such as links to design documents or issue numbers.
-- Mention any shortcomings or breaking changes.
+- The problem being solved
+- What changed and why this approach
+- Relevant context, links, or breaking changes
 ```
 
 ### Guidelines
 
-- **Summary Line:**
-  - Keep the summary line under 50 characters.
-  - Summarize *specifically* what the commit does.
-  - Use the imperative mood ("Add feature," not "Added feature").
-  - Capitalize the first letter.
-  - Do not end the summary line with a period.
+- **Summary**: Imperative mood ("Add feature" not "Added"), capitalized, no period
+- **Body**: Explain the why. Provide context. Use bullet points for clarity.
+- **Before committing**: Review to ensure the message reflects final changes
 
-- **Body:**
-  - Leave a blank line between the summary and the body.
-  - Explain the "what" and the "why." Provide context, even for small commits.
-  - Use bullet points for detailed explanations. Avoid vague messages like "Fix bug."
+### Google3 / Critique
 
-- **Before Committing:**
-  - Review your commit message to ensure it accurately reflects the final changes.
-
-### Google3 / Critique Specifics
-
-For changes in the Google3 monorepo using Critique, add the following fields to the end of your CL description:
-
+For Critique CLs, append:
 ```
-R=[list of reviewers]
+R=[reviewers]
 BUG=[bug ID]
 MARKDOWN=true
 ```

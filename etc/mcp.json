@@ -10,23 +10,23 @@
     },
     "context7": {
       "command": "mcp-proxy",
-      "args": ["http://127.0.0.1:3100/servers/context7/sse"]
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/context7/sse"]
     },
     "firecrawl": {
       "command": "mcp-proxy",
-      "args": ["http://127.0.0.1:3100/servers/firecrawl/sse"]
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/firecrawl/sse"]
     },
     "linkup": {
       "command": "mcp-proxy",
-      "args": ["http://127.0.0.1:3100/servers/linkup/sse"]
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/linkup/sse"]
     },
     "openmemory": {
       "command": "mcp-proxy",
-      "args": ["http://127.0.0.1:3100/servers/openmemory/sse"]
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/openmemory/sse"]
     },
     "perplexity": {
       "command": "mcp-proxy",
-      "args": ["http://127.0.0.1:3100/servers/perplexity/sse"]
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/perplexity/sse"]
     }
   }
 }
