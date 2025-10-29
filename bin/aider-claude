@@ -1,9 +1,6 @@
 #!/bin/bash
 # Wrapper script for aider that uses Claude profile
 
-# Find the real aider binary (not this script)
-REAL_AIDER=$(which -a aider | grep -v "$(dirname "$0")" | head -1)
-
 # Build command line args
 AIDER_ARGS=(-c ~/.aider.conf.claude.yml)
 
@@ -12,4 +9,4 @@ if [ -n "$MCP_SERVERS_FILE" ]; then
   AIDER_ARGS+=(--mcp-servers-file "$MCP_SERVERS_FILE")
 fi
 
-exec "$REAL_AIDER" "${AIDER_ARGS[@]}" "$@"
+exec aider "${AIDER_ARGS[@]}" "$@"
