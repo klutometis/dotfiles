@@ -4,4 +4,12 @@
 # Find the real aider binary (not this script)
 REAL_AIDER=$(which -a aider | grep -v "$(dirname "$0")" | head -1)
 
-exec "$REAL_AIDER" -c ~/.aider.conf.claude.yml "$@"
+# Build command line args
+AIDER_ARGS=(-c ~/.aider.conf.claude.yml)
+
+# Override MCP servers file if environment variable is set
+if [ -n "$MCP_SERVERS_FILE" ]; then
+  AIDER_ARGS+=(--mcp-servers-file "$MCP_SERVERS_FILE")
+fi
+
+exec "$REAL_AIDER" "${AIDER_ARGS[@]}" "$@"
