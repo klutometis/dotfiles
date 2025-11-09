@@ -1,0 +1,64 @@
+#!/bin/bash
+# Base wrapper script for aider with MCP servers
+#
+# Usage: aider-mcp <profile> [aider-args...]
+#   profile: claude, gemini, or gpt
+#
+# This script solves a critical problem: MCP git/shell servers need to know
+# the repository root, but aider can be launched from any subdirectory.
+#
+# Key decisions:
+#
+# 1. AUTO-DETECT GIT ROOT
+#    - Try: git rev-parse --show-toplevel (finds repo root from any subdir)
+#    - Fallback: $PWD (when not in a git repository)
+#    - Why: Makes MCP servers work correctly regardless of launch location
+#
+# 2. CD TO ROOT BEFORE LAUNCHING AIDER
+#    - Critical fix: Even with correct --repository flag, MCP tools resolve
+#      relative paths (like ".") against aider's $PWD, not the configured root
+#    - By cd-ing first, we ensure $PWD matches MCP server expectations
+#    - Result: Model can use simple "repo_path: '.'" and it resolves correctly
+#
+# 3. TEMPLATE MCP CONFIG AT RUNTIME
+#    - Use $MCP_ROOT_DIR variable in etc/mcp-template.json
+#    - Substitute with envsubst on each invocation
+#    - Why: Can't hardcode paths - need dynamic detection based on launch location
+#    - Creates temporary file that's cleaned up on exit
+#
+# 4. ALLOW TEMPLATE OVERRIDE
+#    - Respect $MCP_TEMPLATE_FILE environment variable
+#    - Default: $HOME/etc/mcp-template.json
+#    - Use case: Corporate machines can use different template (no git/shell MCPs)
+#
+# 5. VARIABLE NAMING
+#    - Use MCP_ROOT_DIR (not generic ROOT_DIR)
+#    - Avoids potential conflicts with other scripts/tools
+
+# Validate profile argument
+PROFILE="$1"
+if [ -z "$PROFILE" ]; then
+    echo "Error: Profile required (claude, gemini, or gpt)" >&2
+    exit 1
+fi
+shift  # Remove profile from arguments
+
+# Detect git repository root, or fallback to current directory
+MCP_ROOT_DIR=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
+
+# Change to root directory so MCP tools resolve relative paths correctly
+cd "$MCP_ROOT_DIR"
+
+# Template the MCP configuration with detected root directory
+TEMPLATE_FILE="${MCP_TEMPLATE_FILE:-$HOME/etc/mcp-template.json}"
+TEMP_MCP_FILE=$(mktemp /tmp/mcp-servers.XXXXXX.json)
+
+# Replace $MCP_ROOT_DIR in template with actual path
+export MCP_ROOT_DIR
+envsubst < "$TEMPLATE_FILE" > "$TEMP_MCP_FILE"
+
+# Ensure temporary file is cleaned up on exit (even if aider is interrupted)
+trap "rm -f $TEMP_MCP_FILE" EXIT
+
+# Launch aider with specified profile and templated MCP configuration
+exec aider -c ~/.aider.conf.${PROFILE}.yml --mcp-servers-file "$TEMP_MCP_FILE" "$@"

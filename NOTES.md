@@ -1,3 +1,118 @@
+## 2025-11-09 - MCP Git/Shell Server Root Directory Detection
+
+### Decision: Auto-detect git repository root and cd to it before launching aider
+
+**Context**: MCP git and shell servers were receiving incorrect repository paths when aider was launched from subdirectories. When the model passed `repo_path: "."` to git MCP tools, it resolved to aider's `$PWD` (the subdirectory) instead of the git repository root.
+
+**The Problem:**
+
+**Initial symptom**: Git status returned blank/incorrect results
+- Launched aider from `/home/danenberg/bin` (a subdirectory)
+- MCP git server configured with `--repository /home/danenberg` (correct)
+- But when model called `git_status(repo_path: ".")`, the `.` resolved to `/home/danenberg/bin`
+- Result: Git commands failed or returned incorrect output
+
+**Root cause**: Even with correct `--repository` flag, MCP tools resolve relative paths like `.` against aider's current working directory (`$PWD`), not the configured repository.
+
+**Solutions Considered:**
+
+**❌ Set `AIDER_MCP_ROOT` from Emacs**
+- Would require modifying aidermacs Emacs package
+- Couples the solution to Emacs (doesn't work from command line)
+- More complex to maintain
+
+**✅ Auto-detect in bash wrapper + cd to root**
+- Self-contained in `bin/aider-claude` wrapper script
+- Works from Emacs AND command line
+- Simple to understand and maintain
+
+**Implementation:**
+
+**1. Auto-detect git root or fallback to PWD:**
+```bash
+MCP_ROOT_DIR=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
+```
+
+**2. Template MCP config at runtime:**
+- Created `etc/mcp-template.json` with `$MCP_ROOT_DIR` placeholders
+- Use `envsubst` to replace variables on each aider invocation
+- Generate temporary config file that gets cleaned up on exit
+
+**3. Critical fix - cd to root before launching aider:**
+```bash
+cd "$MCP_ROOT_DIR"
+```
+
+This ensures when the model passes `repo_path: "."`, it resolves correctly to the git root.
+
+**Files Modified:**
+
+**bin/aider-mcp** (new base script):
+- Auto-detect git root using `git rev-parse --show-toplevel`
+- Fall back to `$PWD` if not in a git repository
+- Template `etc/mcp-template.json` using `envsubst`
+- **cd to `$MCP_ROOT_DIR` before launching aider**
+- Accepts profile name as first argument (claude, gemini, or gpt)
+- Contains all MCP logic and comprehensive documentation
+
+**bin/aider-claude, bin/aider-gemini, bin/aider-gpt** (refactored to minimal wrappers):
+- Each is now just 2 lines: `exec "$(dirname "$0")/aider-mcp" <profile> "$@"`
+- All three profiles now benefit from the same MCP root detection and templating
+- Maintains backward compatibility (same command-line interface)
+
+**etc/mcp-template.json** (new file):
+```json
+{
+  "mcpServers": {
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "$MCP_ROOT_DIR"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@mkusaka/mcp-shell-server", "--working-dir", "$MCP_ROOT_DIR"]
+    },
+    // ... other MCP servers
+  }
+}
+```
+
+**etc/dotfiles/dot-zshenv:**
+- Added `export MCP_TEMPLATE_FILE="$HOME/etc/mcp-template.json"`
+- Allows overriding template location (e.g., for corporate machines without git/shell MCPs)
+
+**Variable Naming:**
+- Initially used `ROOT_DIR` (too generic)
+- Renamed to `MCP_ROOT_DIR` to avoid potential conflicts with other scripts
+
+**Test Results:**
+
+**From subdirectory** (`/home/danenberg/bin`):
+```
+MCP_ROOT_DIR: /home/danenberg
+```
+✅ Correctly detected git root, MCP servers operate on full repository
+
+**From non-git directory** (`/`):
+```
+MCP_ROOT_DIR: /
+```
+✅ Falls back to PWD, shell MCP still works (git MCP fails gracefully as expected)
+
+**Benefits:**
+- ✅ **Git MCP works correctly**: Sees full repository history and structure
+- ✅ **Shell MCP works correctly**: Executes from repository root
+- ✅ **Model UX**: Can use simple `repo_path: "."` instead of absolute paths
+- ✅ **Emacs-agnostic**: Works from command line, Emacs, or any launcher
+- ✅ **Graceful fallback**: Works in non-git directories (shell MCP only)
+- ✅ **Flexible**: Can override template via `$MCP_TEMPLATE_FILE` env var
+- ✅ **Maintainable**: Single source of truth in `bin/aider-mcp` for all profiles
+- ✅ **Consistent**: All three profiles (claude, gemini, gpt) get identical MCP behavior
+
+**Key Insight:** The `cd "$MCP_ROOT_DIR"` before launching aider is critical. Without it, even with correct `--repository` and `--working-dir` flags, relative paths in tool arguments resolve against the wrong directory. By changing to the root before launching, we ensure aider's `$PWD` matches the MCP server expectations.
+
+**Integration**: Works seamlessly with existing encrypted MCP configuration (`envmcp` + `git-crypt` from 2025-09-14) and mcp-proxy systemd service (from 2025-10-28).
+
 ## 2025-10-29 - Aider Configuration: YOLO Mode and Tool Usage Guidelines
 
 ### Decision: Enable yes-always mode and add guidance for efficient tool usage

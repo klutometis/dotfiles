@@ -157,47 +157,36 @@ else
 fi
 
 # =============================================================================
-# DHCP Client Configuration
+# NetworkManager DNS Configuration
 # =============================================================================
 
-echo "Configuring DHCP client domain search..."
+echo "Configuring NetworkManager DNS settings..."
 
-DHCLIENT_CONF="/etc/dhcp/dhclient.conf"
+# Global NetworkManager config - applies to ALL connections
+sudo tee /etc/NetworkManager/conf.d/99-google-dns.conf > /dev/null <<EOF
+[main]
+dns=dnsmasq
 
-# Check if DHCP_DOMAIN_SEARCH is set in environment
-if [ -n "$DHCP_DOMAIN_SEARCH" ]; then
-    DOMAIN_SEARCH_LINE="supersede domain-search $DHCP_DOMAIN_SEARCH;"
-    
-    # Check if the configuration already exists
-    if [ -f "$DHCLIENT_CONF" ]; then
-        if grep -q "supersede domain-search" "$DHCLIENT_CONF"; then
-            echo "DHCP domain-search configuration already exists"
-        else
-            echo "Adding domain-search configuration to dhclient.conf..."
-            echo "" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-            echo "# Custom domain search configuration" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-            echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-            echo "Domain-search configuration added"
-            
-            # Restart DHCP client to apply changes
-            echo "Restarting DHCP client..."
-            sudo dhclient -r && sudo dhclient
-            echo "DHCP client restarted"
-        fi
-    else
-        echo "Creating dhclient.conf with domain-search configuration..."
-        echo "# Custom domain search configuration" | sudo tee "$DHCLIENT_CONF" > /dev/null
-        echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-        echo "dhclient.conf created with domain-search configuration"
-        
-        # Restart DHCP client to apply changes
-        echo "Restarting DHCP client..."
-        sudo dhclient -r && sudo dhclient
-        echo "DHCP client restarted"
-    fi
-else
-    echo "DHCP_DOMAIN_SEARCH not set - skipping domain search configuration"
-fi
+[connection]
+ipv4.ignore-auto-dns=yes
+ipv6.ignore-auto-dns=yes
+EOF
+
+# Configure dnsmasq upstream servers
+sudo mkdir -p /etc/NetworkManager/dnsmasq.d
+sudo tee /etc/NetworkManager/dnsmasq.d/google-dns.conf > /dev/null <<EOF
+# Upstream DNS servers - use Google DNS
+server=8.8.8.8
+server=8.8.4.4
+EOF
+
+# Restart NetworkManager to apply changes
+echo "Restarting NetworkManager..."
+sudo systemctl restart NetworkManager
+sleep 3
+
+echo "✓ NetworkManager configured to use Google DNS (8.8.8.8, 8.8.4.4)"
+echo "✓ Configuration applies to ALL network connections"
 
 # Font configuration for bitmapped fonts
 echo "Configuring fonts for bitmapped font support..."
@@ -294,6 +283,12 @@ fi
 
 echo ""
 echo "System configuration deployment complete!"
+echo ""
+echo "DNS Configuration Applied:"
+echo "  ✓ NetworkManager configured to use Google DNS (8.8.8.8, 8.8.4.4)"
+echo "  ✓ dnsmasq configured to forward to Google DNS"
+echo "  ✓ Auto-DNS from DHCP disabled"
+echo ""
 echo "You may need to:"
 if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
     echo "  1. Restart X11 for keyboard changes to take effect"
@@ -304,3 +299,7 @@ else
     echo "  2. Source your shell configuration for PATH updates"
     echo "  Note: Keyboard configuration was skipped (set ENABLE_KEYBOARD_CONFIG=true to enable)"
 fi
+echo ""
+echo "To verify DNS is working:"
+echo "  dig google.com        # Should be fast (~10-20ms)"
+echo "  cat /etc/resolv.conf  # Should show nameserver 127.0.0.1"

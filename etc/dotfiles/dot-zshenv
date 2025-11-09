@@ -28,6 +28,7 @@ export EDITOR='emacs-wait'
 export LANG=en_US.UTF-8
 export LESS='-i'
 export XCOMPOSEFILE=~/.Xcompose
+export MCP_TEMPLATE_FILE="$HOME/etc/mcp-template.json"
 
 # Input Method configuration
 # These were previously set to enable XIM (X Input Method) for complex text input:
