@@ -578,8 +578,6 @@ This operates in-place on the rewritten region between BEG and END."
   (midnight-delay 0)
   (clean-buffer-list-delay-general 1)
   (clean-buffer-list-kill-regexps '(".*"))
-  (clean-buffer-list-kill-never-buffer-names '("*compilation*"))
-  (clean-buffer-list-kill-never-regexps '("^\\*aidermacs"))
   :hook
   (midnight . (lambda () (desktop-save desktop-dirname))))
 

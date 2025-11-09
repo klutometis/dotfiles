@@ -1,12 +1,3 @@
 #!/bin/bash
-# Wrapper script for aider that uses Gemini profile
-
-# Build command line args
-AIDER_ARGS=(-c ~/.aider.conf.gemini.yml)
-
-# Override MCP servers file if environment variable is set
-if [ -n "$MCP_SERVERS_FILE" ]; then
-  AIDER_ARGS+=(--mcp-servers-file "$MCP_SERVERS_FILE")
-fi
-
-exec aider "${AIDER_ARGS[@]}" "$@"
+# Wrapper script for aider that uses Gemini profile with MCP servers
+exec "$(dirname "$0")/aider-mcp" gemini "$@"

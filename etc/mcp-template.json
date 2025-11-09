@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "$MCP_ROOT_DIR"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@mkusaka/mcp-shell-server", "--working-dir", "$MCP_ROOT_DIR"]
+    },
+    "context7": {
+      "command": "mcp-proxy",
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/context7/sse"]
+    },
+    "firecrawl": {
+      "command": "mcp-proxy",
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/firecrawl/sse"]
+    },
+    "linkup": {
+      "command": "mcp-proxy",
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/linkup/sse"]
+    },
+    "openmemory": {
+      "command": "mcp-proxy",
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/openmemory/sse"]
+    },
+    "perplexity": {
+      "command": "mcp-proxy",
+      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/perplexity/sse"]
+    }
+  }
+}
