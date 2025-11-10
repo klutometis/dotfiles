@@ -157,22 +157,29 @@ else
 fi
 
 # =============================================================================
-# NetworkManager DNS Configuration
+# NetworkManager DHCP Client Configuration
 # =============================================================================
 
-echo "Configuring NetworkManager DNS settings..."
+echo "Configuring NetworkManager to use dhclient..."
 
-# Global NetworkManager config - applies to ALL connections
-sudo tee /etc/NetworkManager/conf.d/99-google-dns.conf > /dev/null <<EOF
+# Configure NetworkManager to use dhclient for DHCP, dnsmasq for DNS
+sudo tee /etc/NetworkManager/conf.d/dhcp-client.conf > /dev/null <<EOF
 [main]
+dhcp=dhclient
 dns=dnsmasq
-
-[connection]
-ipv4.ignore-auto-dns=yes
-ipv6.ignore-auto-dns=yes
 EOF
 
-# Configure dnsmasq upstream servers
+echo "✓ NetworkManager configured to use dhclient for DHCP"
+echo "✓ NetworkManager configured to use dnsmasq for DNS (127.0.0.1)"
+
+
+# =============================================================================
+# dnsmasq DNS Configuration
+# =============================================================================
+
+echo "Configuring dnsmasq DNS settings..."
+
+# Configure dnsmasq upstream DNS servers
 sudo mkdir -p /etc/NetworkManager/dnsmasq.d
 sudo tee /etc/NetworkManager/dnsmasq.d/google-dns.conf > /dev/null <<EOF
 # Upstream DNS servers - use Google DNS
@@ -180,13 +187,40 @@ server=8.8.8.8
 server=8.8.4.4
 EOF
 
-# Restart NetworkManager to apply changes
-echo "Restarting NetworkManager..."
+echo "✓ dnsmasq configured to use Google DNS (8.8.8.8, 8.8.4.4) as upstream"
+
+# =============================================================================
+# dhclient Configuration
+# =============================================================================
+
+echo "Configuring dhclient search domain..."
+
+DHCLIENT_CONF="/etc/dhcp/dhclient.conf"
+
+if [ -n "$DHCP_DOMAIN_SEARCH" ]; then
+    DOMAIN_SEARCH_LINE="supersede domain-search \"$DHCP_DOMAIN_SEARCH\";"
+    
+    # Check if the configuration already exists
+    if grep -q "supersede domain-search" "$DHCLIENT_CONF" 2>/dev/null; then
+        echo "dhclient domain-search configuration already exists"
+    else
+        echo "Adding domain-search configuration to dhclient.conf..."
+        echo "" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+        echo "# Custom domain search configuration" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+        echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
+        echo "✓ Domain-search configuration added to dhclient.conf"
+    fi
+    echo "✓ dhclient will set search domain to: $DHCP_DOMAIN_SEARCH"
+else
+    echo "DHCP_DOMAIN_SEARCH not set - skipping search domain configuration"
+fi
+
+echo "Restarting NetworkManager to apply configuration..."
 sudo systemctl restart NetworkManager
 sleep 3
-
-echo "✓ NetworkManager configured to use Google DNS (8.8.8.8, 8.8.4.4)"
-echo "✓ Configuration applies to ALL network connections"
+echo "✓ NetworkManager restarted"
+echo "  - dhclient will handle search domain"
+echo "  - dnsmasq will handle DNS (127.0.0.1 -> 8.8.8.8, 8.8.4.4)"
 
 # Font configuration for bitmapped fonts
 echo "Configuring fonts for bitmapped font support..."
