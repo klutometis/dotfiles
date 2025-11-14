@@ -35,6 +35,27 @@ if ! command -v rofi &> /dev/null; then
     sudo apt-get install -y rofi
 fi
 
+# Install picom if not present
+if ! command -v picom &> /dev/null; then
+    echo "Installing picom..."
+    sudo apt-get update
+    sudo apt-get install -y picom
+fi
+
+# Install i3 if not present
+if ! command -v i3 &> /dev/null; then
+    echo "Installing i3 window manager..."
+    sudo apt-get update
+    sudo apt-get install -y i3
+fi
+
+# Install alacritty if not present
+if ! command -v alacritty &> /dev/null; then
+    echo "Installing alacritty terminal..."
+    sudo apt-get update
+    sudo apt-get install -y alacritty
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
