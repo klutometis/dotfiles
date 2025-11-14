@@ -33,8 +33,8 @@ set-keyboard-options.sh
 # Background services
 echo "$(date): Starting background services"
 xscreensaver -nosplash &
-redshift-palo-alto &
 sxhkd -m -1 &
+picom &
 
 # Log keyboard state after setup
 echo "$(date): Final keyboard state:"

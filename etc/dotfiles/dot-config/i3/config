@@ -175,3 +175,8 @@ mode "resize" {
 bar {
         status_command i3status
 }
+
+for_window [title="Discord Overlay"] floating enable
+for_window [title="Discord Overlay"] sticky enable
+for_window [title="Discord Overlay"] border none
+for_window [title="Discord Overlay"] move position 1570px 680px
