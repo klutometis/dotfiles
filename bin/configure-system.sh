@@ -157,70 +157,63 @@ else
 fi
 
 # =============================================================================
-# NetworkManager DHCP Client Configuration
+# DNS Configuration (Simple & Clean)
 # =============================================================================
 
-echo "Configuring NetworkManager to use dhclient..."
+echo "Configuring DNS..."
 
-# Configure NetworkManager to use dhclient for DHCP, dnsmasq for DNS
-sudo tee /etc/NetworkManager/conf.d/dhcp-client.conf > /dev/null <<EOF
-[main]
-dhcp=dhclient
-dns=dnsmasq
-EOF
-
-echo "✓ NetworkManager configured to use dhclient for DHCP"
-echo "✓ NetworkManager configured to use dnsmasq for DNS (127.0.0.1)"
-
-
-# =============================================================================
-# dnsmasq DNS Configuration
-# =============================================================================
-
-echo "Configuring dnsmasq DNS settings..."
-
-# Configure dnsmasq upstream DNS servers
-sudo mkdir -p /etc/NetworkManager/dnsmasq.d
-sudo tee /etc/NetworkManager/dnsmasq.d/google-dns.conf > /dev/null <<EOF
-# Upstream DNS servers - use Google DNS
+# Step 1: Configure dnsmasq to use Google DNS upstream
+echo "Configuring dnsmasq upstream DNS..."
+sudo mkdir -p /etc/dnsmasq.d
+sudo tee /etc/dnsmasq.d/google-dns.conf > /dev/null <<'EOF'
+# Forward all DNS queries to Google DNS
 server=8.8.8.8
 server=8.8.4.4
 EOF
 
-echo "✓ dnsmasq configured to use Google DNS (8.8.8.8, 8.8.4.4) as upstream"
-
-# =============================================================================
-# dhclient Configuration
-# =============================================================================
-
-echo "Configuring dhclient search domain..."
-
-DHCLIENT_CONF="/etc/dhcp/dhclient.conf"
-
-if [ -n "$DHCP_DOMAIN_SEARCH" ]; then
-    DOMAIN_SEARCH_LINE="supersede domain-search \"$DHCP_DOMAIN_SEARCH\";"
-    
-    # Check if the configuration already exists
-    if grep -q "supersede domain-search" "$DHCLIENT_CONF" 2>/dev/null; then
-        echo "dhclient domain-search configuration already exists"
-    else
-        echo "Adding domain-search configuration to dhclient.conf..."
-        echo "" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-        echo "# Custom domain search configuration" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-        echo "$DOMAIN_SEARCH_LINE" | sudo tee -a "$DHCLIENT_CONF" > /dev/null
-        echo "✓ Domain-search configuration added to dhclient.conf"
-    fi
-    echo "✓ dhclient will set search domain to: $DHCP_DOMAIN_SEARCH"
-else
-    echo "DHCP_DOMAIN_SEARCH not set - skipping search domain configuration"
+# Restart dnsmasq if it's running
+if systemctl is-active --quiet dnsmasq; then
+    echo "Restarting dnsmasq..."
+    sudo systemctl restart dnsmasq
 fi
 
-echo "Restarting NetworkManager to apply configuration..."
+# Step 2: Configure dhclient to only use 127.0.0.1 (ignore DHCP nameservers)
+echo "Configuring dhclient to use only localhost DNS..."
+sudo tee /etc/dhcp/dhclient.conf > /dev/null <<'EOF'
+# Force only localhost DNS - dnsmasq handles everything
+supersede domain-name-servers 127.0.0.1;
+EOF
+
+# Step 2.5: Tell NetworkManager to ignore DHCP DNS servers
+echo "Configuring NetworkManager to ignore DHCP DNS..."
+sudo mkdir -p /etc/NetworkManager/conf.d
+sudo tee /etc/NetworkManager/conf.d/dns.conf > /dev/null <<'EOF'
+[main]
+dns=dnsmasq
+
+[connection]
+ipv4.ignore-auto-dns=yes
+ipv6.ignore-auto-dns=yes
+EOF
+
+# Step 3: Configure static search domains via resolvconf
+echo "Configuring search domains..."
+sudo tee /etc/resolvconf/resolv.conf.d/base > /dev/null <<'EOF'
+search corp.google.com prod.google.com prodz.google.com google.com
+EOF
+
+# Step 4: Regenerate resolv.conf
+echo "Regenerating resolv.conf..."
+sudo resolvconf -u
+
+# Step 5: Restart NetworkManager to apply changes
+echo "Restarting NetworkManager..."
 sudo systemctl restart NetworkManager
-sleep 3
-echo "✓ NetworkManager restarted"
-echo "  - dhclient will handle search domain"
-echo "  - dnsmasq will handle DNS (127.0.0.1 -> 8.8.8.8, 8.8.4.4)"
+
+echo "DNS configured:"
+echo "  ✓ Applications query: 127.0.0.1 (dnsmasq)"
+echo "  ✓ dnsmasq forwards to: 8.8.8.8, 8.8.4.4 (Google DNS)"
+echo "  ✓ Search domains: corp.google.com prod.google.com prodz.google.com google.com"
 
 # Font configuration for bitmapped fonts
 echo "Configuring fonts for bitmapped font support..."
@@ -323,17 +316,18 @@ echo "  ✓ NetworkManager configured to use Google DNS (8.8.8.8, 8.8.4.4)"
 echo "  ✓ dnsmasq configured to forward to Google DNS"
 echo "  ✓ Auto-DNS from DHCP disabled"
 echo ""
-echo "You may need to:"
 if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
+    echo "You may need to:"
     echo "  1. Restart X11 for keyboard changes to take effect"
     echo "  2. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
     echo "  3. Source your shell configuration for PATH updates"
 else
+    echo "You may need to:"
     echo "  1. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
     echo "  2. Source your shell configuration for PATH updates"
     echo "  Note: Keyboard configuration was skipped (set ENABLE_KEYBOARD_CONFIG=true to enable)"
 fi
 echo ""
 echo "To verify DNS is working:"
-echo "  dig google.com        # Should be fast (~10-20ms)"
-echo "  cat /etc/resolv.conf  # Should show nameserver 127.0.0.1"
+echo "  cat /etc/resolv.conf    # Should show nameserver 127.0.0.1 and search domains"
+echo "  dig google.com          # Should be fast (~10-20ms)"
