@@ -6,6 +6,10 @@ super + q
 super + question
     sxhkd-menu
 
+# Screenshot to clipboard
+super + z
+    ~/bin/screenshot
+
 # Direct elvi launchers
 super + g
     ~/bin/q --engine=google

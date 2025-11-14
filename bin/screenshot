@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Capture screenshot, save to temp file, and pipe to clipboard
+import -window root png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+
+echo "Screenshot captured and copied to clipboard"
