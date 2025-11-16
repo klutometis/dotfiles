@@ -49,6 +49,20 @@ if ! command -v i3 &> /dev/null; then
     sudo apt-get install -y i3
 fi
 
+# Install i3lock if not present
+if ! command -v i3lock &> /dev/null; then
+    echo "Installing i3lock..."
+    sudo apt-get update
+    sudo apt-get install -y i3lock
+fi
+
+# Install i3status if not present
+if ! command -v i3status &> /dev/null; then
+    echo "Installing i3status..."
+    sudo apt-get update
+    sudo apt-get install -y i3status
+fi
+
 # Install alacritty if not present
 if ! command -v alacritty &> /dev/null; then
     echo "Installing alacritty terminal..."
