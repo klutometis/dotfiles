@@ -56,6 +56,13 @@ if ! command -v alacritty &> /dev/null; then
     sudo apt-get install -y alacritty
 fi
 
+# Install fzf if not present
+if ! command -v fzf &> /dev/null; then
+    echo "Installing fzf..."
+    sudo apt-get update
+    sudo apt-get install -y fzf
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
@@ -74,6 +81,40 @@ fi
 echo "Installing aider-ce (Community Edition)..."
 uv tool install --force git+https://github.com/dwash96/aider-ce.git@v0.87.13
 
+# Install mcp-proxy via uv
+echo "Installing mcp-proxy..."
+uv tool install git+https://github.com/sparfenyuk/mcp-proxy
+
+# =============================================================================
+# Node.js & npm Installation (via nvm)
+# =============================================================================
+
+echo "Setting up Node.js and npm via nvm..."
+
+# Install nvm if not present
+if [ ! -d "$HOME/.nvm" ]; then
+    echo "Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/refs/heads/master/install.sh | bash
+    
+    # Load nvm for current session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+else
+    echo "nvm already installed"
+    # Load nvm for current session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+# Install latest Node.js and npm if not present
+if ! command -v node &> /dev/null; then
+    echo "Installing Node.js..."
+    nvm install node
+    nvm use node
+    nvm install-latest-npm
+else
+    echo "Node.js already installed ($(node --version))"
+fi
 
 # =============================================================================
 # Directory Symlinks Configuration
@@ -217,15 +258,19 @@ ipv4.ignore-auto-dns=yes
 ipv6.ignore-auto-dns=yes
 EOF
 
-# Step 3: Configure static search domains via resolvconf
-echo "Configuring search domains..."
-sudo tee /etc/resolvconf/resolv.conf.d/base > /dev/null <<'EOF'
+# Step 3: Configure static search domains via resolvconf (if available)
+if [ -d /etc/resolvconf/resolv.conf.d ]; then
+    echo "Configuring search domains..."
+    sudo tee /etc/resolvconf/resolv.conf.d/base > /dev/null <<'EOF'
 search corp.google.com prod.google.com prodz.google.com google.com
 EOF
 
-# Step 4: Regenerate resolv.conf
-echo "Regenerating resolv.conf..."
-sudo resolvconf -u
+    # Step 4: Regenerate resolv.conf
+    echo "Regenerating resolv.conf..."
+    sudo resolvconf -u
+else
+    echo "Skipping resolvconf search domain configuration (not available on this system)"
+fi
 
 # Step 5: Restart NetworkManager to apply changes
 echo "Restarting NetworkManager..."
