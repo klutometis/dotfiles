@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Launch Alacritty with pair-programming configuration (large font)
+exec alacritty --config-file ~/.config/alacritty/alacritty-pair.toml "$@"
