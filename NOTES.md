@@ -1,3 +1,7 @@
+## TODO
+
+- **i3 window rules via wrapper script**: Investigate using wrapper scripts with i3-msg for project-specific window rules instead of config files. Would allow launching apps with dynamic configuration (float, sticky, position, size) without polluting dotfiles. Example: `launch-discord-overlay` script that spawns process and configures via `i3-msg "[pid=$PID] floating enable"`. More scriptable and portable than config includes.
+
 ## 2025-11-09 - MCP Git/Shell Server Root Directory Detection
 
 ### Decision: Auto-detect git repository root and cd to it before launching aider

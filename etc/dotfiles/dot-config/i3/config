@@ -9,6 +9,9 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+# Include project-specific configs
+include ~/.config/i3/projects/*.conf
+
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -175,19 +178,3 @@ mode "resize" {
 bar {
         status_command i3status
 }
-
-# Discord Overlay - float in lower right corner
-# Add this to your ~/.config/i3/config file
-
-# Float, sticky, and remove border
-for_window [title="Discord Overlay"] floating enable
-for_window [title="Discord Overlay"] sticky enable
-for_window [title="Discord Overlay"] border none
-
-# Size and position based on golden ratio (φ ≈ 1.618)
-# Portrait orientation: width × φ = height
-# Width: 24%, Height: 39% (24 × 1.625 ≈ φ)
-# Positioned in lower-right corner
-# This is resolution-independent!
-for_window [title="Discord Overlay"] resize set 24 ppt 39 ppt
-for_window [title="Discord Overlay"] move position 76 ppt 61 ppt
