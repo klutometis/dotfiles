@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+while true; do
+    flatpak run org.vinegarhq.Sober
+done
