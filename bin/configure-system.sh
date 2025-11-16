@@ -276,6 +276,10 @@ fi
 echo "Restarting NetworkManager..."
 sudo systemctl restart NetworkManager
 
+# Wait for DNS to be ready using wait-for-it
+echo "Waiting for DNS connectivity..."
+wait-for-it 8.8.8.8:53 --timeout=30 --strict
+
 echo "DNS configured:"
 echo "  ✓ Applications query: 127.0.0.1 (dnsmasq)"
 echo "  ✓ dnsmasq forwards to: 8.8.8.8, 8.8.4.4 (Google DNS)"

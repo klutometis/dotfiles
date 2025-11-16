@@ -10,3 +10,6 @@
 [submodule "etc/stow/common/dot-password-store"]
 	path = etc/dotfiles/dot-password-store
 	url = git@github.com:klutometis/password-store.git
+[submodule "lib/wait-for-it"]
+	path = lib/wait-for-it
+	url = https://github.com/vishnubob/wait-for-it.git
