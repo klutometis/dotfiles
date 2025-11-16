@@ -1,0 +1,33 @@
+[font.normal]
+family = "DejaVu Sans Mono"
+style = "Regular"
+
+[font]
+size = 16.0
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
+
+[colors.normal]
+black   = "#000000"
+red     = "#ff7c4d"
+green   = "#22ff00"
+yellow  = "#ffcc00"
+blue    = "#3399ff"
+magenta = "#ff61df"
+cyan    = "#00ffff"
+white   = "#888888"
+
+[colors.bright]
+black   = "#000000"
+red     = "#ff7c4d"
+green   = "#22ff00"
+yellow  = "#ffcc00"
+blue    = "#3399ff"
+magenta = "#ff61df"
+cyan    = "#00ffff"
+white   = "#ffffff"
+
+[colors]
+draw_bold_text_with_bright_colors = true
