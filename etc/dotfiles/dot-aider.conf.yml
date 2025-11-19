@@ -34,7 +34,7 @@ detect-urls: false
 
 # YOLO MODE: Always say yes to every confirmation 🚀
 # No more hand-holding, we're living dangerously now!
-yes-always: true
+yes-always: no
 
 # Log the conversation with the LLM to this file (for example, .aider.llm.history)
 llm-history-file: .aider.llm.history
