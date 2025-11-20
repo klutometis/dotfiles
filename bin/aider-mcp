@@ -38,13 +38,13 @@
 # Validate profile argument
 PROFILE="$1"
 if [ -z "$PROFILE" ]; then
-    echo "Error: Profile required (claude, gemini, or gpt)" >&2
-    exit 1
+  echo "Error: Profile required (claude, gemini, or gpt)" >&2
+  exit 1
 fi
-shift  # Remove profile from arguments
+shift # Remove profile from arguments
 
 # Detect git repository root, or fallback to current directory
-MCP_ROOT_DIR=$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
+MCP_ROOT_DIR=$(git rev-parse --show-toplevel 2> /dev/null || echo "$PWD")
 
 # Change to root directory so MCP tools resolve relative paths correctly
 cd "$MCP_ROOT_DIR"
@@ -61,4 +61,4 @@ envsubst < "$TEMPLATE_FILE" > "$TEMP_MCP_FILE"
 trap "rm -f $TEMP_MCP_FILE" EXIT
 
 # Launch aider with specified profile and templated MCP configuration
-exec aider -c ~/.aider.conf.${PROFILE}.yml --mcp-servers-file "$TEMP_MCP_FILE" "$@"
+exec aider-ce -c ~/.aider.conf.${PROFILE}.yml --mcp-servers-file "$TEMP_MCP_FILE" "$@"
