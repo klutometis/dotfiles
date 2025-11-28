@@ -101,6 +101,8 @@
            (choice (completing-read "Select aider profile: " profiles nil t)))
       (let ((program (cdr (assoc choice profiles))))
         (setq aidermacs-program program)
+        ;; Clear the cached program path so aidermacs-get-program re-resolves it.
+        (setq aidermacs--resolved-program nil)
         (message "Switched to %s" choice)))))
 
 (use-package all-the-icons)
