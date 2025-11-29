@@ -1,0 +1,31 @@
+#!/bin/bash
+# Usage: autossh-tmux <host> [session-name]
+# 
+# Connects to remote host with auto-reconnect, ensuring gcert is valid locally before each attempt.
+# Uses aggressive reconnection settings (20 second dead connection detection).
+
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+    echo "Usage: autossh-tmux <host> [session-name]" >&2
+    echo "Example: autossh-tmux remote-host.example.com work" >&2
+    exit 1
+fi
+
+HOST="$1"
+SESSION="${2:-work}"
+
+while true; do
+    echo "Checking local gcert status..."
+    gcertstatus || gcert
+    
+    echo "Connecting to $HOST..."
+    ssh -o "ServerAliveInterval=10" \
+        -o "ServerAliveCountMax=2" \
+        "$HOST" -t \
+        "(gcertstatus || gcert) && tmux new-session -A -s '$SESSION'"
+    
+    EXIT_CODE=$?
+    echo "Connection closed (exit code: $EXIT_CODE). Reconnecting in 5 seconds..."
+    sleep 5
+done
