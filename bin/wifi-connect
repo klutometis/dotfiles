@@ -1,0 +1,27 @@
+#!/bin/bash
+# Usage: wifi-connect <SSID> [password]
+# Connects to WiFi network, reusing existing connection if available
+
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+    echo "Usage: wifi-connect <SSID> [password]" >&2
+    echo "Example: wifi-connect MyNetwork mypassword" >&2
+    exit 1
+fi
+
+SSID="$1"
+PASSWORD="${2:-}"
+
+# Check if connection profile exists
+if nmcli connection show "$SSID" &> /dev/null; then
+    echo "Connection profile exists, bringing up: $SSID"
+    nmcli connection up "$SSID"
+else
+    if [ -z "$PASSWORD" ]; then
+        echo "Error: No existing connection found for '$SSID' and no password provided" >&2
+        exit 1
+    fi
+    echo "Creating new connection: $SSID"
+    nmcli device wifi connect "$SSID" password "$PASSWORD"
+fi
