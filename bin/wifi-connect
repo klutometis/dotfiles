@@ -7,21 +7,28 @@ set -euo pipefail
 if [ $# -eq 0 ]; then
     echo "Usage: wifi-connect <SSID> [password]" >&2
     echo "Example: wifi-connect MyNetwork mypassword" >&2
+    echo "For open networks: wifi-connect MyNetwork" >&2
     exit 1
 fi
 
 SSID="$1"
 PASSWORD="${2:-}"
 
+# Trigger WiFi rescan to ensure network is available
+echo "Scanning for networks..."
+nmcli dev wifi list --rescan yes > /dev/null  # Synchronous rescan
+
 # Check if connection profile exists
 if nmcli connection show "$SSID" &> /dev/null; then
     echo "Connection profile exists, bringing up: $SSID"
     nmcli connection up "$SSID"
 else
-    if [ -z "$PASSWORD" ]; then
-        echo "Error: No existing connection found for '$SSID' and no password provided" >&2
-        exit 1
-    fi
     echo "Creating new connection: $SSID"
-    nmcli device wifi connect "$SSID" password "$PASSWORD"
+    if [ -z "$PASSWORD" ]; then
+        # Try connecting to open network
+        nmcli device wifi connect "$SSID"
+    else
+        # Connect with password
+        nmcli device wifi connect "$SSID" password "$PASSWORD"
+    fi
 fi
