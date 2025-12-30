@@ -4,6 +4,28 @@
 
 This document catalogs MCP (Model Context Protocol) servers that have been tested, configured, or considered for use with this repository. It serves as a reference for future experimentation and documents why certain servers were accepted or rejected.
 
+## Configuration Files
+
+### Aider
+**Location:** `etc/mcp.json`  
+**Servers:** All servers (local + proxied)
+- `git` - Local git operations
+- `shell` - Shell command execution
+- `context7`, `firecrawl`, `linkup`, `openmemory`, `perplexity` - Proxied API services
+
+### Claude Code
+**Location:** `~/.config/claude-code/mcp_settings.json`  
+**Dotfile source:** `~/etc/dotfiles/dot-config/claude-code/mcp_settings.json`  
+**Servers:** Only proxied API services
+- `context7`, `firecrawl`, `linkup`, `openmemory`, `perplexity`  
+**Rationale:** Claude Code has built-in `Bash` tool that handles git and shell operations, so local MCP servers are redundant
+
+**Setup:** Symlinked via `~/bin/bootstrap-dotfiles.sh` (which runs `stow -v --restow --adopt dotfiles`)
+
+To update MCP configuration:
+- **Aider:** Edit `etc/mcp.json` and restart Aider
+- **Claude Code:** Edit `etc/dotfiles/dot-config/claude-code/mcp_settings.json`, run `~/bin/bootstrap-dotfiles.sh`, and restart Claude Code
+
 ## Active Servers
 
 See `etc/mcp.json` for currently enabled servers.
@@ -11,6 +33,7 @@ See `etc/mcp.json` for currently enabled servers.
 **Current setup:**
 - **Local servers** - Run directly via `uvx`/`npx`, have access to current working directory
 - **Proxied servers** - Accessed through `mcp-proxy` at `http://127.0.0.1:3100`, for remote API services
+- **Proxy startup** - Use `~/bin/start-mcp-proxy` to start the proxy server
 
 ---
 

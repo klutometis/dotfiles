@@ -56,7 +56,7 @@ apply_xmodmap_for_device() {
   case "$device_name" in
     "HHKB-Studio1 Keyboard")
       xmodmap - << 'EOF'
-! Fix the compose key assignments after setxkbmap
+CAF! Fix the compose key assignments after setxkbmap
 ! Physical right Win (134) should be Alt_R, not Compose
 keycode 134 = Alt_R
 ! Ensure physical right Alt (108) is Compose only, no mod4
@@ -81,6 +81,9 @@ set_keyboard_layout "Logitech K400 Plus" "us" "dvorak" "caps:ctrl_modifier,compo
 # Apply settings for HHKB-Studio1 (swap all alt/win keys, compose on right alt)
 set_keyboard_layout "HHKB-Studio1 Keyboard" "us" "dvorak" "altwin:swap_alt_win,compose:ralt-<"
 apply_xmodmap_for_device "HHKB-Studio1 Keyboard"
+
+# Apply settings for Keychron K2 HE
+set_keyboard_layout "Keychron Keychron K2 HE" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
 
 # Apply global fallback only if no specific layouts were applied
 if [ "$LAYOUT_APPLIED" = false ]; then
