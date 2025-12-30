@@ -63,6 +63,12 @@
   (aw-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold))))
   (aw-minibuffer-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold)))))
 
+(use-package agent-shell
+  :custom
+  (agent-shell-anthropic-claude-command '("npx" "@zed-industries/claude-code-acp"))
+  (agent-shell-google-gemini-command '("npx" "@google/gemini-cli" "--experimental-acp"))
+  (agent-shell-openai-codex-command '("npx" "@zed-industries/codex-acp")))
+
 (use-package aidermacs
   :bind (("C-c A" . aidermacs-transient-menu)
          ("C-c M" . aidermacs-select-profile))
@@ -194,6 +200,8 @@
   :config
   (setq compilation-ask-about-save nil)
   (setq compilation-always-kill t))
+
+(use-package deadgrep)
 
 (use-package deferred)
 

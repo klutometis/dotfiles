@@ -13,3 +13,6 @@
 [submodule "lib/wait-for-it"]
 	path = lib/wait-for-it
 	url = https://github.com/vishnubob/wait-for-it.git
+[submodule "prg/laptop-stickers"]
+	path = prg/laptop-stickers
+	url = git@github.com:klutometis/laptop-stickers.git
