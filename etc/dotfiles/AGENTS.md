@@ -62,21 +62,49 @@ Don't just document the last immediate action - capture the full scope of work i
 
 ## Git Commit Messages
 
-Write commit messages that explain **what** changed and **why**. Use this format:
+Use semantic commit messages following conventional commits format. This makes history readable and enables automation.
+
+### Format
 
 ```
-One-line summary (50 chars, imperative mood)
+<type>(<scope>): <description>
 
-- The problem being solved
-- What changed and why this approach
-- Relevant context, links, or breaking changes
+<body>
+
+<footer>
 ```
+
+### Types
+
+- **feat**: new feature
+- **fix**: bug fix
+- **docs**: documentation changes
+- **style**: formatting changes (no code change)
+- **refactor**: code restructuring (no behavior change)
+- **test**: add or update tests
+- **chore**: maintenance tasks (dependencies, build tools)
+- **build**: build system changes
+- **ci**: CI configuration changes
+- **perf**: performance improvements
 
 ### Guidelines
 
-- **Summary**: Imperative mood ("Add feature" not "Added"), capitalized, no period
-- **Body**: Explain the why. Provide context. Use bullet points for clarity.
-- **Before committing**: Review to ensure the message reflects final changes
+- **Description**: imperative mood ("add" not "added"), lowercase, no period, under 50 chars
+- **Body**: explain what and why (not how), wrap at 100 chars, use bullets for clarity
+- **Footer**: reference issues/PRs, note breaking changes
+- **Breaking changes**: add `!` after type/scope (e.g., `feat(api)!: change endpoint format`)
+
+### Examples
+
+```
+feat(auth): add OAuth2 login support
+
+fix(api): resolve timeout on large requests
+
+docs(readme): update installation steps
+
+refactor: simplify error handling logic
+```
 
 ### Google3 / Critique
 
