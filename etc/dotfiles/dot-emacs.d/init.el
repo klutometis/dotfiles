@@ -634,6 +634,10 @@ This operates in-place on the rewritten region between BEG and END."
 
 (use-package poetry)
 
+(use-package projectile
+  :config
+  (projectile-mode +1))
+
 ;;; Make pulse more readable in terminal.
 (use-package pulse
   :custom-face

@@ -85,6 +85,9 @@ apply_xmodmap_for_device "HHKB-Studio1 Keyboard"
 # Apply settings for Keychron K2 HE
 set_keyboard_layout "Keychron Keychron K2 HE" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
 
+# Apply settings for Keychron Link (2.4G wireless)
+set_keyboard_layout "Keychron  Keychron Link" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
+
 # Apply global fallback only if no specific layouts were applied
 if [ "$LAYOUT_APPLIED" = false ]; then
   echo "No specific keyboards found, applying global fallback"
