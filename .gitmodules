@@ -16,3 +16,6 @@
 [submodule "prg/laptop-stickers"]
 	path = prg/laptop-stickers
 	url = git@github.com:klutometis/laptop-stickers.git
+[submodule "lib/shflags"]
+	path = lib/shflags
+	url = https://github.com/kward/shflags.git

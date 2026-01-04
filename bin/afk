@@ -1,0 +1,475 @@
+#!/bin/bash
+
+# Grow a Garden AFK Bot with Advanced Human-like Behavior
+# Usage: afk [--ai_chat] [--model MODEL]
+#
+# Note: This bot includes backtracking to keep you in your garden plot.
+# Left/Right rotate your view (no backtracking needed), but Up/Down
+# movements are automatically reversed to return you to your starting
+# position. This ensures you stay in range to receive seeds from Shina Ibu.
+
+# ============================================
+# Command-line flags
+# ============================================
+
+. "${HOME}/lib/shflags/shflags"
+
+DEFINE_boolean 'ai_chat' true 'Use AI-generated chat messages' 'a'
+DEFINE_string 'model' 'gemini-3-flash-preview' 'Gemini model to use' 'm'
+DEFINE_boolean 'screenshot_context' true 'Use screenshot for AI context' 's'
+DEFINE_boolean 'test_chat' false 'Test chat generation and exit' 't'
+
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+
+# ============================================
+# Configuration
+# ============================================
+
+# Movement delays (seconds)
+MIN_MOVE_DELAY=0.5
+MAX_MOVE_DELAY=3.0
+
+# Action delays between cycles (seconds)
+MIN_ACTION_DELAY=5
+MAX_ACTION_DELAY=15
+
+# Action probabilities (percentage)
+JUMP_PROBABILITY=15    # 15% chance per cycle
+FARM_PROBABILITY=20    # 20% chance per cycle
+CHAT_PROBABILITY=5     # 5% chance per cycle
+IDLE_PROBABILITY=10    # 10% chance per cycle
+
+# Chat configuration (from flags)
+USE_AI_CHAT=${FLAGS_ai_chat}
+GEMINI_MODEL="${FLAGS_model}"
+USE_SCREENSHOT_CONTEXT=${FLAGS_screenshot_context}
+
+# Screenshot temp file
+SCREENSHOT_FILE="/tmp/afk_screenshot_$$.png"
+
+# Fallback chat messages if AI is unavailable
+CHAT_MESSAGES=(
+    "nice garden!"
+    "how's everyone doing?"
+    "loving this game"
+    "afk for a bit"
+    "beautiful plants"
+    "great vibes here"
+    "this is relaxing"
+    "brb"
+)
+
+# ============================================
+# Utility Functions
+# ============================================
+
+# Generate random float between two values
+random_float() {
+    echo "scale=2; $1 + ($2 - $1) * $RANDOM / 32767" | bc
+}
+
+# Generate random integer between two values
+random_int() {
+    echo $(($1 + $RANDOM % ($2 - $1 + 1)))
+}
+
+# Get timestamp for logging
+timestamp() {
+    date '+%H:%M:%S'
+}
+
+# ============================================
+# Action Functions
+# ============================================
+
+# Move in a random direction with backtracking for Up/Down
+move_randomly() {
+    local directions=("Up" "Down" "Left" "Right")
+    local direction=${directions[$RANDOM % 4]}
+    
+    # Hold direction for a random duration (0.1 to 2 seconds)
+    local duration=$(random_float 0.1 2.0)
+    
+    echo "[$(timestamp)] [MOVE] ${direction} for ${duration}s"
+    xdotool keydown $direction
+    sleep $duration
+    xdotool keyup $direction
+    
+    # Backtrack only for Up/Down (actual movement), not Left/Right (rotation)
+    if [ "$direction" == "Up" ] || [ "$direction" == "Down" ]; then
+        local opposite_direction=""
+        if [ "$direction" == "Up" ]; then
+            opposite_direction="Down"
+        else
+            opposite_direction="Up"
+        fi
+        
+        # Small pause before backtracking
+        sleep 0.1
+        
+        echo "[$(timestamp)] [BACKTRACK] Returning $opposite_direction for ${duration}s"
+        xdotool keydown $opposite_direction
+        sleep $duration
+        xdotool keyup $opposite_direction
+    fi
+}
+
+# Jump action
+jump() {
+    echo "[$(timestamp)] [ACTION] Jumping!"
+    xdotool key space
+    sleep 0.3
+}
+
+# Send raw keycode using ydotool, or fallback to xdotool keysym
+send_keycode() {
+    local keycode=$1
+    local fallback_keysym=$2
+    
+    if command -v ydotool &> /dev/null && pgrep -x ydotoold > /dev/null 2>&1; then
+        # Use ydotool for layout-independent keycode
+        ydotool key $keycode:1 $keycode:0
+    else
+        # Fallback to xdotool with keysym (layout-dependent)
+        xdotool key "$fallback_keysym"
+    fi
+}
+
+# Farm action (press 'e' key)
+farm() {
+    echo "[$(timestamp)] [ACTION] Farming (pressing E)"
+    send_keycode 18 "e"  # KEY_E keycode 18, fallback to 'e' keysym
+    sleep 0.5
+}
+
+# Capture screenshot of Roblox window
+capture_roblox_screenshot() {
+    # Prefer scrot as it's simpler and more reliable
+    if command -v scrot &> /dev/null; then
+        # Capture focused/active window
+        scrot -u "$SCREENSHOT_FILE" 2>/dev/null
+    elif command -v import &> /dev/null; then
+        # Fallback to ImageMagick (capture root window)
+        import -window root "$SCREENSHOT_FILE" 2>/dev/null
+    fi
+    
+    if [ -f "$SCREENSHOT_FILE" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Generate AI chat message using Gemini
+# Takes optional parameter: "keep_screenshot" to preserve screenshot file
+generate_ai_message() {
+    if [ -z "$GEMINI_API_KEY" ]; then
+        echo ""
+        return 1
+    fi
+    
+    local keep_screenshot="$1"
+    local prompt="You're a Grow a Garden bot in Roblox who speaks occasionally. Say a brief phrase (max 10 words) that a typical Roblox gamer might say."
+    local attachment_args=""
+    
+    # Capture screenshot if enabled
+    if [ "$USE_SCREENSHOT_CONTEXT" = "${FLAGS_TRUE}" ]; then
+        if capture_roblox_screenshot; then
+            attachment_args="-a $SCREENSHOT_FILE"
+            prompt="$prompt Look at the game screenshot. If there's chat visible, respond naturally to it. Otherwise, say something relevant to what you see. Only respond with the phrase, nothing else."
+        fi
+    else
+        prompt="$prompt Only respond with the phrase, nothing else."
+    fi
+    
+    # Generate message using Gemini (--with installs llm-gemini if needed)
+    local message=$(uvx --with llm-gemini llm -m "$GEMINI_MODEL" --key "$GEMINI_API_KEY" \
+        $attachment_args "$prompt" 2>/dev/null)
+    
+    # Clean up screenshot unless told to keep it
+    if [ "$keep_screenshot" != "keep_screenshot" ] && [ -f "$SCREENSHOT_FILE" ]; then
+        rm -f "$SCREENSHOT_FILE"
+    fi
+    
+    if [ -n "$message" ]; then
+        echo "$message"
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Send a random chat message
+send_chat() {
+    local message=""
+    
+    # Try AI-generated message if enabled
+    if [ "$USE_AI_CHAT" = "${FLAGS_TRUE}" ]; then
+        message=$(generate_ai_message)
+        if [ $? -ne 0 ] || [ -z "$message" ]; then
+            echo "[$(timestamp)] [CHAT] AI unavailable, using fallback message"
+            message=${CHAT_MESSAGES[$RANDOM % ${#CHAT_MESSAGES[@]}]}
+        fi
+    else
+        message=${CHAT_MESSAGES[$RANDOM % ${#CHAT_MESSAGES[@]}]}
+    fi
+    
+    echo "[$(timestamp)] [CHAT] Sending: $message"
+    
+    send_keycode 53 "slash"  # KEY_SLASH keycode 53, fallback to 'slash' keysym
+    sleep 0.2
+    xdotool type "$message"
+    sleep 0.3
+    xdotool key Return
+    sleep 0.5
+}
+
+# Perform random idle actions to seem more human
+idle_action() {
+    local actions=("look_around" "pause" "wiggle" "short_move")
+    local action=${actions[$RANDOM % 4]}
+    
+    case $action in
+        "look_around")
+            echo "[$(timestamp)] [IDLE] Looking around..."
+            xdotool key Left
+            sleep 0.1
+            xdotool key Right
+            sleep 0.1
+            ;;
+        "pause")
+            local pause_time=$(random_float 1.0 3.0)
+            echo "[$(timestamp)] [IDLE] Pausing for ${pause_time}s..."
+            sleep $pause_time
+            ;;
+        "wiggle")
+            echo "[$(timestamp)] [IDLE] Wiggling..."
+            xdotool keydown Left
+            sleep 0.05
+            xdotool keyup Left
+            xdotool keydown Right
+            sleep 0.05
+            xdotool keyup Right
+            ;;
+        "short_move")
+            echo "[$(timestamp)] [IDLE] Quick adjustment..."
+            local directions=("Up" "Down" "Left" "Right")
+            local dir=${directions[$RANDOM % 4]}
+            xdotool keydown $dir
+            sleep 0.15
+            xdotool keyup $dir
+            ;;
+    esac
+}
+
+# Occasionally do a longer walking pattern
+walk_pattern() {
+    echo "[$(timestamp)] [PATTERN] Executing walk pattern..."
+    local steps=$(random_int 2 4)
+    
+    for ((i=1; i<=steps; i++)); do
+        move_randomly
+        sleep $(random_float 0.3 0.8)
+    done
+}
+
+# ============================================
+# Main Bot Logic
+# ============================================
+
+main() {
+    echo "========================================"
+    echo "  Grow a Garden AFK Bot (Advanced)"
+    echo "========================================"
+    echo ""
+    echo "Configuration:"
+    echo "  - Jump probability: ${JUMP_PROBABILITY}%"
+    echo "  - Farm probability: ${FARM_PROBABILITY}%"
+    echo "  - Chat probability: ${CHAT_PROBABILITY}%"
+    echo "  - Idle probability: ${IDLE_PROBABILITY}%"
+    echo "  - AI chat: ${USE_AI_CHAT}"
+    if [ "${USE_AI_CHAT}" = "${FLAGS_TRUE}" ]; then
+        echo "  - Model: ${GEMINI_MODEL}"
+        echo "  - Screenshot context: ${USE_SCREENSHOT_CONTEXT}"
+    fi
+    echo ""
+    echo "Starting in 5 seconds..."
+    echo ">>> FOCUS THE GAME WINDOW NOW! <<<"
+    echo ""
+    
+    for i in {5..1}; do
+        echo "Starting in $i..."
+        sleep 1
+    done
+    
+    echo ""
+    echo "Bot is now running!"
+    echo "Press Ctrl+C to stop."
+    echo "========================================"
+    echo ""
+    
+    # Main loop
+    while true; do
+        # Primary movement
+        move_randomly
+        
+        # Short pause after movement
+        delay=$(random_float $MIN_MOVE_DELAY $MAX_MOVE_DELAY)
+        sleep $delay
+        
+        # Random jump
+        if [ $(($RANDOM % 100)) -lt $JUMP_PROBABILITY ]; then
+            jump
+        fi
+        
+        # Random farm action
+        if [ $(($RANDOM % 100)) -lt $FARM_PROBABILITY ]; then
+            farm
+        fi
+        
+        # Random idle behavior
+        if [ $(($RANDOM % 100)) -lt $IDLE_PROBABILITY ]; then
+            idle_action
+        fi
+        
+        # Occasional walking pattern (5% chance)
+        if [ $(($RANDOM % 100)) -lt 5 ]; then
+            walk_pattern
+        fi
+        
+        # Random chat (less frequent)
+        if [ $(($RANDOM % 100)) -lt $CHAT_PROBABILITY ]; then
+            send_chat
+        fi
+        
+        # Longer pause between complete action cycles
+        action_delay=$(random_int $MIN_ACTION_DELAY $MAX_ACTION_DELAY)
+        echo "[$(timestamp)] [WAIT] Pausing for ${action_delay}s before next cycle..."
+        sleep $action_delay
+    done
+}
+
+# ============================================
+# Cleanup and Error Handling
+# ============================================
+
+# Trap Ctrl+C to exit gracefully
+trap 'echo ""; echo "[$(timestamp)] Bot stopped by user. Goodbye!"; exit 0' INT
+
+# Check if xdotool is installed
+if ! command -v xdotool &> /dev/null; then
+    echo "ERROR: xdotool is not installed!"
+    echo ""
+    echo "Install it with:"
+    echo "  Ubuntu/Debian: sudo apt-get install xdotool"
+    echo "  Arch: sudo pacman -S xdotool"
+    echo "  Fedora: sudo dnf install xdotool"
+    exit 1
+fi
+
+# Check if bc is installed (needed for floating point math)
+if ! command -v bc &> /dev/null; then
+    echo "ERROR: bc is not installed!"
+    echo ""
+    echo "Install it with:"
+    echo "  Ubuntu/Debian: sudo apt-get install bc"
+    echo "  Arch: sudo pacman -S bc"
+    echo "  Fedora: sudo dnf install bc"
+    exit 1
+fi
+
+# Check for screenshot tools if screenshot context is enabled
+if [ "$USE_SCREENSHOT_CONTEXT" = "${FLAGS_TRUE}" ]; then
+    if ! command -v import &> /dev/null && ! command -v scrot &> /dev/null; then
+        echo "ERROR: Screenshot tools not found!"
+        echo ""
+        echo "Install one of:"
+        echo "  ImageMagick (import): sudo apt-get install imagemagick"
+        echo "  scrot: sudo apt-get install scrot"
+        exit 1
+    fi
+fi
+
+# Check for ydotool (optional, for layout-independent key sending)
+if ! command -v ydotool &> /dev/null; then
+    echo "NOTE: ydotool is not installed, falling back to xdotool."
+    echo "      If you use non-QWERTY layouts (e.g., Dvorak), some keys may not work correctly."
+    echo ""
+    echo "To fix this, install ydotool:"
+    echo "  Ubuntu/Debian: sudo apt-get install ydotool"
+    echo "  Arch: sudo pacman -S ydotool"
+    echo "  Fedora: sudo dnf install ydotool"
+    echo ""
+    echo "Then enable and start the daemon:"
+    echo "  sudo systemctl enable --now ydotool"
+    echo ""
+    echo "Continuing with xdotool in 3 seconds..."
+    sleep 3
+elif ! pgrep -x ydotoold > /dev/null 2>&1; then
+    echo "NOTE: ydotoold daemon is not running, falling back to xdotool."
+    echo "      If you use non-QWERTY layouts (e.g., Dvorak), some keys may not work correctly."
+    echo ""
+    echo "Start the daemon with:"
+    echo "  sudo systemctl start ydotool"
+    echo "Or enable it permanently:"
+    echo "  sudo systemctl enable --now ydotool"
+    echo ""
+    echo "Continuing with xdotool in 3 seconds..."
+    sleep 3
+fi
+
+# Test chat mode
+if [ "${FLAGS_test_chat}" = "${FLAGS_TRUE}" ]; then
+    echo "========================================"
+    echo "  Chat Generation Test"
+    echo "========================================"
+    echo ""
+    echo "Configuration:"
+    echo "  - AI chat: ${USE_AI_CHAT}"
+    echo "  - Model: ${GEMINI_MODEL}"
+    echo "  - Screenshot context: ${USE_SCREENSHOT_CONTEXT}"
+    echo ""
+    
+    if [ "${USE_AI_CHAT}" = "${FLAGS_TRUE}" ]; then
+        if [ "${USE_SCREENSHOT_CONTEXT}" = "${FLAGS_TRUE}" ]; then
+            echo "Attempting to capture screenshot..."
+            if capture_roblox_screenshot; then
+                echo "Screenshot captured: $SCREENSHOT_FILE"
+            else
+                echo "Warning: Screenshot capture failed"
+            fi
+            echo ""
+        fi
+        
+        echo "Generating AI message..."
+        message=$(generate_ai_message "keep_screenshot")
+        if [ $? -eq 0 ] && [ -n "$message" ]; then
+            echo ""
+            echo "Generated message:"
+            echo "  \"$message\""
+            if [ -f "$SCREENSHOT_FILE" ]; then
+                echo ""
+                echo "Screenshot saved to: $SCREENSHOT_FILE"
+            fi
+            echo ""
+            exit 0
+        else
+            echo ""
+            echo "AI generation failed. Using fallback message:"
+            message=${CHAT_MESSAGES[$RANDOM % ${#CHAT_MESSAGES[@]}]}
+            echo "  \"$message\""
+            echo ""
+            exit 1
+        fi
+    else
+        echo "AI chat disabled. Using fallback message:"
+        message=${CHAT_MESSAGES[$RANDOM % ${#CHAT_MESSAGES[@]}]}
+        echo "  \"$message\""
+        echo ""
+        exit 0
+    fi
+fi
+
+# Run the bot
+main
