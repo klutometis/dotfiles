@@ -82,8 +82,11 @@ set_keyboard_layout "Logitech K400 Plus" "us" "dvorak" "caps:ctrl_modifier,compo
 set_keyboard_layout "HHKB-Studio1 Keyboard" "us" "dvorak" "altwin:swap_alt_win,compose:ralt-<"
 apply_xmodmap_for_device "HHKB-Studio1 Keyboard"
 
-# Apply settings for Keychron K2 HE
+# Apply settings for Keychron K2 HE (wired/USB)
 set_keyboard_layout "Keychron Keychron K2 HE" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
+
+# Apply settings for Keychron K2 HE (Bluetooth)
+set_keyboard_layout "Keychron K2 HE Keyboard" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"
 
 # Apply settings for Keychron Link (2.4G wireless)
 set_keyboard_layout "Keychron  Keychron Link" "us" "dvorak" "caps:ctrl_modifier,compose:ralt"

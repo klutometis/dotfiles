@@ -93,6 +93,7 @@ Use semantic commit messages following conventional commits format. This makes h
 - **Body**: explain what and why (not how), wrap at 100 chars, use bullets for clarity
 - **Footer**: reference issues/PRs, note breaking changes
 - **Breaking changes**: add `!` after type/scope (e.g., `feat(api)!: change endpoint format`)
+- **No attribution footers**: Don't add tool attribution or co-authorship footers to commits
 
 ### Examples
 
