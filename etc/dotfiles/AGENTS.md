@@ -23,6 +23,13 @@ For example:
 
 The script should be a distillation of the documentation in executable form.
 
+## Documentation Conventions
+
+### TODO.md vs NOTES.md
+
+- **TODO.md**: Concrete, actionable tasks and checklists. Items that can be checked off when complete.
+- **NOTES.md**: Context, rationale, decisions, future directions, and non-actionable observations. Things to remember but not necessarily do.
+
 ## Package Management
 
 ### Node.js / npm
@@ -46,19 +53,6 @@ When adding or updating Python packages:
 - **Use pip/uv commands**: Run `pip install package` or `uv add package` to get current versions
 - **Don't edit requirements.txt/pyproject.toml directly**: Let the package manager handle version resolution
 - **For specific versions**: Only hardcode versions when there's a compatibility requirement
-
-## Common Workflows
-
-### Quick Note and Commit
-
-When you say "quick note and commit" or "QNC":
-
-Reflect on the work completed since the last commit and:
-1. Add a comprehensive summary to NOTES.md covering all changes and their significance
-2. Stage all changes (`git add -A`)
-3. Create a commit with an appropriate message
-
-Don't just document the last immediate action - capture the full scope of work in the session.
 
 ## Git Commit Messages
 
