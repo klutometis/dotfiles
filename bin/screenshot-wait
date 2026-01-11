@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# Wait for an event, then take a screenshot
+# Usage: screenshot-wait [--workspace|--window|--click|--key|--sleep N] [screenshot options]
+
+# ============================================
+# Command-line flags
+# ============================================
+
+. "${HOME}/lib/shflags/shflags"
+
+DEFINE_boolean 'workspace' false 'Wait for workspace change' 'w'
+DEFINE_boolean 'window' false 'Wait for window focus change' 'f'
+DEFINE_boolean 'click' false 'Wait for mouse click' 'c'
+DEFINE_boolean 'key' false 'Wait for any key press' 'k'
+DEFINE_string 'sleep' '' 'Sleep for N seconds' 's'
+DEFINE_boolean 'section' false 'Take a section instead of full screen' ''
+
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+
+# ============================================
+# Main Logic
+# ============================================
+
+# Build screenshot command with options
+SCREENSHOT_CMD="screenshot"
+if [ "${FLAGS_section}" = "${FLAGS_TRUE}" ]; then
+    SCREENSHOT_CMD="$SCREENSHOT_CMD --section"
+fi
+
+# Determine wait method (first one wins)
+if [ "${FLAGS_workspace}" = "${FLAGS_TRUE}" ]; then
+    echo "Waiting for workspace change..."
+    i3-msg -t subscribe -m '["workspace"]' | head -1 > /dev/null
+    echo "Workspace changed! Taking screenshot..."
+    $SCREENSHOT_CMD
+
+elif [ "${FLAGS_window}" = "${FLAGS_TRUE}" ]; then
+    echo "Waiting for window focus change..."
+    i3-msg -t subscribe -m '["window"]' | grep -m 1 '"change":"focus"' > /dev/null
+    echo "Window focus changed! Taking screenshot..."
+    $SCREENSHOT_CMD
+
+elif [ "${FLAGS_click}" = "${FLAGS_TRUE}" ]; then
+    echo "Waiting for mouse click..."
+    # Use xinput to detect any mouse button click
+    xinput test-xi2 --root | grep -m 1 "ButtonPress" > /dev/null
+    echo "Click detected! Taking screenshot..."
+    $SCREENSHOT_CMD
+
+elif [ "${FLAGS_key}" = "${FLAGS_TRUE}" ]; then
+    echo "Waiting for key press..."
+    xinput test-xi2 --root | grep -m 1 "KeyPress" > /dev/null
+    echo "Key pressed! Taking screenshot..."
+    $SCREENSHOT_CMD
+
+elif [ -n "${FLAGS_sleep}" ]; then
+    echo "Sleeping for ${FLAGS_sleep} seconds..."
+    sleep "${FLAGS_sleep}"
+    echo "Taking screenshot..."
+    $SCREENSHOT_CMD
+
+else
+    # Default: workspace change (most common use case)
+    echo "Waiting for workspace change... (use --help for other options)"
+    i3-msg -t subscribe -m '["workspace"]' | head -1 > /dev/null
+    echo "Workspace changed! Taking screenshot..."
+    $SCREENSHOT_CMD
+fi

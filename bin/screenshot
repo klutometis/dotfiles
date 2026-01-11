@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 
 # Capture screenshot, save to temp file, and pipe to clipboard
-import -window root png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+# Usage: screenshot [--section] [--help]
 
-echo "Screenshot captured and copied to clipboard"
+# ============================================
+# Command-line flags
+# ============================================
+
+. "${HOME}/lib/shflags/shflags"
+
+DEFINE_boolean 'section' false 'Take a section instead of full screen' 's'
+
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+
+# ============================================
+# Main Logic
+# ============================================
+
+if [ "${FLAGS_section}" = "${FLAGS_TRUE}" ]; then
+    # Take a section (normal import behavior - interactive selection)
+    import png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+    echo "Screenshot section captured and copied to clipboard"
+else
+    # Take full screen (root window)
+    import -window root png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+    echo "Screenshot captured and copied to clipboard"
+fi
