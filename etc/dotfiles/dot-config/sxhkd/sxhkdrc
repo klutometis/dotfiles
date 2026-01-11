@@ -10,6 +10,10 @@ super + question
 super + z
     ~/bin/screenshot
 
+# Screenshot section to clipboard
+super + shift + z
+    ~/bin/screenshot --section
+
 # Direct elvi launchers
 super + g
     ~/bin/q --engine=google
