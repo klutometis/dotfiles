@@ -54,7 +54,26 @@ When adding or updating Python packages:
 - **Don't edit requirements.txt/pyproject.toml directly**: Let the package manager handle version resolution
 - **For specific versions**: Only hardcode versions when there's a compatibility requirement
 
-## Git Commit Messages
+## Git Operations
+
+### Staging Files
+
+Be surgical when staging files for commits:
+
+- **Stage specific files**: Use `git add <file>` for files you've actually modified
+- **Never use `git add -A` or `git add .`**: Not all repos have complete .gitignore coverage
+- **Check what you're adding**: Run `git status` to see untracked files before staging
+- **Avoid noise**: Don't stage build artifacts, editor configs, or other unrelated files
+
+Example workflow:
+```bash
+git status                    # Review what changed
+git add src/feature.ts        # Stage only relevant files
+git add tests/feature.test.ts
+git commit -m "feat: add feature"
+```
+
+### Commit Messages
 
 Use semantic commit messages following conventional commits format. This makes history readable and enables automation.
 
