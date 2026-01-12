@@ -30,6 +30,107 @@ The script should be a distillation of the documentation in executable form.
 - **TODO.md**: Concrete, actionable tasks and checklists. Items that can be checked off when complete.
 - **NOTES.md**: Context, rationale, decisions, future directions, and non-actionable observations. Things to remember but not necessarily do.
 
+### Scaling NOTES.md for Long-Running Projects
+
+For projects where NOTES.md grows unwieldy (>500 lines), consider this structure:
+
+- **notes/topics/[TOPIC].md** - Living documentation per system/feature
+- **notes/archive/YYYY-MM-DD.md** - Historical snapshots
+
+See detailed workflow in project-specific AGENTS.md files.
+
+### Pruning TODO.md
+
+TODO.md should be forward-looking, not archival. When it exceeds ~300-400 lines, prune completed work.
+
+**What to remove:**
+- Fully completed sections (all checkboxes checked)
+- Implementation details of finished features
+- Old known issues that were resolved
+
+**What to keep:**
+- Current/in-progress tasks (any section with unchecked boxes)
+- High-level milestone structure (phase headers)
+- Brief one-line summary of completed phases
+
+**Archive before pruning:**
+```bash
+cp TODO.md TODO-archive-$(date +%Y-%m-%d).md
+# Then manually prune TODO.md
+```
+
+**Example transformation:**
+
+Before (60 lines):
+```markdown
+### v1 - Cinematic Spawn - COMPLETED ✓
+- [x] Implement falling spawn
+  - [x] Players spawn at 2500 studs
+  - [x] Camera locked looking down
+  - [x] Sigmoid deceleration at 200 studs
+  ... 15 more completed items
+```
+
+After (2 lines):
+```markdown
+### v1 - Cinematic Spawn - COMPLETED ✓
+Brief: Players spawn high and descend cinematically with camera transitions.
+```
+
+Or even simpler (1 line):
+```markdown
+- [x] v1: Cinematic spawn system
+```
+
+**Philosophy**: Completed work is already documented in git history, NOTES.md/topic files, and the code itself. TODO.md doesn't need to maintain historical checklists.
+
+### TODO.md → CHANGELOG.md → Archive Flow
+
+When pruning TODO.md, completed work should flow to CHANGELOG.md before being archived.
+
+**Workflow:**
+
+1. **Active development**: Tasks live in TODO.md
+2. **Completion**: When a feature/phase is complete, move summary to CHANGELOG.md
+3. **Archival**: When CHANGELOG.md grows large (>1000 lines), archive old entries
+
+**CHANGELOG.md structure:**
+
+```markdown
+# Changelog
+
+## [Unreleased]
+- Feature in progress
+
+## [1.2.0] - 2026-01-15
+### Added
+- Cinematic spawn system with camera transitions
+- OAuth2 login support
+
+### Fixed
+- Timeout on large API requests
+
+### Changed
+- Simplified error handling logic
+```
+
+**Archiving changelogs:**
+
+When CHANGELOG.md becomes unwieldy:
+
+```bash
+# Archive entries older than 6 months
+mkdir -p changelog/archive
+mv CHANGELOG.md changelog/archive/CHANGELOG-2025.md
+# Create fresh CHANGELOG.md with recent entries
+```
+
+Or use dated archives similar to notes:
+- **changelog/archive/2025-H1.md** - First half of 2025
+- **changelog/archive/2025-H2.md** - Second half of 2025
+
+**Philosophy**: CHANGELOG.md is user-facing release history. Archives preserve the full timeline without cluttering the main file.
+
 ## Package Management
 
 ### Node.js / npm
