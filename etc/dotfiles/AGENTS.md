@@ -45,8 +45,8 @@ changelog/archive/YYYY-MM-DD.md  # Old releases (user-facing)
 
 Use package managers to install/update dependencies, not manual file edits. Avoids stale versions from training data.
 
-- **Node.js**: `npm install package@latest` (not editing package.json)
-- **Python**: `uv add package` or `pip install package` (not editing requirements.txt/pyproject.toml)
+- **Node.js**: `npm install package@latest`
+- **Python**: `uv add package` (ensure `pyproject.toml` has `[tool.uv]` with `package = false` for dependency-only projects)
 
 ## Git Operations
 
