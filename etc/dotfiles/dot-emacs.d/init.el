@@ -285,8 +285,7 @@
   (exec-path-from-shell-initialize))
 
 (use-package find-dired
-  :bind (("C-c f" . find-grep-dired)
-         ("C-c n" . find-name-dired))
+  :bind (("C-c n" . find-name-dired))
   :init
   ;; Grep case-insensitively.
   (setq find-grep-options "-q -i")
@@ -447,55 +446,59 @@ This operates in-place on the rewritten region between BEG and END."
   (setq graphviz-dot-indent-width 2))
 
 (use-package grep
-  :bind ("C-c r" . rgrep)
   :config
   (setq grep-save-buffers 'save-all-file-buffers))
 
-(use-package helm
-  :bind (("<f1> a" . helm-apropos)
-         ("C-c h o" . helm-occur)
-         ;; Can't stand this, for some reason; let's head back to
-         ;; ido. Helm-buffers-list can take a second or more with a
-         ;; lot of buffers
-         ;;
-         ;; Actually, we'll bind it to C-x C-b; and keep
-         ;; e.g. switch-to-buffer or ido-switch-buffers at C-x b.
-         ;;
-         ;; Third thought, we'll keep it vanilla switch-to-buffer;
-         ;; which gets helmized.
-         ;;
-         ;; Other people have experienced this, too, with tramp:
-         ;; <https://github.com/emacs-helm/helm/issues/749>.
-         ;;
-         ("C-x b" . switch-to-buffer)
-         ;;
-         ;; You know what? I can't fucking stand helm-find-files,
-         ;; either; let's go back to ido!
-         ;;
-         ;; ("C-x C-f" . helm-find-files)
-         ("M-x" . helm-M-x)
-         ("M-y" . helm-show-kill-ring)
-         ("C-x b" . helm-buffers-list)
-         ("C-x C-f" . helm-find-files)
-         ([tab] . helm-execute-persistent-action))
+;; Vertico stack for completion - modern, modular alternative to Helm
+(use-package vertico
   :init
-  ;; Fuzzy match
-  (setq helm-M-x-fuzzy-match t
-        helm-buffers-fuzzy-matching t
-        helm-recentf-fuzzy-match t
-        helm-semantic-fuzzy-match t
-        helm-imenu-fuzzy-match t
-        helm-locate-fuzzy-match t
-        helm-apropos-fuzzy-match t)
+  (vertico-mode)
+  :custom
+  (vertico-cycle t)  ; Cycle through candidates
+  (vertico-count 20)) ; Show more candidates
 
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :init
+  (marginalia-mode)
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle)))
+
+(use-package consult
+  :bind (;; Replace helm bindings
+         ("<f1> a" . consult-apropos)        ; was helm-apropos
+         ("C-c h o" . consult-line)          ; was helm-occur
+         ("C-x b" . consult-buffer)          ; was helm-buffers-list
+         ("M-y" . consult-yank-pop)          ; was helm-show-kill-ring
+         ;; Replace grep/find bindings
+         ("C-c r" . consult-ripgrep)         ; was rgrep
+         ("C-c f" . consult-find)            ; was find-grep-dired
+         ;; Additional useful commands
+         ("M-g i" . consult-imenu)
+         ("M-g M-g" . consult-goto-line)
+         ("C-x C-r" . consult-recent-file))
+  :custom
+  (consult-narrow-key "<")  ; Use < to narrow
   :config
-  (helm-mode 1)
-  ;; Use ack.
-  (when (executable-find "ack-grep")
-    (setq helm-grep-default-command "ack-grep -Hn --no-group --no-color %e %p %f"
-          helm-grep-default-recurse-command "ack-grep -H --no-group --no-color %e %p %f"))
-  ;; Man-page at point
-  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages))
+  ;; Use ripgrep if available, otherwise fallback to grep
+  (when (executable-find "rg")
+    (setq consult-ripgrep-args
+          "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip")))
+
+;; Embark for actions on candidates
+(use-package embark
+  :bind (("C-." . embark-act)
+         ("M-." . embark-dwim))
+  :custom
+  (embark-quit-after-action nil))
+
+(use-package embark-consult
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package helpful)
 
