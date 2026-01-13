@@ -35,6 +35,7 @@ echo "$(date): Starting background services"
 xscreensaver -nosplash &
 sxhkd -m -1 &
 picom &
+watch-keyboard-hotplug.sh &
 
 # Log keyboard state after setup
 echo "$(date): Final keyboard state:"

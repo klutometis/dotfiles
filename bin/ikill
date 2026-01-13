@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+# Interactive process killer with full command-line matching
+# Usage: ikill [options] <pattern>
+#
+# By default, interactively prompts before killing each matching process.
+# Matches against the full command line (like pgrep -f).
+
+# ============================================
+# Command-line flags
+# ============================================
+
+. "${HOME}/lib/shflags/shflags"
+
+DEFINE_boolean 'dry-run' false 'Show what would be killed without killing' 'n'
+DEFINE_boolean 'verbose' false 'Kill all with confirmation messages (systematic kill mode)' 'v'
+DEFINE_string 'signal' 'TERM' 'Signal to send (default: TERM)' 's'
+
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+
+# ============================================
+# Main Logic
+# ============================================
+
+if [ $# -eq 0 ]; then
+    echo "Usage: ikill [options] <pattern>"
+    echo ""
+    echo "Interactively kills processes matching the pattern (full command-line match)."
+    echo ""
+    echo "Options:"
+    echo "  -n, --dry-run        Show what would be killed without killing"
+    echo "  -v, --verbose        Kill all and show what's being killed (systematic mode)"
+    echo "  -s, --signal SIGNAL  Signal to send (default: TERM)"
+    echo "  -h, --help           Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  ikill firefox                 # Interactively kill firefox processes"
+    echo "  ikill -n firefox              # Dry-run: show what would be killed"
+    echo "  ikill -v firefox              # Kill all and show progress"
+    echo "  ikill -s KILL firefox         # Send SIGKILL instead of SIGTERM"
+    exit 1
+fi
+
+PATTERN="$1"
+SIGNAL="${FLAGS_signal}"
+
+# Find matching processes (full command-line match)
+PIDS=$(pgrep -f "$PATTERN")
+
+if [ -z "$PIDS" ]; then
+    echo "No processes matching '$PATTERN' found."
+    exit 0
+fi
+
+# Count processes
+COUNT=$(echo "$PIDS" | wc -l)
+
+echo "Found $COUNT process(es) matching '$PATTERN':"
+echo ""
+
+# Show processes
+ps -fp $PIDS
+
+echo ""
+
+# Dry-run mode
+if [ "${FLAGS_dry_run}" = "${FLAGS_TRUE}" ]; then
+    echo "Dry-run mode: no processes were killed."
+    echo "Run without -n to interactively kill, or use -v for systematic kill."
+    exit 0
+fi
+
+# Verbose/systematic mode - kill all without prompting
+if [ "${FLAGS_verbose}" = "${FLAGS_TRUE}" ]; then
+    for pid in $PIDS; do
+        cmd=$(ps -p $pid -o command= 2>/dev/null)
+        if [ -z "$cmd" ]; then
+            echo "Process $pid already exited"
+            continue
+        fi
+        
+        if kill -s "$SIGNAL" "$pid" 2>/dev/null; then
+            echo "Killed $pid: $cmd"
+        else
+            echo "Failed to kill $pid: $cmd"
+        fi
+    done
+    exit 0
+fi
+
+# Default: Interactive mode - prompt for each process
+for pid in $PIDS; do
+    cmd=$(ps -p $pid -o command= 2>/dev/null)
+    if [ -z "$cmd" ]; then
+        echo "Process $pid already exited"
+        continue
+    fi
+    
+    read -p "Kill $pid ($cmd)? [Y/n] " response
+    response=${response:-y}  # Default to yes
+    case "$response" in
+        [yY]|[yY][eE][sS])
+            if kill -s "$SIGNAL" "$pid" 2>/dev/null; then
+                echo "Killed $pid"
+            else
+                echo "Failed to kill $pid (may have already exited)"
+            fi
+            ;;
+        *)
+            echo "Skipped $pid"
+            ;;
+    esac
+done

@@ -19,3 +19,6 @@
 [submodule "lib/shflags"]
 	path = lib/shflags
 	url = https://github.com/kward/shflags.git
+[submodule "lib/bashlog"]
+	path = lib/bashlog
+	url = https://github.com/Zordrak/bashlog.git

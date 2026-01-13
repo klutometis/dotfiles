@@ -77,6 +77,13 @@ if ! command -v fzf &> /dev/null; then
   sudo apt-get install -y fzf
 fi
 
+# Install inotify-tools if not present
+if ! command -v inotifywait &> /dev/null; then
+  echo "Installing inotify-tools..."
+  sudo apt-get update
+  sudo apt-get install -y inotify-tools
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
