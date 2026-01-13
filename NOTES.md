@@ -2,6 +2,132 @@
 
 - **i3 window rules via wrapper script**: Investigate using wrapper scripts with i3-msg for project-specific window rules instead of config files. Would allow launching apps with dynamic configuration (float, sticky, position, size) without polluting dotfiles. Example: `launch-discord-overlay` script that spawns process and configures via `i3-msg "[pid=$PID] floating enable"`. More scriptable and portable than config includes.
 
+## 2026-01-13 - Documentation Directory Consolidation
+
+### Decision: Consolidate ~/doc/ into ~/var/doc/
+
+**Context**: Had redundant documentation directories (`~/doc/` and `~/var/doc/`) serving unclear purposes.
+
+**The Problem:**
+- **~/doc/**: Abandoned location with random notes and Anki flashcard data
+- **~/var/doc/**: Active working documents (aider history, project files, logs)
+- **~/var/build/**: Build instructions paired with automation scripts
+- Unclear where new documentation should go
+
+**Why Consolidate to ~/var/doc/:**
+- **FHS alignment**: `/var` is for variable/changing data - exactly what working documents are
+- **Existing structure**: Already had `~/var/build/` and `~/var/web/` (Downloads symlink)
+- **Clear semantics**: `~/var/` signals "stuff that changes" vs static configs/binaries
+- **Consistency**: Keeps all variable data under one parent directory
+
+**Files Moved:**
+- `~/doc/notes/voice-dictation.md` → `~/var/doc/notes/`
+- `~/doc/txt/anki/*` (Fry word lists, math flashcards) → `~/var/doc/txt/anki/`
+- `~/doc/txt/chronos-first-text-file.txt` → `~/var/doc/txt/`
+
+**Final Structure:**
+```
+~/var/
+├── build/     # Build instructions + automation (established pattern)
+├── doc/       # Working documents, notes, project files (consolidated)
+└── web/       # Downloads symlink (established)
+```
+
+**Benefits:**
+- ✅ **Clarity**: Single location for all variable documentation
+- ✅ **FHS-compliant**: Follows Unix filesystem hierarchy principles
+- ✅ **Consistent**: All `/var`-style data under `~/var/`
+- ✅ **No confusion**: Obvious where to put new documents
+
+**Key Insight:** The `~/prg/` exception (non-FHS) works because it's short and memorable. Generic directories like `~/doc/` don't need to be at root level when `~/var/doc/` provides better organization and FHS alignment.
+
+## 2026-01-13 - Emacs Completion: Migrated from Helm to Vertico Stack
+
+### Decision: Replace Helm with Vertico + Consult + Orderless + Marginalia + Embark
+
+**Context**: Helm had become a performance bottleneck and felt too opinionated/heavyweight. User wanted a lighter, faster, more modular completion framework.
+
+**Problems with Helm:**
+- **Slow buffer switching**: `helm-buffers-list` could take 1+ seconds with many buffers open
+- **Clunky file finding**: `helm-find-files` was sluggish and frustrating (see init.el comments: "I can't fucking stand helm-find-files")
+- **Monolithic**: Heavy, opinionated framework that takes over Emacs
+- **TRAMP issues**: Known performance problems with remote files
+- **Mode pollution**: Helm mode affects too many things globally
+
+**Why Vertico Stack:**
+- **Modular**: Each component does one thing well, can be swapped independently
+- **Fast**: Instant response even with thousands of candidates
+- **Native integration**: Works with standard Emacs `completing-read` APIs
+- **Lightweight**: Minimal footprint compared to Helm
+- **Not opinionated**: Compose behavior from small packages rather than fighting a framework
+
+**Packages Chosen:**
+
+1. **Vertico** - Minimal vertical completion UI
+   - Just displays candidates efficiently
+   - Cycles through results
+   - Shows 20 items by default
+
+2. **Orderless** - Flexible matching engine
+   - Space-separated terms match in any order
+   - Type `fbuf` to match `find-buffer`
+   - Works across all completion contexts
+
+3. **Marginalia** - Rich annotations
+   - Shows file info, keybindings, documentation in minibuffer
+   - Adds context without cluttering
+
+4. **Consult** - Enhanced commands
+   - Modern replacements for common operations
+   - Live preview for searches
+   - Intelligent grouping (buffers, files, bookmarks)
+
+5. **Embark** - Context actions on candidates
+   - Like right-click menus for completion
+   - Perform actions without selecting
+
+**Key Binding Migration:**
+
+| Function | Old (Helm) | New (Consult/Native) |
+|----------|------------|----------------------|
+| Command palette | `M-x` → `helm-M-x` | `M-x` (native + vertico) |
+| Switch buffer | `C-x b` → `helm-buffers-list` | `C-x b` → `consult-buffer` |
+| Find file | `C-x C-f` → `helm-find-files` | `C-x C-f` (native + orderless) |
+| Kill ring | `M-y` → `helm-show-kill-ring` | `M-y` → `consult-yank-pop` |
+| Buffer search | `C-c h o` → `helm-occur` | `C-c h o` → `consult-line` |
+| Help apropos | `<f1> a` → `helm-apropos` | `<f1> a` → `consult-apropos` |
+| Grep files | `C-c r` → `rgrep` | `C-c r` → `consult-ripgrep` |
+| Find by name | `C-c f` → `find-grep-dired` | `C-c f` → `consult-find` |
+
+**Bonus Commands Added:**
+- `M-g i` → `consult-imenu` (jump to functions/classes)
+- `M-g M-g` → `consult-goto-line` (with live preview)
+- `C-x C-r` → `consult-recent-file` (quick recent files)
+- `C-.` → `embark-act` (context actions)
+- `M-.` → `embark-dwim` (smart default action)
+
+**Technical Details:**
+- Configured orderless with `basic` fallback for file completion
+- Set `vertico-cycle t` for wraparound navigation
+- Integrated `consult-ripgrep` to use ripgrep when available
+- Preserved `find-name-dired` at `C-c n` (still useful for some workflows)
+
+**Benefits Achieved:**
+- ✅ **Speed**: Buffer/file operations now instant
+- ✅ **Clarity**: Minimal UI, no visual noise
+- ✅ **Flexibility**: Can replace individual components without breaking workflow
+- ✅ **Better UX**: Live preview, intelligent grouping, contextual actions
+- ✅ **Lower friction**: No fighting with opinionated defaults
+
+**Comparison to Other Stacks:**
+- **Ivy/Counsel/Swiper**: Lighter than Helm but still somewhat monolithic; Vertico is more modular
+- **Ido**: Simple but limited; doesn't scale to modern workflows
+- **Icomplete/Fido**: Built-in but minimal features compared to Vertico stack
+
+**Key Insight:** The Emacs ecosystem has moved toward composition of small, focused packages rather than monolithic frameworks. Vertico stack represents current best practices: minimal core (vertico) + composable enhancements (consult, orderless, marginalia, embark).
+
+**Integration:** Works seamlessly with existing packages (avy, magit, projectile, etc.). No conflicts with other configured tools.
+
 ## 2025-11-09 - MCP Git/Shell Server Root Directory Detection
 
 ### Decision: Auto-detect git repository root and cd to it before launching aider
