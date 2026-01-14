@@ -81,6 +81,13 @@ if ! command -v inotifywait &> /dev/null; then
   sudo apt-get install -y inotify-tools
 fi
 
+# Install gh (GitHub CLI) if not present
+if ! command -v gh &> /dev/null; then
+  echo "Installing GitHub CLI (gh)..."
+  sudo apt-get update
+  sudo apt-get install -y gh
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
