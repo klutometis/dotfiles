@@ -11,6 +11,9 @@ DISABLE_AUTO_UPDATE=false
 UPDATE_ZSH_DAYS=0
 source $ZSH/oh-my-zsh.sh
 
+# Unalias npx (breaks tooling)
+unalias npx 2>/dev/null
+
 # Prompt customization
 export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
 
