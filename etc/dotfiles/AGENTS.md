@@ -47,6 +47,10 @@ Use package managers to install/update dependencies, not manual file edits. Avoi
 
 - **Node.js**: `npm install package@latest`
 - **Python**: `uv add package` (ensure `pyproject.toml` has `[tool.uv]` with `package = false` for dependency-only projects)
+- **Rust**: `cargo add package`
+- **Go**: `go get package@latest`
+
+**General principle**: If a language has a standard package manager command, use it instead of editing dependency files (package.json, pyproject.toml, Cargo.toml, go.mod, etc.) directly.
 
 ## Git Operations
 
