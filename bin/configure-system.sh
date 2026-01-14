@@ -3,9 +3,6 @@
 
 set -e
 
-# Configuration flags
-ENABLE_KEYBOARD_CONFIG=${ENABLE_KEYBOARD_CONFIG:-false}
-
 echo "Deploying system configuration files..."
 
 # =============================================================================
@@ -193,53 +190,6 @@ create_directory_symlink ~/Downloads ~/var/web # This one should already exist
 echo "Directory symlinks configured"
 
 # =============================================================================
-# X11 Configuration
-# =============================================================================
-
-if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
-  # X11 configs
-  if [ -d ~/etc/X11/xorg.conf.d ]; then
-    echo "Copying X11 configuration files..."
-    sudo cp ~/etc/X11/xorg.conf.d/* /etc/X11/xorg.conf.d/
-    sudo chown root:root /etc/X11/xorg.conf.d/*
-    sudo chmod 644 /etc/X11/xorg.conf.d/*
-    echo "X11 configs deployed successfully"
-    echo "  - Carbon laptop keyboard config"
-    echo "  - Happy Hacking Keyboard config"
-  else
-    echo "No X11 configs found in ~/etc/X11/xorg.conf.d/"
-  fi
-else
-  echo "Skipping X11 keyboard configuration (ENABLE_KEYBOARD_CONFIG=false)"
-fi
-
-# =============================================================================
-# udev Rules
-# =============================================================================
-
-if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
-  # udev rules for keyboard layout
-  if [ -d ~/etc/udev/rules.d ]; then
-    echo "Copying udev rules..."
-    sudo cp ~/etc/udev/rules.d/* /etc/udev/rules.d/
-    sudo chown root:root /etc/udev/rules.d/*
-    sudo chmod 644 /etc/udev/rules.d/*
-    echo "udev rules deployed successfully"
-    echo "  - Keyboard layout rules"
-
-    # Reload udev rules and trigger for existing devices
-    echo "Reloading udev rules..."
-    sudo udevadm control --reload-rules
-    sudo udevadm trigger --subsystem-match=input
-    echo "udev rules reloaded and triggered"
-  else
-    echo "No udev rules found in ~/etc/udev/rules.d/"
-  fi
-else
-  echo "Skipping udev keyboard rules (ENABLE_KEYBOARD_CONFIG=false)"
-fi
-
-# =============================================================================
 # DNS Configuration (Simple & Clean)
 # =============================================================================
 
@@ -399,6 +349,13 @@ else
   echo "Warning: privoxy not installed - skipping ad blocking setup"
 fi
 
+# Reload sxhkd if running
+if pgrep -x sxhkd > /dev/null; then
+  echo "Reloading sxhkd configuration..."
+  pkill -USR1 -x sxhkd
+  echo "  ✓ sxhkd reloaded"
+fi
+
 echo ""
 echo "System configuration deployment complete!"
 echo ""
@@ -407,18 +364,9 @@ echo "  ✓ NetworkManager configured to use Google DNS (8.8.8.8, 8.8.4.4)"
 echo "  ✓ dnsmasq configured to forward to Google DNS"
 echo "  ✓ Auto-DNS from DHCP disabled"
 echo ""
-if [ "$ENABLE_KEYBOARD_CONFIG" = "true" ]; then
-  echo "You may need to:"
-  echo "  1. Restart X11 for keyboard changes to take effect"
-  echo "  2. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
-  echo "  3. Source your shell configuration for PATH updates"
-else
-  echo "You may need to:"
-  echo "  1. Reload sxhkd configuration: pkill -USR1 -x sxhkd"
-  echo "  2. Source your shell configuration for PATH updates"
-  echo "  Note: Keyboard configuration was skipped (set ENABLE_KEYBOARD_CONFIG=true to enable)"
-fi
-echo ""
 echo "To verify DNS is working:"
 echo "  cat /etc/resolv.conf    # Should show nameserver 127.0.0.1 and search domains"
 echo "  dig google.com          # Should be fast (~10-20ms)"
+echo ""
+echo "Note: Source your shell configuration to pick up PATH updates:"
+echo "  source ~/.bashrc  # or ~/.zshrc"
