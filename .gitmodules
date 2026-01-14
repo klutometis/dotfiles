@@ -22,3 +22,6 @@
 [submodule "lib/bashlog"]
 	path = lib/bashlog
 	url = https://github.com/Zordrak/bashlog.git
+[submodule "prg/clipboard-mcp"]
+	path = prg/clipboard-mcp
+	url = git@github.com:klutometis/clipboard-mcp.git
