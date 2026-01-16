@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-01-16
+
+### Added Go Toolchain and Bluetuith Bluetooth Manager
+
+**Changes**:
+- Added Go installation section to `configure-system.sh`
+- Added bluetuith installation via `go install github.com/darkhz/bluetuith@latest`
+- Go version fetched dynamically from official API (no hardcoded versions)
+
+**Details**:
+- Go installed to `/usr/local/go` (standard location)
+- Bluetuith binary placed in `~/go/bin`
+- Both `/usr/local/go/bin` and `~/go/bin` added to PATH
+- Installations only run if commands not already present
+
+**Rationale**: Bluetuith is a terminal-based Bluetooth manager that provides better control than GUI tools. Go installation method ensures cross-distro compatibility and always-latest versions.
+
 ## 2026-01-13
 
 ### Removed Unstable TigerVNC X11 Extension
