@@ -2,6 +2,39 @@
 
 - **i3 window rules via wrapper script**: Investigate using wrapper scripts with i3-msg for project-specific window rules instead of config files. Would allow launching apps with dynamic configuration (float, sticky, position, size) without polluting dotfiles. Example: `launch-discord-overlay` script that spawns process and configures via `i3-msg "[pid=$PID] floating enable"`. More scriptable and portable than config includes.
 
+## 2026-01-16 - Go Installation and Bluetuith Configuration
+
+### Decision: Add Go toolchain installation and bluetuith Bluetooth manager to configure-system.sh
+
+**Context**: User wanted to add bluetuith (terminal-based Bluetooth manager) to system configuration. This required first installing the Go toolchain since bluetuith is most reliably installed via `go install`.
+
+**Implementation:**
+
+**1. Go Installation:**
+- Fetches latest Go version dynamically using canonical API: `curl -s "https://go.dev/dl/?mode=json" | jq -r '.[0].version'`
+- Downloads and installs to `/usr/local/go` (standard location per go.dev documentation)
+- Adds both `/usr/local/go/bin` and `$HOME/go/bin` to PATH for current session
+- Skips installation if Go already present
+
+**2. Bluetuith Installation:**
+- Installed via `go install github.com/darkhz/bluetuith@latest`
+- Binary placed in `~/go/bin` by Go toolchain
+- Only installs if not already present in PATH
+
+**Why Go Installation Method:**
+- Cross-distribution compatibility (not all distros package bluetuith)
+- Always gets latest version directly from source
+- No PPA or manual binary management required
+- Follows upstream project's recommended installation method
+
+**Benefits:**
+- ✅ **Always current**: Fetches latest Go version on each run
+- ✅ **Portable**: Works across different Linux distributions
+- ✅ **Reliable**: Uses official Go installation method from go.dev
+- ✅ **No version drift**: No hardcoded versions that become stale
+
+**Key Insight:** Using the JSON API endpoint (`https://go.dev/dl/?mode=json`) with `jq` provides a reliable, canonical way to fetch the latest Go version. This is superior to hardcoding versions or scraping HTML.
+
 ## 2026-01-13 - Documentation Directory Consolidation
 
 ### Decision: Consolidate ~/doc/ into ~/var/doc/

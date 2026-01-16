@@ -111,6 +111,49 @@ echo "Installing mcp-proxy..."
 uv tool install git+https://github.com/sparfenyuk/mcp-proxy
 
 # =============================================================================
+# Go Installation & Tools
+# =============================================================================
+
+echo "Setting up Go and Go tools..."
+
+# Install Go if not present
+if ! command -v go &> /dev/null; then
+  echo "Installing Go..."
+  
+  # Fetch latest Go version using canonical method
+  GO_VERSION=$(curl -s "https://go.dev/dl/?mode=json" | jq -r '.[0].version')
+  GO_TARBALL="${GO_VERSION}.linux-amd64.tar.gz"
+  
+  echo "Latest Go version: ${GO_VERSION}"
+  
+  # Download Go
+  cd /tmp
+  wget -q "https://go.dev/dl/${GO_TARBALL}"
+  
+  # Remove any previous installation and extract
+  sudo rm -rf /usr/local/go
+  sudo tar -C /usr/local -xzf "${GO_TARBALL}"
+  
+  # Clean up
+  rm "${GO_TARBALL}"
+  
+  # Add to PATH for current session
+  export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+  
+  echo "Go ${GO_VERSION} installed"
+else
+  echo "Go already installed ($(go version))"
+  # Ensure Go paths are in current session
+  export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+fi
+
+# Install bluetuith if not present
+if ! command -v bluetuith &> /dev/null; then
+  echo "Installing bluetuith..."
+  go install github.com/darkhz/bluetuith@latest
+fi
+
+# =============================================================================
 # Node.js & npm Installation (via nvm)
 # =============================================================================
 

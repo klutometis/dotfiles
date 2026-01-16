@@ -65,16 +65,9 @@
 
 (use-package agent-shell
   :custom
-  (agent-shell-anthropic-claude-command '("npx" "@zed-industries/claude-code-acp"))
-  (agent-shell-google-gemini-command '("npx" "@google/gemini-cli" "--experimental-acp"))
-  (agent-shell-openai-codex-command '("npx" "@zed-industries/codex-acp"))
-  (agent-shell-transcript-file-path-function
-   (lambda ()
-     "Generate transcript path in ~/.agent-shell/transcripts."
-     (let* ((dir (expand-file-name "~/.agent-shell/transcripts"))
-            (filename (format-time-string "%F-%H-%M-%S.md"))
-            (filepath (expand-file-name filename dir)))
-       filepath))))
+  (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest" "--permission-mode" "plan"))
+  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-cli@latest" "--experimental-acp"))
+  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest")))
 
 (use-package aidermacs
   :bind (("C-c A" . aidermacs-transient-menu)
