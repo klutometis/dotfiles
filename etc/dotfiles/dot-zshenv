@@ -20,6 +20,7 @@ path+=$HOME/.npm-global/bin
 path+=$HOME/.cargo/bin
 path+=$HOME/.local/bin
 path+=$HOME/.rbenv/bin
+path+=$HOME/go/bin
 [[ -d $PYENV_ROOT/bin ]] && path+=$PYENV_ROOT/bin
 export PATH
 
@@ -35,12 +36,12 @@ export MCP_TEMPLATE_FILE="$HOME/etc/mcp-template.json"
 #   XMODIFIERS='@im=none'
 #   GTK_IM_MODULE=xim
 #   QT_IM_MODULE=xim
-# 
+#
 # We explicitly unset them because:
 # 1. XIM intercepts Compose key sequences, breaking them in terminals
 # 2. We only use Western languages with Compose, not CJK input methods
 # 3. Chrome and other apps work fine without XIM
-# 
+#
 # If you need CJK input in the future, set these per-application:
 #   GTK_IM_MODULE=xim QT_IM_MODULE=xim <application>
 unset XMODIFIERS
