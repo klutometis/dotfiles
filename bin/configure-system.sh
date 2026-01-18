@@ -88,6 +88,13 @@ if ! command -v gh &> /dev/null; then
   sudo apt-get install -y gh
 fi
 
+# Install ripgrep if not present
+if ! command -v ripgrep &> /dev/null; then
+  echo "Installing ripgrep..."
+  sudo apt-get update
+  sudo apt-get install -y ripgrep
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================
