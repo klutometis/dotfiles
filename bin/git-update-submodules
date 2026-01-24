@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Update all submodules and ensure they're on their tracked branch (not detached HEAD)
+# Usage: git-update-submodules
+
+set -euo pipefail
+
+echo "Updating submodules..."
+git submodule update --recursive --remote --merge
+
+echo ""
+echo "Ensuring submodules are on proper branches..."
+git submodule foreach --recursive '
+  # Get the configured branch for this submodule (default to main/master if not set)
+  BRANCH=$(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "")
+  
+  if [ -z "$BRANCH" ]; then
+    # Try to detect main vs master
+    if git rev-parse --verify main >/dev/null 2>&1; then
+      BRANCH=main
+    elif git rev-parse --verify master >/dev/null 2>&1; then
+      BRANCH=master
+    else
+      echo "Warning: Could not determine branch for $name, staying on current ref"
+      exit 0
+    fi
+  fi
+  
+  # Checkout the branch if not already on it
+  CURRENT=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$CURRENT" = "HEAD" ] || [ "$CURRENT" != "$BRANCH" ]; then
+    echo "Checking out $BRANCH in $name"
+    git checkout "$BRANCH" 2>/dev/null || echo "Warning: Could not checkout $BRANCH in $name"
+  fi
+'
+
+echo ""
+echo "Done! All submodules updated and on proper branches."
