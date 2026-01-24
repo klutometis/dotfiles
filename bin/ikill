@@ -46,7 +46,20 @@ PATTERN="$1"
 SIGNAL="${FLAGS_signal}"
 
 # Find matching processes (full command-line match)
-PIDS=$(pgrep -f "$PATTERN")
+# Exclude the ikill script itself by filtering out processes containing 'ikill'
+PIDS=$(pgrep -f "$PATTERN" | grep -v "^$$\$")
+
+# Also filter out any process that contains 'ikill' in its command line
+if [ -n "$PIDS" ]; then
+    FILTERED_PIDS=""
+    for pid in $PIDS; do
+        cmd=$(ps -p $pid -o command= 2>/dev/null)
+        if [[ ! "$cmd" =~ ikill ]]; then
+            FILTERED_PIDS="$FILTERED_PIDS $pid"
+        fi
+    done
+    PIDS=$(echo "$FILTERED_PIDS" | xargs)
+fi
 
 if [ -z "$PIDS" ]; then
     echo "No processes matching '$PATTERN' found."

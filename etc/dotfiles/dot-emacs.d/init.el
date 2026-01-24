@@ -674,9 +674,8 @@ This operates in-place on the rewritten region between BEG and END."
      search-ring
      regexp-search-ring
      log-edit-comment-ring
-     helm-M-x-input-history
-     helm-find-files-history
-     helm-grep-history))
+     file-name-history
+     consult--grep-history))
   (savehist-file "~/.emacs.d/savehist")
   ;; (savehist-autosave-interval 600) ; optional CPU fix
   :config
