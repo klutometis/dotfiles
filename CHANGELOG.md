@@ -30,6 +30,18 @@
 
 **Rationale**: Explicitly sets npm to use the official registry across all shells and npm operations.
 
+### Added Git Submodule Update Script
+
+**Problem**: `git submodule update --remote` leaves submodules in detached HEAD state, requiring manual branch checkout.
+
+**Changes**:
+- Created `~/bin/git-update-submodules` script
+- Updates all submodules with `--merge` flag to avoid detached HEAD
+- Automatically detects and checks out correct branch (main/master) for each submodule
+- Handles mixed main/master repositories gracefully
+
+**Rationale**: Automates the tedious process of updating submodules and ensuring they're on proper branches. Works for all present and future submodules without manual configuration.
+
 ## 2026-01-16
 
 ### Added Go Toolchain and Bluetuith Bluetooth Manager
