@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-01-24
+
+### Replaced Helm with Vertico/Consult Completion Stack
+
+**Changes**:
+- Replaced Helm with modern Vertico/Consult/Marginalia/Embark stack in `~/etc/dotfiles/dot-emacs.d/init.el`
+- Updated savehist configuration to use Vertico/Consult history variables
+- Removed helm-specific history variables (`helm-M-x-input-history`, `helm-find-files-history`, `helm-grep-history`)
+- Added `file-name-history` and `consult--grep-history` to persist search patterns across sessions
+
+**Rationale**: Vertico/Consult provides a more modular, faster, and actively maintained completion framework compared to Helm. Uses standard Emacs completion APIs.
+
+### Fixed ikill Self-Termination Bug
+
+**Problem**: `~/bin/ikill` would occasionally kill itself when matching patterns, especially when it appeared first in the process list.
+
+**Changes**:
+- Added filtering to exclude processes containing 'ikill' in their command line
+- Filters out current process ID (`$$`) from results
+- Prevents premature termination when ikill matches its own search pattern
+
+**Rationale**: Self-termination prevented ikill from completing its job. Filtering ensures only target processes are affected.
+
+### Added NPM Registry Configuration
+
+**Changes**:
+- Added `NPM_CONFIG_REGISTRY=https://registry.npmjs.org/` to `~/.zshenv`
+
+**Rationale**: Explicitly sets npm to use the official registry across all shells and npm operations.
+
 ## 2026-01-16
 
 ### Added Go Toolchain and Bluetuith Bluetooth Manager
