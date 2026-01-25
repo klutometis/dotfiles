@@ -1,47 +1,55 @@
-;; Bootstrap straight.el  -*- lexical-binding: t; -*-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el"
-                         user-emacs-directory))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+;; Bootstrap Elpaca  -*- lexical-binding: t; -*-
+(defvar elpaca-installer-version 0.11)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1 :inherit ignore
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (<= emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
 
-;; Integrate use-package with straight.el
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
-(setq package-install-upgrade-built-in t)
+;; Install use-package support
+(elpaca elpaca-use-package
+        ;; Enable use-package :ensure support for Elpaca.
+        (elpaca-use-package-mode)
+        ;; Assume :ensure t for all use-package declarations (like straight-use-package-by-default)
+        (setq use-package-always-ensure t))
 
-;; Just discard changes in dirty repos (gptel, for instance, is
-;; perpetually dirty).
-(defun my-straight-auto-discard-advice (local-repo)
-  "Automatically discard changes in straight repos without prompting."
-  (let ((status (let ((straight--process-trim nil))
-                  (straight--process-output
-                   "git" "-c" "status.branch=false"
-                   "status" "--short"))))
-    (if (string-empty-p status)
-        t  ; Clean worktree, proceed normally
-      ;; Dirty worktree - automatically discard changes
-      (straight--output "Auto-discarding changes in repository %S" local-repo)
-      (and (straight--process-output "git" "reset" "--hard")
-           (straight--process-output "git" "clean" "-ffd"))
-      t)))  ; Return t after discarding changes
-
-(advice-add 'straight-vc-git--ensure-worktree :override #'my-straight-auto-discard-advice)
-
-;; Optional: auto-update all packages on Emacs startup
-(add-hook 'emacs-startup-hook #'straight-pull-all)
-
+;; Block until elpaca-use-package is ready
+(elpaca-wait)
 
 ;;; Load transient early and eagerly.
-(use-package transient :demand t)
+(use-package transient :ensure t :demand t)
 
 (use-package ace-window
   :bind ("C-x o" . ace-window)
@@ -63,64 +71,17 @@
   :custom
   (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest" "--permission-mode" "plan"))
   (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-cli@latest" "--experimental-acp"))
-  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest")))
-
-(use-package aidermacs
-  :bind (("C-c A" . aidermacs-transient-menu)
-         ("C-c M" . aidermacs-select-profile))
-  :custom
-  (aidermacs-program "aider-claude")
-  ;; Disruptive, for some reason to force-show diff; maybe can call manually.
-  (aidermacs-show-diff-after-change nil)
-  :config
-  ;; Custom enthusiastic accept-change function
-  (defun aidermacs-accept-change ()
-    "Send an enthusiastic acceptance to aidermacs."
-    (interactive)
-    (aidermacs--send-command "/code Let's go!"))
-
-  ;; Utility functions for reasoning settings
-  (defun aidermacs-toggle-thinking-tokens ()
-    "Toggle thinking tokens between different levels or disable."
-    (interactive)
-    (let ((current-setting (completing-read "Thinking tokens: " '("32k" "8k" "4k" "1k" "0") nil t "32k")))
-      (aidermacs--send-command (format "/think-tokens %s" current-setting))
-      (message "Set thinking tokens to %s" current-setting)))
-
-  (defun aidermacs-set-reasoning-effort ()
-    "Set reasoning effort level."
-    (interactive)
-    (let ((effort (completing-read "Reasoning effort: " '("low" "medium" "high") nil t)))
-      (aidermacs--send-command (format "/reasoning-effort %s" effort))
-      (message "Set reasoning effort to %s" effort)))
-
-  (defun aidermacs-select-profile ()
-    "Select an aider configuration profile (Claude, Gemini, or OpenAI)."
-    (interactive)
-    (let* ((profiles '(("🔵 Claude (Sonnet 4.5 + Haiku 4.5)" . "aider-claude")
-                       ("🟢 Gemini (Flash + Flash Lite)" . "aider-gemini")
-                       ("🟠 OpenAI (GPT-5 Mini + Nano)" . "aider-gpt")))
-           (choice (completing-read "Select aider profile: " profiles nil t)))
-      (let ((program (cdr (assoc choice profiles))))
-        (setq aidermacs-program program)
-        ;; Clear the cached program path so aidermacs-get-program re-resolves it.
-        (setq aidermacs--resolved-program nil)
-        (message "Switched to %s" choice)))))
-
-(use-package all-the-icons)
+  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
+  :bind (("C-c A" . agent-shell)))
 
 (use-package ansi-color
+  :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter))
 
 (use-package auth-source-pass
+  :ensure nil
   :config
   (auth-source-pass-enable))
-
-(use-package auto-package-update
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
 
 (use-package avy
   :init
@@ -170,16 +131,15 @@
   (add-to-list 'auto-mode-alist '("/WORKSPACE\\(?:\\.bazel\\)?\\'" . bazel-mode))
   (add-to-list 'auto-mode-alist '("\\.bzl\\'" . bazel-mode)))
 
-(use-package better-defaults
-  :config
-  ;; Don't flash on bell, after all.
-  (setq visible-bell nil))
-
 (use-package clipetty
+  :custom
+  ;; Force OSC 52 even on local terminal (Alacritty supports it)
+  (clipetty-assume-nested-mux t)
   :config
   (global-clipetty-mode 1))
 
 (use-package combobulate
+  :ensure (:host github :repo "mickeynp/combobulate")
   :bind (("C-<M-a>" . combobulate-navigate-beginning-of-defun))
   :custom
   (combobulate-key-prefix "C-c o")
@@ -187,6 +147,7 @@
 
 
 (use-package compile
+  :ensure nil
   :config
   (setq compilation-ask-about-save nil)
   (setq compilation-always-kill t))
@@ -200,7 +161,7 @@
   (corfu-cycle t)                     ;; Enable cycling for `corfu-next/previous'
   (corfu-preselect 'prompt)           ;; Preselect the prompt
   (corfu-on-exact-match nil)          ;; Don't auto-insert on exact match
-  :init
+  :config
   (global-corfu-mode)
   :bind
   (:map corfu-map
@@ -222,6 +183,7 @@
   (setq cape-dabbrev-check-other-buffers t))
 
 (use-package eglot
+  :ensure nil
   :hook ((c++-mode . eglot-ensure)
          (c-mode . eglot-ensure)
          (python-mode . eglot-ensure)
@@ -244,27 +206,66 @@
   ;; Ensure cape-capf is used for eglot completion
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
-
-
-(use-package deadgrep)
-
-(use-package deferred)
-
-(use-package desktop
+(use-package activities
   :config
-  (desktop-save-mode 1)
-  (add-to-list 'desktop-globals-to-save 'kill-ring))
+  (activities-mode)
+  (activities-tabs-mode)
+  :bind (("C-x C-a C-n" . activities-new)
+         ("C-x C-a C-d" . activities-define)
+         ("C-x C-a C-a" . activities-resume)
+         ("C-x C-a C-s" . activities-suspend)
+         ("C-x C-a C-k" . activities-kill)
+         ("C-x C-a RET" . activities-switch)
+         ("C-x C-a b"   . activities-switch-buffer)
+         ("C-x C-a g"   . activities-revert)
+         ("C-x C-a l"   . activities-list)))
 
-(use-package dictionary)
+(use-package dired
+  :ensure nil  ; Built-in package
+  :custom
+  ;; When two dired buffers are open, operations target the other window
+  (dired-dwim-target t)
+  ;; Show directories first, then files
+  (dired-listing-switches "-alh --group-directories-first")
+  ;; Auto-refresh dired buffers when files change
+  (dired-auto-revert-buffer t)
+  ;; Kill dired buffers when leaving them
+  (dired-kill-when-opening-new-dired-buffer t))
 
 (use-package dired-subtree
   :bind (:map dired-mode-map
               ("i" . dired-subtree-insert)
               (";" . dired-subtree-remove)))
 
-(use-package edit-indirect)
+(use-package dired-narrow
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow-fuzzy)))
+
+(use-package dired-rainbow
+  :config
+  (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+  (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+  (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+  (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+  (dired-rainbow-define markdown "#ffed4e" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+  (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+  (dired-rainbow-define media "#de751f" ("mp3" "mp4" "mkv" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+  (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+  (dired-rainbow-define log "#c17d11" ("log"))
+  (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+  (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+  (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+  (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+  (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+  (dired-rainbow-define packaged "#c7c7ff" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+  (dired-rainbow-define encrypted "#ffed4e" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+  (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+  (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+  (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+  (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
 (use-package emacs
+  :ensure nil
   :init
   ;; Configure input-decode-map for terminal Meta + Arrow keys
   (unless (display-graphic-p)
@@ -289,6 +290,7 @@
   (mouse-wheel-scroll-amount '(1 ((shift) . 5)))
   ;; Send backups to alternative location
   (backup-directory-alist `(("." . "~/.emacs.d/backups")))
+  (backup-by-copying t)
   (vc-make-backup-files t)
   (kept-old-versions 5)
   (kept-new-versions 5)
@@ -298,6 +300,19 @@
   (compilation-scroll-output t)
   ;; Disable visible bell
   (visible-bell nil)
+  ;; Better defaults settings
+  (uniquify-buffer-name-style 'forward)
+  (save-interprogram-paste-before-kill t)
+  (apropos-do-all t)
+  (mouse-yank-at-point t)
+  (require-final-newline t)
+  (load-prefer-newer t)
+  (frame-inhibit-implied-resize t)
+  (read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  (indent-tabs-mode nil)
 
   :config
   ;; Enable mouse support in terminal
@@ -311,6 +326,24 @@
 
   ;; Typed text replaces selection
   (delete-selection-mode t)
+
+  ;; Auto-refresh buffers when files change on disk
+  (global-auto-revert-mode 1)
+
+  ;; UI cleanup (disable toolbars, scrollbars, menu bar)
+  (unless (memq window-system '(mac ns))
+    (menu-bar-mode -1))
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1))
+  (when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
+
+  ;; Better defaults modes
+  (show-paren-mode 1)
+  (save-place-mode 1)
+  (require 'uniquify)
 
   ;; Load custom file if it exists
   (when (file-exists-p custom-file)
@@ -529,15 +562,13 @@ point reaches the beginning or end of the buffer, stop there."
          ("C-c P"     . copy-file-name-to-clipboard)
          ("C-c R"     . recompile)
          ("C-c U"     . rename-uniquely)
-         ("C-c a"     . list-matching-lines)
          ("C-c c"     . compile)
          ("C-c h"     . help-command)
          ("C-c o"     . occur)
          ("C-c p"     . pwd)
          ("C-c u"     . kill-line-backward)
-         ("C-h"       . kill-whole-line)
+         ("C-c k"     . kill-whole-line)
          ("C-o"       . smart-open-line-above)
-         ("C-x C-r"   . revert-buffer)
          ("C-x s"     . save-all-file-buffers)
          ("C-x TAB"   . indent-rigidly)
          ("M-%"       . query-replace-regexp)
@@ -548,13 +579,8 @@ point reaches the beginning or end of the buffer, stop there."
   ((find-file-hook . (lambda () (setq buffer-save-without-query t)))
    (sh-mode-hook . (lambda () (add-hook 'before-save-hook #'whitespace-cleanup nil :local)))))
 
-(use-package embark)
-
-(use-package exec-path-from-shell
-  :config
-  (exec-path-from-shell-initialize))
-
 (use-package find-dired
+  :ensure nil  ; Built-in package
   :bind (("C-c n" . find-name-dired))
   :init
   ;; Grep case-insensitively.
@@ -567,7 +593,12 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((dired-mode-hook
           . (lambda () (bind-key "F" 'dired-do-find-marked-files dired-mode-map)))))
 
-(use-package flycheck)
+(use-package flymake
+  :ensure nil  ; Built-in package
+  :bind (:map flymake-mode-map
+              ("C-c ! n" . flymake-goto-next-error)
+              ("C-c ! p" . flymake-goto-prev-error)
+              ("C-c ! l" . flymake-show-buffer-diagnostics)))
 
 (use-package format-all
   :config
@@ -616,112 +647,24 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;; Activate dark-mode in terminal.
 (use-package frame
-  :straight nil
+  :ensure nil
   :custom
   (frame-background-mode 'dark)
   :hook
   (after-init . (lambda () (mapc 'frame-set-background-mode (frame-list)))))
-
-(use-package full-ack)
-
-(use-package gptel
-  :bind (("C-c t s" . gptel-send)
-         ("C-c t r" . gptel-rewrite)
-         ("C-c t a" . gptel-add)
-         ("C-c t f" . gptel-add-file)
-         ("C-c t x" . gptel-context-remove-all)
-         ("C-c t m" . gptel-menu)
-         ("C-c t g" . gptel))
-  :custom
-  (gptel-default-mode 'text-mode)
-  (gptel-model 'gpt-4o)
-  (gptel-track-media t)
-  (gptel-include-reasoning t)
-  (gptel-confirm-tool-calls nil)
-  (gptel-include-tool-results t)
-  :hook ((gptel-post-stream-hook . gptel-auto-scroll)
-         (gptel-post-response-functions . gptel-end-of-response))
-  :custom-face
-  (gptel-context-highlight-face ((t (:weight bold :background "#2a2f4a" :extend t))))
-  (gptel-rewrite-highlight-face ((t (:weight bold :background "#1f3a24" :extend t))))
-
-  :config
-  (require 'gptel-integrations)
-
-  (defun save-gptel-buffer-with-timestamp ()
-    "Save the current gptel buffer to a directory with a timestamped filename."
-    (interactive)
-    (let ((directory "~/prg/gptel/")  ; Specify your desired directory here
-          (filename (format-time-string "gptel-%Y%m%d-%H%M%S.txt")))
-      (write-region (point-min) (point-max) (concat directory filename))
-      (message "Buffer saved as %s" (concat directory filename))))
-
-  (defun check-and-save-gptel-buffer ()
-    "Check if the gptel buffer token count exceeds a limit and save it."
-    (when (and (derived-mode-p 'gptel-mode)
-               (> (buffer-size) 30000))  ; Adjust the token count threshold as needed
-      (save-gptel-buffer-with-timestamp)
-      (message "Buffer saved due to exceeding token limit.")))
-
-  (defun gptel-cleanup-code-fences (beg end)
-    "Remove Markdown-style code fences (like ```python) from GPTel rewrite response.
-This operates in-place on the rewritten region between BEG and END."
-    (save-excursion
-      ;; Remove trailing fence if present
-      (goto-char end)
-      (forward-line 0) ; Move to beginning of the last line
-      (when (looking-at "^```\\s-*$")
-        (delete-region (line-beginning-position) (1+ (line-end-position)))) ; Remove line and newline
-
-      ;; Remove leading fence if present
-      (goto-char beg)
-      (when (looking-at "^```.*$")
-        (delete-region (line-beginning-position) (1+ (line-end-position))))))
-
-  (defun gptel-replace-buffer-with-overlay ()
-    "Replace current buffer contents with text from GPTel overlay."
-    (interactive)
-    (let* ((ovs (overlays-in (point-min) (point-max)))
-           (target (car ovs))
-           (content
-            (cond
-             ((overlay-get target 'display)
-              (format "%s" (overlay-get target 'display)))
-             ((and (overlay-start target) (overlay-end target))
-              (buffer-substring-no-properties
-               (overlay-start target)
-               (overlay-end target)))
-             (t (user-error "No usable overlay content found")))))
-      (erase-buffer)
-      (insert content)
-      (message "Replaced buffer contents with overlay text.")))
-
-  (setq gptel-backends
-        (list
-         (gptel-make-anthropic "Claude"
-           :stream t
-           :key (getenv "ANTHROPIC_API_KEY")
-           :request-params '(:thinking (:type "enabled" :budget_tokens 24000)))
-         (gptel-make-openai "OpenAI"
-           :stream t
-           :key (getenv "OPENAI_API_KEY")
-           :request-params '(:thinking (:type "enabled" :budget_tokens 24000)))
-         (gptel-make-gemini "Gemini"
-           :stream t
-           :key (getenv "GOOGLE_API_KEY")
-           :request-params '(:thinking (:type "enabled" :budget_tokens 24000))))))
 
 (use-package graphviz-dot-mode
   :init
   (setq graphviz-dot-indent-width 2))
 
 (use-package grep
+  :ensure nil  ; Built-in package
   :config
   (setq grep-save-buffers 'save-all-file-buffers))
 
 ;; Vertico stack for completion - modern, modular alternative to Helm
 (use-package vertico
-  :init
+  :config
   (vertico-mode)
   :custom
   (vertico-cycle t)  ; Cycle through candidates
@@ -734,7 +677,7 @@ This operates in-place on the rewritten region between BEG and END."
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
 (use-package marginalia
-  :init
+  :config
   (marginalia-mode)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
@@ -771,8 +714,6 @@ This operates in-place on the rewritten region between BEG and END."
   (consult-customize
    consult-ripgrep consult-grep consult-git-grep
    consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
    ;; Preview with 0.2s debounce to avoid flickering
    :preview-key '(:debounce 0.2 any))
 
@@ -789,14 +730,18 @@ This operates in-place on the rewritten region between BEG and END."
   (embark-quit-after-action nil))
 
 (use-package embark-consult
+  :after (embark consult)
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package helpful)
+(use-package wgrep
+  :custom
+  (wgrep-auto-save-buffer t))
 
-(use-package keyfreq
-  :config
-  (keyfreq-mode 1)           ;; Enable keyfreq-mode
-  (keyfreq-autosave-mode 1)) ;; Automatically save frequency data
+(use-package helpful
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h x" . helpful-command)))
 
 (use-package language-id
   :config
@@ -834,33 +779,8 @@ This operates in-place on the rewritten region between BEG and END."
               (auto-fill-mode 1)
               (unbind-key "C-c C-s" markdown-mode-map)))))
 
-(use-package mcp
-  :config
-  (defun load-mcp-servers-from-json (json-file)
-    "Load MCP server configuration from JSON file and convert to mcp-hub-servers format."
-    (let* ((json-object-type 'alist)
-           (json-array-type 'list)
-           (json-key-type 'string)
-           (json-data (json-read-file json-file))
-           (servers (cdr (assoc "mcpServers" json-data))))
-      (mapcar (lambda (server)
-                (let* ((name (car server))
-                       (config (cdr server))
-                       (command (cdr (assoc "command" config)))
-                       (args (cdr (assoc "args" config)))
-                       (env (cdr (assoc "env" config))))
-                  `(,name . (:command ,command
-                                      :args ,args
-                                      ,@(when env
-                                          `(:env (,@(mapcan (lambda (pair)
-                                                              (list (intern (concat ":" (car pair)))
-                                                                    (cdr pair)))
-                                                            env))))))))
-              servers)))
-
-  (setq mcp-hub-servers (load-mcp-servers-from-json "~/etc/mcp.json")))
-
 (use-package midnight
+  :ensure nil
   :init
   (midnight-mode 1)
   :custom
@@ -868,7 +788,11 @@ This operates in-place on the rewritten region between BEG and END."
   (clean-buffer-list-delay-general 1)
   (clean-buffer-list-kill-regexps '(".*"))
   :hook
-  (midnight . (lambda () (desktop-save desktop-dirname))))
+  (midnight . (lambda () (desktop-save desktop-dirname)))
+  (midnight . (lambda ()
+                (message "Elpaca: Starting package update...")
+                (elpaca-fetch-all t)
+                (elpaca-merge-all nil t))))
 
 (use-package paredit
   :bind (:map paredit-mode-map
@@ -878,40 +802,8 @@ This operates in-place on the rewritten region between BEG and END."
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
 
-(use-package monet
-  :straight (:type git :host github :repo "stevemolitor/monet"))
-
-;; for eat terminal backend:
-(use-package eat
-  :straight (:type git
-                   :host codeberg
-                   :repo "akib/emacs-eat"
-                   :files ("*.el" ("term" "term/*.el") "*.texi"
-                           "*.ti" ("terminfo/e" "terminfo/e/*")
-                           ("terminfo/65" "terminfo/65/*")
-                           ("integration" "integration/*")
-                           (:exclude ".dir-locals.el" "*-tests.el"))))
-
 ;; for vterm terminal backend:
-(use-package vterm :straight t)
-
-;; install claude-code.el, using :depth 1 to reduce download size:
-(use-package claude-code
-  :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main" :depth 1
-                   :files ("*.el" (:exclude "images/*")))
-  :bind-keymap
-  ("C-c C" . claude-code-command-map) ;; C-c followed by uppercase C
-  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
-  :bind
-  (:repeat-map my-claude-code-map ("M" . claude-code-cycle-mode))
-  :config
-  ;; optional IDE integration with Monet
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
-  (monet-mode 1)
-
-  (claude-code-mode))
-
-(use-package poetry)
+(use-package vterm :ensure t)
 
 (use-package projectile
   :config
@@ -919,6 +811,7 @@ This operates in-place on the rewritten region between BEG and END."
 
 ;;; Make pulse more readable in terminal.
 (use-package pulse
+  :ensure nil
   :custom-face
   (pulse-highlight-start-face
    ((((class color) (min-colors 88) (background dark))
@@ -940,8 +833,11 @@ This operates in-place on the rewritten region between BEG and END."
   (setq python-indent-offset 4))
 
 (use-package savehist
+  :ensure nil  ; Built-in package
   :custom
   (savehist-save-minibuffer-history t)
+  ;; Increase history length from default 100
+  (history-length 1000)
   (savehist-additional-variables
    '(minibuffer-history
      compile-history
@@ -951,13 +847,18 @@ This operates in-place on the rewritten region between BEG and END."
      regexp-search-ring
      log-edit-comment-ring
      file-name-history
-     consult--grep-history))
+     ;; Consult-specific histories
+     consult--grep-history
+     consult--find-history
+     consult--line-history
+     consult--buffer-history))
   (savehist-file "~/.emacs.d/savehist")
   ;; (savehist-autosave-interval 600) ; optional CPU fix
   :config
   (savehist-mode 1))
 
 (use-package sort
+  :ensure nil  ; Built-in package
   :bind ("C-c s" . sort-lines))
 
 (use-package typescript-mode
@@ -972,8 +873,6 @@ This operates in-place on the rewritten region between BEG and END."
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist 'all))
 
-(use-package transient)
-
 (use-package transpose-frame
   :bind (("C-c w t" . transpose-frame)
          ("C-c w f" . flip-frame)
@@ -984,9 +883,13 @@ This operates in-place on the rewritten region between BEG and END."
 
 (use-package which-key
   :config
-  (which-key-mode))
+  (which-key-mode)
+  :custom
+  (which-key-idle-delay 0.3)
+  (which-key-sort-order 'which-key-key-order-alpha))
 
 (use-package windmove
+  :ensure nil
   :bind (("<up>" . windmove-up)
          ("<down>" . windmove-down)
          ("<right>" . windmove-right)
@@ -997,38 +900,9 @@ This operates in-place on the rewritten region between BEG and END."
 
 ;;; For manipulating stacks of windows.
 (use-package winner
+  :ensure nil  ; Built-in package
   :config
   (winner-mode 1))
-
-(use-package xclip
-  :config
-  (setq xclip-method 'xsel)
-  (setq xclip-program "xsel")
-
-  :init
-  (defun xclip-copy-to-clipboard ()
-    "Copy selection to clipboard using xclip."
-    (interactive)
-    (when (use-region-p)  ; Ensure there is a text selection
-      (xclip-set-selection 'clipboard (buffer-substring-no-properties (region-beginning) (region-end)))
-      (deactivate-mark)))  ; Optionally clear the selection
-
-  (defun xclip-paste-from-clipboard ()
-    "Paste text from clipboard using xclip."
-    (interactive)
-    (insert (xclip-get-selection 'clipboard)))
-
-  :bind
-  (("M-C-w" . xclip-copy-to-clipboard)
-   ("M-C-y" . xclip-paste-from-clipboard)))
-
-(use-package yasnippet
-  :config
-  (yas-global-mode 01)
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets")))
-
-(use-package yasnippet-snippets
-  :after yasnippet)
 
 ;;; Load a host-specific file, if one exists.
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))

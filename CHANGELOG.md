@@ -1,5 +1,105 @@
 # Changelog
 
+## 2026-01-25
+
+### Migrated from straight.el to Elpaca Package Manager
+
+**Changes**:
+- Replaced straight.el with Elpaca for package management
+- Added `use-package-always-ensure t` to auto-install all packages (equivalent to `straight-use-package-by-default`)
+- Added `:ensure nil` to all built-in packages (ansi-color, auth-source-pass, compile, combobulate, dired, eglot, emacs, find-dired, flymake, frame, grep, midnight, pulse, savehist, sort, windmove, winner)
+- Added custom recipe for combobulate (`:ensure (:host github :repo "mickeynp/combobulate")`)
+- Configured auto-update to run daily at midnight via `midnight-hook`
+- Removed unused packages: keyfreq, yasnippet, yasnippet-snippets, exec-path-from-shell, xclip, claude-code, monet, mcp, eat (kept vterm)
+- Fixed consult error by removing obsolete `consult--source-*` variables from `consult-customize`
+
+**Rationale**:
+- **Elpaca**: Faster parallel package installation vs straight.el's serial approach
+- **Package cleanup**: Removed ~2400 yasnippet files and other unused bloat for faster startup
+- **Auto-updates**: Daily midnight updates keep packages current without manual intervention
+- **Built-in annotations**: Explicit `:ensure nil` makes it clear which packages are built-in vs external
+
+**Files affected**:
+- `~/.emacs.d/init.el` - Complete package manager migration
+- `~/.emacs.d/early-init.el` - Added lexical-binding cookie
+- Created backup: `~/.emacs.d/init.el.straight-backup-20260125-032933`
+
+### Enhanced Dired, Savehist, and File Management
+
+**Changes**:
+- Enhanced `dired` configuration: dwim-target (two-pane operations), group-directories-first, auto-refresh
+- Added `dired-narrow` package with `/` binding for fuzzy filtering in dired buffers
+- Added `dired-rainbow` package for color-coded file types (source/media/archives/etc.)
+- Enhanced `savehist` with 1000-item history and consult-specific histories (grep/find/line/buffer)
+- Verified and enhanced `embark-consult` integration (removed duplicate embark declaration)
+- Enabled `global-auto-revert-mode` for automatic buffer refresh when files change
+- Removed `revert-buffer` keybinding (obsoleted by global-auto-revert-mode)
+- Replaced `better-defaults` with explicit configuration for transparency
+- Fixed clipetty on local machine (OSC 52 passthrough through tmux to Alacritty)
+
+**Rationale**:
+- **dired enhancements**: dwim-target makes two-pane copy/move operations intuitive, dired-narrow enables quick filtering, dired-rainbow improves visual organization
+- **savehist**: Increased history enables better recall of searches and commands across sessions
+- **global-auto-revert**: Eliminates manual revert-buffer calls when files change externally (git, builds, etc.)
+- **better-defaults removal**: All settings now explicit and visible in config (no black boxes)
+- **clipetty fix**: tmux wasn't passing OSC 52 sequences; `allow-passthrough on` + `clipetty-assume-nested-mux t` fixes local clipboard integration
+
+**What better-defaults provided (now explicit)**:
+- UI cleanup (no toolbars/scrollbars/menu-bar)
+- show-paren-mode, save-place-mode, uniquify
+- Better default settings (case-insensitive completion, backup-by-copying, indent with spaces, etc.)
+
+**Files affected**:
+- `~/etc/dotfiles/dot-emacs.d/init.el`
+- `~/.tmux.conf`
+
+### Removed Unused AI Packages and Reclaimed Keybinding
+
+**Changes**:
+- Removed `aidermacs` package (86 lines including custom functions)
+- Removed `gptel` package (86 lines including backend configuration and helper functions)
+- Added `C-c A` keybinding to `agent-shell` (reclaimed from aidermacs)
+
+**Rationale**: 
+Both `aidermacs` and `gptel` have been supplanted by `agent-shell` in the workflow. Removing them simplifies configuration and reclaims valuable keybindings. `C-c A` is now available for quick access to agent-shell, which provides a unified interface for Claude Code, Gemini CLI, and Codex via ACP.
+
+**Files affected**:
+- `~/etc/dotfiles/dot-emacs.d/init.el`
+
+### Removed Legacy Packages and Added Modern Tooling
+
+**Changes**:
+- Removed `auto-package-update` package (incompatible with straight.el workflow)
+- Replaced `flycheck` with `flymake` for syntax checking
+- Replaced `desktop-save-mode` with `activities.el` for unified session/workspace management
+- Added `wgrep` package for editing grep/ripgrep results in-place
+- Added keybindings for `helpful` package (enhanced help system)
+- Rebound `C-h` from `kill-whole-line` to restore standard help prefix
+- Moved `kill-whole-line` to `C-c k` (consistent with `C-c u` for kill-line-backward)
+
+**Rationale**: 
+- `auto-package-update` only works with package.el; straight.el already handles updates via `straight-pull-all`
+- `flymake` is built into Emacs 29+ and integrates natively with Eglot (unlike flycheck)
+- `activities.el` supersedes both desktop+ and burly.el, providing unified activity management (suspend/resume workspaces) with automatic state saving, tab-bar integration, and bookmark-based buffer restoration for both file and special buffers
+- `helpful` provides superior help buffers with source code, references, and better formatting
+- `wgrep` enables direct editing of search results, essential for modern refactoring workflows
+- Restoring `C-h` prefix enables all standard help commands and helpful's enhanced interface
+
+**New keybindings**:
+- `C-h f/v/k/x` - Enhanced help via helpful (function/variable/key/command)
+- `C-c k` - kill-whole-line (moved from C-h)
+- `C-c ! n/p/l` - Flymake navigation (next/previous error, list diagnostics)
+- `C-c C-p` (in grep buffers) - Edit results with wgrep
+- `C-c C-c` (in wgrep) - Apply changes to files
+- `C-x C-a C-d/C-a/C-s/C-k/g/l/b` - Activities commands (define/resume/suspend/kill/revert/list/switch-buffer)
+
+**Files affected**:
+- `~/etc/dotfiles/dot-emacs.d/init.el`
+
+**Documentation updated**:
+- Moved `var/doc/emacs.md` → `notes/emacs.md` (flat structure per CLAUDE.md)
+- Updated CLAUDE.md to use flat structure for notes/todo/changelog archives (date patterns self-document)
+
 ## 2026-01-24
 
 ### Consolidated Emacs Configuration into Single File
