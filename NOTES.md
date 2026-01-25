@@ -2,6 +2,372 @@
 
 - **i3 window rules via wrapper script**: Investigate using wrapper scripts with i3-msg for project-specific window rules instead of config files. Would allow launching apps with dynamic configuration (float, sticky, position, size) without polluting dotfiles. Example: `launch-discord-overlay` script that spawns process and configures via `i3-msg "[pid=$PID] floating enable"`. More scriptable and portable than config includes.
 
+## 2026-01-24 - Emacs Configuration Consolidation
+
+### Decision: Merge init-settings.el into init.el
+
+**Context**: Emacs configuration was split between `init.el` (package configurations) and `init-settings.el` (global settings, functions, and keybindings). The split was a historical artifact that created discoverability issues.
+
+**The Problem:**
+- **Awkward setup**: Required knowing about `init-settings.el` existence
+- **Helm remnants**: Still had `("C-x C-f" . helm-find-files)` binding in init-settings.el
+- **Missing functions**: `copy-line` and `kill-line-backward` were bound but not defined
+- **Unclear organization**: Not obvious which settings belonged where
+
+**Implementation:**
+Merged all init-settings.el content into the `(use-package emacs ...)` stanza in init.el:
+- Global settings (backups, custom-file, compilation, etc.) → `:custom` section
+- Mode activation (subword-mode, delete-selection-mode, etc.) → `:config` section  
+- Helper functions (smart-open-line, copy-file-name-to-clipboard, etc.) → `:config` section
+- Global keybindings → `:bind` section
+- Hooks (sh-mode whitespace cleanup) → `:hook` section
+
+**Why Keybindings Live in use-package emacs:**
+All keybindings are in `(use-package emacs :bind ...)` because:
+1. **They're global** - Should work everywhere, not mode-specific
+2. **They map to global-map** - `:bind` in `use-package emacs` puts them in the global keymap
+3. **Custom functions live here** - Functions like `copy-line`, `smart-open-line` are defined in this stanza
+4. **Built-in commands** - Core Emacs commands like `compile`, `occur`, `recompile` work as global bindings
+
+Could theoretically split them into individual package stanzas (e.g., move `compile`/`recompile` to `use-package compile`), but that's overkill for simple keybindings and makes them harder to find. Centralized approach is cleaner.
+
+**Cleanup Actions:**
+- ✅ Added missing `copy-line` and `kill-line-backward` function definitions
+- ✅ Removed duplicate `C-c C-h` binding (kept only `C-c h`)
+- ✅ Removed Helm reference: `("C-x C-f" . helm-find-files)`
+- ✅ Removed unused `org-store-link` binding
+- ✅ Fixed `consult-apropos` → `apropos` (consult doesn't provide apropos wrapper; Vertico already enhances built-in)
+- ✅ Removed obsolete comment "Additional bindings from init-settings.el"
+- ✅ Commented out and later removed `(load "~/.emacs.d/init-settings.el")`
+
+**Benefits:**
+- ✅ **Single source of truth**: All configuration in init.el
+- ✅ **Better discoverability**: No hidden settings files
+- ✅ **No Helm remnants**: Clean break from old completion framework
+- ✅ **Logical organization**: Settings grouped by package/purpose
+
+**Files:**
+- `~/etc/dotfiles/dot-emacs.d/init.el` - consolidated configuration
+- `~/etc/dotfiles/dot-emacs.d/init-settings.el` - no longer loaded (backup exists)
+- `~/etc/dotfiles/dot-emacs.d/init-settings.el.backup` - archived original
+- `~/etc/dotfiles/dot-emacs.d/init.el.backup` - archived pre-merge version
+
+**Key Insight:** Modern `use-package` with `:demand t` and proper load ordering eliminates the need for separate "front-loaded" settings files. Everything can live in appropriate package stanzas.
+
+
+## 2026-01-24 - Modern Auto-Completion Stack Migration
+
+### Decision: Replace hippie-expand/company with Corfu + Cape + Eglot
+
+**Context**: Previous completion setup relied on `hippie-expand` (M-/) for basic expansion and `company-mode` (disabled) for LSP. The commented-out `lsp-mode` indicated an abandoned attempt at LSP integration. This setup was outdated and didn't provide modern IDE-like completions.
+
+**The Problem with hippie-expand:**
+- ❌ **No UI** - Just cycles through options sequentially
+- ❌ **Slow** - Checks each source one by one until it finds matches
+- ❌ **No LSP integration** - Can't leverage language servers
+- ❌ **No spell checking** - No integrated corrections
+- ❌ **Sequential checking** - Tries backends in order, doesn't merge sources
+
+**The Problem with company + lsp-mode:**
+- ❌ **lsp-mode was commented out** - Never actually working
+- ❌ **company-mode orphaned** - Hooked to lsp-mode but lsp-mode disabled
+- ❌ **Heavy** - company has significant overhead, modal overlays
+- ❌ **Older capf integration** - Wraps instead of native integration
+
+**Modern Stack: Corfu + Cape + Eglot**
+
+**Why This Stack:**
+1. **Aligns with Vertico/Consult philosophy** - Minimal, fast, native Emacs integration
+2. **Eglot built into Emacs 29+** - Zero external dependencies for LSP
+3. **Capf-native** - Uses Emacs' `completion-at-point-functions` natively
+4. **Community standard 2025-2026** - Current recommendation from Emacs community
+
+**Architecture:**
+
+```
+User types → completion-at-point-functions (capf)
+                ↓
+            Cape stacks sources:
+                1. eglot (LSP completions)
+                2. cape-file (file paths)
+                3. cape-dabbrev (buffer words)
+                4. cape-ispell (spell check)
+                ↓
+            Corfu displays popup UI
+                ↓
+            User selects with TAB/RET
+```
+
+**Implementation Details:**
+
+**Corfu Configuration:**
+- `corfu-auto t` - Auto-trigger completions
+- `corfu-auto-delay 0.1` - 100ms delay before showing
+- `corfu-auto-prefix 2` - Trigger after 2 characters
+- `corfu-cycle t` - Wrap around at list ends
+- TAB/S-TAB for navigation (familiar muscle memory)
+
+**Cape Sources (order matters):**
+1. **cape-file** - File path completions (first for immediate paths)
+2. **cape-dabbrev** - Dynamic abbreviations from buffers
+3. **cape-ispell** - Spell checking completions
+4. **eglot capf** - Added automatically by eglot when active
+
+**Eglot Configuration:**
+- Auto-enabled via hooks for: C++, C, Python, TypeScript, JavaScript, Shell
+- `eglot-autoshutdown t` - Clean up when buffers close
+- `eglot-sync-connect nil` - Async connection for faster startup
+- Custom clangd args: `--background-index`, `--clang-tidy`, `--header-insertion=iwyu`
+
+**Why Eglot Over lsp-mode:**
+1. **Built-in Emacs 29+** - No external package needed
+2. **Minimal config** - Works out of box with sensible defaults
+3. **Native integration** - Uses flymake, project.el, xref (all built-in)
+4. **Faster startup** - Lighter architecture
+5. **Stability** - Part of Emacs core, rigorously tested
+6. **Matches philosophy** - We chose Vertico over Helm, eglot over lsp-mode follows same logic
+
+**Language Server Support:**
+- **C/C++**: clangd (with clang-tidy, IWYU)
+- **Python**: python-lsp-server or pyright (auto-detected)
+- **TypeScript/JavaScript**: typescript-language-server
+- **Shell**: bash-language-server
+
+**Benefits:**
+
+**vs hippie-expand:**
+- ✅ Popup UI with visible candidates
+- ✅ Multiple sources merged intelligently
+- ✅ LSP integration for smart completions
+- ✅ Spell checking integrated
+- ✅ Much faster for large completion sets
+
+**vs company + lsp-mode:**
+- ✅ 10x lighter configuration
+- ✅ Faster startup and completion
+- ✅ Native Emacs integration (no modal overlays)
+- ✅ Works seamlessly with Vertico/Consult
+- ✅ eglot built-in (no external dependencies)
+
+**Compatibility:**
+- ✅ `M-/` still works (dabbrev-expand) for quick single expansions
+- ✅ `C-M-i` / `M-TAB` (completion-at-point) now shows corfu popup
+- ✅ All Vertico/Consult commands unaffected
+- ✅ Can disable corfu-auto and use manual `C-M-i` if preferred
+
+**Migration Notes:**
+- Removed `(use-package company ...)` entirely
+- Removed commented `(use-package lsp-mode ...)` and `(use-package lsp-ui ...)`
+- Added corfu, cape, eglot in single location after compile package
+- All settings self-contained and documented
+
+**Key Insight:** Modern Emacs completion is built on **capf** (completion-at-point-functions). Corfu is a UI frontend, Cape stacks sources, and eglot provides LSP via capf. This architecture is cleaner than older approaches (company backends, helm sources) and aligns with Emacs' built-in systems.
+
+**Testing:**
+```elisp
+;; Verify packages loaded
+(fboundp 'corfu-mode)  ;; t
+(fboundp 'eglot)       ;; t  
+(fboundp 'cape-file)   ;; t
+
+;; Check completion sources
+completion-at-point-functions
+;; => (cape-file cape-dabbrev cape-ispell ...)
+
+;; In a code buffer with eglot:
+;; => (eglot-completion-at-point cape-file cape-dabbrev ...)
+```
+
+**Future Improvements:**
+- Could add `corfu-popupinfo` for inline documentation
+- Could add `cape-keyword` for language keywords
+- Could add `cape-dict` for dictionary completions
+- Could tune `cape-dabbrev-check-other-buffers` for performance
+
+**References:**
+- Modern Emacs completion guide: https://blog.tjll.net/a-beginners-guide-to-extending-emacs
+- Corfu wiki: https://github.com/minad/corfu
+- Eglot manual: Built into Emacs, see `C-h i m eglot`
+- 2025 community consensus: corfu > company, eglot > lsp-mode for most users
+
+
+## 2026-01-24 - Hermetic Language Server Installation
+
+### Decision: Replace nvm/pyenv with uv/mise for hermetic language server installation
+
+**Context**: Emacs eglot needs language servers installed. Traditional approaches (pip, npm global installs) contaminate system packages and require sudo. The existing nvm setup was slow and Node-only.
+
+**The Problem with Traditional Installation:**
+- ❌ **pip global install**: Breaks system Python, requires sudo, conflicts between tools
+- ❌ **npm global install**: Contamination, permission issues, version conflicts
+- ❌ **nvm**: Slow (shell script, 20-40x slower than Rust alternatives), Node-only, shell eval overhead
+- ❌ **pyenv**: Unnecessary complexity for tool installation, just managing Python versions
+
+**Modern Hermetic Stack: uv + mise**
+
+**Why This Stack:**
+1. **Zero system contamination** - All user-level, isolated installations
+2. **No sudo required** (except for clangd system package)
+3. **Significantly faster** - Both are Rust-based, 10-100x faster than predecessors
+4. **Reproducible** - Easy to replicate setup across machines
+5. **Clean uninstall** - Just delete `~/.local` and `~/.cargo` directories
+
+**Architecture:**
+
+```
+Language Servers Needed:
+├── C/C++: clangd (system package via apt)
+├── Python: python-lsp-server
+│   └── Installed via: uv tool install
+│       └── Location: ~/.local/bin/pylsp
+│       └── Isolated environment, no system Python contamination
+├── TypeScript: typescript-language-server
+│   └── Installed via: mise Node + npm
+│       └── Location: ~/.local/share/mise/installs/node/X.X.X/bin/
+│       └── Shimmed to: ~/.local/share/mise/shims/
+└── Bash: bash-language-server
+    └── Installed via: mise Node + npm
+        └── Same location as TypeScript
+```
+
+**Tool Details:**
+
+### uv (Python Package Manager)
+- **Replaces**: pip, pipx, pyenv
+- **Speed**: 10-100x faster than pip (Rust vs Python)
+- **Installation**: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- **Location**: `~/.cargo/bin/uv`
+- **Key Feature**: `uv tool install` creates isolated environments per tool
+- **Benefits**:
+  - No virtualenv needed for CLI tools
+  - Each tool has own dependencies, no conflicts
+  - Automatic dependency resolution
+  - Lock file support for reproducibility
+
+### mise (Polyglot Version Manager)
+- **Replaces**: nvm, fnm, volta, pyenv, rbenv, asdf
+- **Speed**: Fastest among all alternatives (Rust-based)
+- **Installation**: `curl https://mise.run | sh`
+- **Location**: `~/.local/bin/mise`
+- **Key Features**:
+  - **Shims**: Symlinks in `~/.local/share/mise/shims/` point to actual binaries
+  - **Auto-activation**: Detects `.tool-versions`, `package.json`, `.node-version`
+  - **Multi-language**: Can manage Python, Ruby, Go, etc. (not just Node)
+  - **No shell overhead**: Unlike nvm's `eval "$(nvm init)"` on every shell
+- **How it works**:
+  ```
+  1. mise use --global node@lts
+     → Downloads Node to ~/.local/share/mise/installs/node/X.X.X/
+  
+  2. mise x -- npm install -g typescript-language-server
+     → Uses mise's Node, installs to ~/.local/share/mise/installs/node/X.X.X/bin/
+  
+  3. Creates shim: ~/.local/share/mise/shims/typescript-language-server
+     → Symlink points to ~/.local/bin/mise
+     → mise intercepts and runs correct version
+  
+  4. PATH includes ~/.local/share/mise/shims/
+     → Commands "just work" from any directory
+  ```
+
+**Shell Configuration (.zshenv):**
+
+```bash
+# Old (removed):
+export PYENV_ROOT="$HOME/.pyenv"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+command -v pyenv >/dev/null 2>&1 && eval "$(pyenv init -)"
+
+# New:
+export MISE_DATA_DIR="$HOME/.local/share/mise"
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
+```
+
+**Integration with Emacs Eglot:**
+
+Eglot searches PATH for language servers. With mise shims in PATH:
+```elisp
+(use-package eglot
+  :hook ((python-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure)
+         (sh-mode . eglot-ensure))
+  ...)
+```
+
+When you open a TypeScript file:
+1. `eglot-ensure` runs
+2. Eglot looks for `typescript-language-server` in PATH
+3. Finds `~/.local/share/mise/shims/typescript-language-server`
+4. Shim executes `~/.local/bin/mise` which finds real binary
+5. mise runs correct version for current project
+
+**Benefits:**
+
+**vs pip:**
+- ✅ No system contamination
+- ✅ No sudo needed
+- ✅ 10-100x faster
+- ✅ Isolated per-tool dependencies
+
+**vs nvm:**
+- ✅ 3-40x faster (Rust vs shell script)
+- ✅ No shell eval overhead
+- ✅ Multi-language support (not just Node)
+- ✅ True per-project isolation
+
+**Future: Per-Project Versions**
+
+mise supports project-specific versions:
+
+```bash
+cd ~/project-a
+mise use node@18
+echo "node 18" > .tool-versions
+
+cd ~/project-b
+mise use node@20
+# Auto-switches when you cd between projects!
+```
+
+**Verification:**
+
+```bash
+# Check installations
+which uv                          # ~/.cargo/bin/uv
+which mise                        # ~/.local/bin/mise
+which pylsp                       # ~/.local/bin/pylsp
+which typescript-language-server  # ~/.local/share/mise/shims/...
+
+# Check versions
+uv --version
+mise --version
+pylsp --version
+typescript-language-server --version
+
+# See mise status
+mise ls        # Lists installed runtimes
+mise which node  # Shows which node binary is active
+```
+
+**Documentation:**
+- Usage guide: `~/var/doc/emacs.md`
+- Build instructions: `~/var/build/emacs.md`
+
+**Key Insight:** Hermetic installation via modern Rust-based tools (uv, mise) eliminates the decade-old problems of system contamination, permission issues, and version conflicts. The architecture is cleaner: each tool gets its own isolated environment, shims provide transparent access, and everything is user-level (no sudo).
+
+**Migration Notes:**
+- Old `~/.nvm/` no longer loaded (can be deleted after verification)
+- Old `~/.pyenv/` no longer loaded (can be deleted after verification)
+- `.zshenv` updated to use mise instead of nvm/pyenv
+- `configure-system.sh` replaces nvm section with full language server stack
+
+**References:**
+- uv: https://docs.astral.sh/uv/
+- mise: https://mise.jdx.dev/
+
+
+
 ## 2026-01-16 - Go Installation and Bluetuith Configuration
 
 ### Decision: Add Go toolchain installation and bluetuith Bluetooth manager to configure-system.sh

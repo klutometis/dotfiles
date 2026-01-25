@@ -160,36 +160,112 @@ if ! command -v bluetuith &> /dev/null; then
   go install github.com/darkhz/bluetuith@latest
 fi
 
+
 # =============================================================================
-# Node.js & npm Installation (via nvm)
+# Language Server Installation (Hermetic, Isolated Environments)
 # =============================================================================
 
-echo "Setting up Node.js and npm via nvm..."
+echo "Setting up language servers for Emacs eglot..."
 
-# Install nvm if not present
-if [ ! -d "$HOME/.nvm" ]; then
-  echo "Installing nvm..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/refs/heads/master/install.sh | bash
-
-  # Load nvm for current session
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# -----------------------------------------------------------------------------
+# C/C++ Language Server - clangd (native Ubuntu package)
+# -----------------------------------------------------------------------------
+if ! command -v clangd &> /dev/null; then
+  echo "Installing clangd..."
+  sudo apt-get update
+  sudo apt-get install -y clangd
 else
-  echo "nvm already installed"
-  # Load nvm for current session
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  echo "clangd already installed"
 fi
 
-# Install latest Node.js and npm if not present
-if ! command -v node &> /dev/null; then
-  echo "Installing Node.js..."
-  nvm install node
-  nvm use node
-  nvm install-latest-npm
+# -----------------------------------------------------------------------------
+# Python Package Manager - uv (Rust-based, hermetic)
+# Replaces: pip, pipx, pyenv - 10-100x faster, proper isolation
+# -----------------------------------------------------------------------------
+if ! command -v uv &> /dev/null; then
+  echo "Installing uv (modern Python package manager)..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  # Add to PATH for current session
+  export PATH="$HOME/.cargo/bin:$PATH"
 else
-  echo "Node.js already installed ($(node --version))"
+  echo "uv already installed"
 fi
+
+# -----------------------------------------------------------------------------
+# Python Language Server - python-lsp-server (via uv tool)
+# Isolated installation, won't interfere with system Python
+# -----------------------------------------------------------------------------
+if ! command -v pylsp &> /dev/null; then
+  echo "Installing python-lsp-server via uv..."
+  uv tool install python-lsp-server
+else
+  echo "python-lsp-server already installed"
+fi
+
+# -----------------------------------------------------------------------------
+# Node.js Version Manager - mise (Rust-based, multi-language, hermetic)
+# Replaces: nvm, fnm, volta - Fastest, true isolation, no shell hooks
+# Also manages other tools (Python, Ruby, etc.) if needed later
+# -----------------------------------------------------------------------------
+if ! command -v mise &> /dev/null; then
+  echo "Installing mise (modern polyglot version manager)..."
+  curl https://mise.run | sh
+  # Add to PATH for current session
+  export PATH="$HOME/.local/bin:$PATH"
+  
+  # Initialize mise for current shell (bash/zsh auto-detected)
+  eval "$(mise activate bash)"
+else
+  echo "mise already installed"
+fi
+
+# -----------------------------------------------------------------------------
+# Node.js Installation via mise
+# Hermetic, per-user installation separate from system Node
+# -----------------------------------------------------------------------------
+if ! mise ls node &> /dev/null || [ -z "$(mise ls node 2>/dev/null)" ]; then
+  echo "Installing Node.js via mise..."
+  mise use --global node@lts
+  # Ensure mise Node is in PATH
+  eval "$(mise activate bash)"
+else
+  echo "Node.js already installed via mise"
+fi
+
+# -----------------------------------------------------------------------------
+# TypeScript Language Server (via mise Node's npm)
+# Isolated to mise's Node, won't touch system npm
+# -----------------------------------------------------------------------------
+if ! command -v typescript-language-server &> /dev/null; then
+  echo "Installing typescript-language-server..."
+  mise x -- npm install -g typescript-language-server typescript
+else
+  echo "typescript-language-server already installed"
+fi
+
+# -----------------------------------------------------------------------------
+# Bash Language Server (via mise Node's npm)
+# -----------------------------------------------------------------------------
+if ! command -v bash-language-server &> /dev/null; then
+  echo "Installing bash-language-server..."
+  mise x -- npm install -g bash-language-server
+else
+  echo "bash-language-server already installed"
+fi
+
+echo ""
+echo "Language server installation complete!"
+echo "Installed servers:"
+echo "  - clangd (C/C++): $(which clangd 2>/dev/null || echo 'not found')"
+echo "  - pylsp (Python): $(which pylsp 2>/dev/null || echo 'not found')"
+echo "  - typescript-language-server: $(which typescript-language-server 2>/dev/null || echo 'not found')"
+echo "  - bash-language-server: $(which bash-language-server 2>/dev/null || echo 'not found')"
+echo ""
+echo "Note: You may need to restart your shell or run:"
+echo "  export PATH=\"\$HOME/.cargo/bin:\$HOME/.local/bin:\$HOME/.local/share/mise/shims:\$PATH\""
+echo ""
+
+
 
 # =============================================================================
 # Directory Symlinks Configuration

@@ -4,8 +4,8 @@
 # Available to all shells (interactive, non-interactive, scripts)
 
 # Tool-specific environment
-export PYENV_ROOT="$HOME/.pyenv"
-export NVM_DIR="$HOME/.nvm"
+# Modern hermetic package managers (mise replaces nvm/pyenv, uv replaces pip/pipx)
+export MISE_DATA_DIR="$HOME/.local/share/mise"
 
 # PATH Configuration
 path=
@@ -55,8 +55,8 @@ unset QT_IM_MODULE
 [ -f "$HOME/.rokit/env" ] && . "$HOME/.rokit/env"
 
 # Tool initialization (available to all shells including non-interactive)
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+# Initialize mise (replaces nvm, pyenv, etc.)
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
+
+# Keep rbenv if still needed
 command -v rbenv >/dev/null 2>&1 && eval "$(rbenv init -)"
-command -v pyenv >/dev/null 2>&1 && eval "$(pyenv init -)"
-command -v pyenv >/dev/null 2>&1 && eval "$(pyenv virtualenv-init -)"

@@ -1,5 +1,19 @@
 # TODO
 
+## Content Extraction & Media
+
+### Fetch.AI Event Video
+- Extract video from Fetch.AI event (interview with folks for health-tech week)
+- Extract still of slide to print for dad
+
+## Harvard Submission
+- Prepare headshot for Harvard
+- Prepare bio for Harvard
+
+## Website Update
+- Update danenberg.ai after running LI-extraction
+- Include latest Davos talks in the update
+
 ## Bazelify the scripts
 
 Stow handles relative symlinks; Bazel builds?

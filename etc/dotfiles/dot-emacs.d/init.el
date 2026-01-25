@@ -39,10 +39,6 @@
 ;; Optional: auto-update all packages on Emacs startup
 (add-hook 'emacs-startup-hook #'straight-pull-all)
 
-;; Load a separate file containing all global settings and functions;
-;; front-loading to enjoy the function definitions when configuring packages
-;; below.
-(load "~/.emacs.d/init-settings.el")
 
 ;;; Load transient early and eagerly.
 (use-package transient :demand t)
@@ -189,17 +185,66 @@
   (combobulate-key-prefix "C-c o")
   :hook ((prog-mode . combobulate-mode)))
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :config
-  (setq company-minimum-prefix-length 1
-        company-idle-delay 0.0)) ;; Default is 0.2
 
 (use-package compile
   :config
   (setq compilation-ask-about-save nil)
   (setq compilation-always-kill t))
+
+;; Modern completion stack: Corfu + Cape + Eglot
+(use-package corfu
+  :custom
+  (corfu-auto t)                      ;; Enable auto completion
+  (corfu-auto-delay 0.1)              ;; Delay before showing completions
+  (corfu-auto-prefix 2)               ;; Minimum prefix length for auto completion
+  (corfu-cycle t)                     ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect 'prompt)           ;; Preselect the prompt
+  (corfu-on-exact-match nil)          ;; Don't auto-insert on exact match
+  :init
+  (global-corfu-mode)
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous)))
+
+(use-package cape
+  :init
+  ;; Add completion sources to completion-at-point-functions
+  ;; Order matters: earlier sources are tried first
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  ;; cape-ispell or cape-dict for spell checking completions
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  :config
+  ;; Make cape-dabbrev case-sensitive for better matches
+  (setq cape-dabbrev-check-other-buffers t))
+
+(use-package eglot
+  :hook ((c++-mode . eglot-ensure)
+         (c-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (python-ts-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure)
+         (typescript-ts-mode . eglot-ensure)
+         (js-mode . eglot-ensure)
+         (sh-mode . eglot-ensure))
+  :custom
+  (eglot-autoshutdown t)  ;; Shutdown server when last managed buffer is killed
+  (eglot-sync-connect nil) ;; Async connection
+  :config
+  ;; Add clangd arguments for C++
+  (add-to-list 'eglot-server-programs
+               '((c++-mode c-mode) . ("clangd"
+                                      "--background-index"
+                                      "--clang-tidy"
+                                      "--header-insertion=iwyu"
+                                      "--suggest-missing-includes")))
+  ;; Ensure cape-capf is used for eglot completion
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+
+
 
 (use-package deadgrep)
 
@@ -241,7 +286,18 @@
   :custom
   ;; Enable terminal mouse tracking
   (mouse-wheel-follow-mouse t)
-  (mouse-wheel-scroll-amount '(1 ((shift) . 5))) ;; optional
+  (mouse-wheel-scroll-amount '(1 ((shift) . 5)))
+  ;; Send backups to alternative location
+  (backup-directory-alist `(("." . "~/.emacs.d/backups")))
+  (vc-make-backup-files t)
+  (kept-old-versions 5)
+  (kept-new-versions 5)
+  ;; Custom file location
+  (custom-file "~/.emacs.d/custom.el")
+  ;; Compilation settings
+  (compilation-scroll-output t)
+  ;; Disable visible bell
+  (visible-bell nil)
 
   :config
   ;; Enable mouse support in terminal
@@ -249,6 +305,19 @@
 
   ;; Show the column-number in addition to row-number
   (column-number-mode 1)
+
+  ;; Enable subword mode globally
+  (global-subword-mode 1)
+
+  ;; Typed text replaces selection
+  (delete-selection-mode t)
+
+  ;; Load custom file if it exists
+  (when (file-exists-p custom-file)
+    (load custom-file))
+
+  ;; Enable upcase-region
+  (put 'upcase-region 'disabled nil)
 
   (defun toggle-terminal-mouse ()
     (interactive)
@@ -259,17 +328,225 @@
       (xterm-mouse-mode 1)
       (message "Mouse enabled in Emacs.")))
 
+  ;; Helper functions from init-settings.el
+
+  (defun copy-line (arg)
+    "Copy lines (as many as prefix argument) in the kill ring.
+      Ease of use features:
+      - Move to start of next line.
+      - Appends the copy on sequential calls.
+      - Use newline as last char even on the last line of the buffer.
+      - If region is active, copy its lines."
+    (interactive "p")
+    (let ((beg (line-beginning-position))
+          (end (line-end-position arg)))
+      (when mark-active
+        (if (> (point) (mark))
+            (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
+          (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
+      (if (eq last-command 'copy-line)
+          (kill-append (buffer-substring beg end) (< end beg))
+        (kill-ring-save beg end)))
+    (kill-append "\n" nil)
+    (beginning-of-line (or (and arg (1+ arg)) 2))
+    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+
+  (defun kill-line-backward (arg)
+    "Kill ARG lines backward."
+    (interactive "p")
+    (kill-line (- 1 arg)))
+
+  (defun copy-file-name-to-clipboard ()
+    "Copy the current buffer file name to the clipboard."
+    (interactive)
+    (let ((filename (if (equal major-mode 'dired-mode)
+                        default-directory
+                      (buffer-file-name))))
+      (when filename
+        (kill-new filename)
+        (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+  (defun save-all-buffers-no-confirmation (orig-func &rest args)
+    "Save all buffers without confirmation."
+    (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t))
+              ((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
+      (apply orig-func args)))
+
+  (advice-add 'save-some-buffers :around #'save-all-buffers-no-confirmation)
+
+  (defun save-all-file-buffers ()
+    "Save all buffers with file names that are modified, without confirmation."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (buffer-modified-p))
+          (save-buffer)))))
+
+  (defun select-next-subword ()
+    "Extend selection to the next subword, or select the next subword if none is selected."
+    (interactive)
+    (if (use-region-p)
+        (progn
+          (goto-char (region-end))
+          (subword-right 1))
+      (progn
+        (set-mark (point))
+        (subword-right 1))))
+
+  (defun current-buffer-not-mini ()
+    "Return current-buffer if current buffer is not the *mini-buffer*
+  else return buffer before minibuf is activated."
+    (if (not (window-minibuffer-p)) (current-buffer)
+      (if (eq (get-lru-window) (next-window))
+          (window-buffer (previous-window)) (window-buffer (next-window)))))
+
+  (define-key minibuffer-local-map
+              (kbd "C-c TAB") (lambda () (interactive)
+                                (insert (buffer-name (current-buffer-not-mini)))))
+
+  (defun get-buffers-matching-mode (mode)
+    "Returns a list of buffers where their major-mode is equal to MODE"
+    (let ((buffer-mode-matches '()))
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf
+          (if (eq mode major-mode)
+              (add-to-list 'buffer-mode-matches buf))))
+      buffer-mode-matches))
+
+  (defun multi-occur-in-this-mode ()
+    "Show all lines matching REGEXP in buffers with this major mode."
+    (interactive)
+    (multi-occur
+     (get-buffers-matching-mode major-mode)
+     (car (occur-read-primary-args))))
+
+  (defun get-buffers-matching-extension (extension)
+    (let ((matching-buffers '()))
+      (dolist (buffer (buffer-list) matching-buffers)
+        (let ((file-name (buffer-file-name buffer)))
+          (if (and file-name
+                   (string= (file-name-extension file-name)
+                            extension))
+              (add-to-list 'matching-buffers buffer))))))
+
+  (defun multi-occur-with-this-extension ()
+    "Show all lines matching REGEXP in buffers whose filenames have
+this extension."
+    (interactive)
+    (multi-occur
+     (get-buffers-matching-extension (file-name-extension buffer-file-name))
+     (car (occur-read-primary-args))))
+
+  (defun occur-multi-occur ()
+    "Starts multi-occur for the current search term on all buffers with the first matching buffer's major mode."
+    (interactive)
+    (multi-occur
+     (get-buffers-matching-mode
+      (with-current-buffer (car (nth 2 occur-revert-arguments))
+        major-mode))
+     (car occur-revert-arguments)))
+
+  (bind-key "C-o" 'isearch-occur isearch-mode-map)
+  (bind-key "m" 'occur-multi-occur occur-mode-map)
+
+  (defun rename-file-and-buffer (new-name)
+    "Renames both current buffer and file it's visiting to NEW-NAME."
+    (interactive "fNew name: ")
+    (let ((name (buffer-name))
+          (filename (buffer-file-name)))
+      (if (not filename)
+          (message "Buffer '%s' is not visiting a file!" name)
+        (if (get-buffer new-name)
+            (message "A buffer named '%s' already exists!" new-name)
+          (progn
+            (rename-file name new-name 1)
+            (rename-buffer new-name)
+            (set-visited-file-name new-name)
+            (set-buffer-modified-p nil))))))
+
+  (defun smart-open-line ()
+    "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+    (interactive)
+    (move-end-of-line nil)
+    (newline-and-indent))
+
+  (defun smart-open-line-above ()
+    "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
+    (interactive)
+    (move-beginning-of-line nil)
+    (newline-and-indent)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+  (defun smarter-move-beginning-of-line (arg)
+    "Move point back to indentation of beginning of line.
+
+Move point to the first non-whitespace character on this line.
+If point is already there, move to the beginning of the line.
+Effectively toggle between the first non-whitespace character and
+the beginning of the line.
+
+If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+point reaches the beginning or end of the buffer, stop there."
+    (interactive "^p")
+    (setq arg (or arg 1))
+
+    ;; Move lines first
+    (when (/= arg 1)
+      (let ((line-move-visual nil))
+        (forward-line (1- arg))))
+
+    (let ((orig-point (point)))
+      (back-to-indentation)
+      (when (= orig-point (point))
+        (move-beginning-of-line 1))))
+
+  (defun y-or-n-p-with-return (orig-func &rest args)
+    "Make RET act as yes in y-or-n-p prompts."
+    (let ((query-replace-map (copy-keymap query-replace-map)))
+      (define-key query-replace-map (kbd "RET") 'act)
+      (apply orig-func args)))
+
+  (advice-add 'y-or-n-p :around #'y-or-n-p-with-return)
+
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
   :bind (("C-c ?"     . help-for-help)
          ("M-z"       . zap-to-char)
          ("C-<M-z>"   . zap-up-to-char)
          ("C-c m"     . chmod-current-file)
-         ("C-c M-m" . toggle-terminal-mouse)
+         ("C-c M-m"   . toggle-terminal-mouse)
          ;; Get rid of suspension (messes with tmux).
          ("C-z" . nil)
-         ("C-x C-z" . nil))
+         ("C-x C-z" . nil)
+         ("C-a"       . smarter-move-beginning-of-line)
+         ("C-c ;"     . comment-or-uncomment-region)
+         ("C-c C-k"   . copy-line)
+         ("C-c C-o"   . multi-occur-in-matching-buffers)
+         ("C-c O"     . multi-occur-with-this-extension)
+         ("C-c P"     . copy-file-name-to-clipboard)
+         ("C-c R"     . recompile)
+         ("C-c U"     . rename-uniquely)
+         ("C-c a"     . list-matching-lines)
+         ("C-c c"     . compile)
+         ("C-c h"     . help-command)
+         ("C-c o"     . occur)
+         ("C-c p"     . pwd)
+         ("C-c u"     . kill-line-backward)
+         ("C-h"       . kill-whole-line)
+         ("C-o"       . smart-open-line-above)
+         ("C-x C-r"   . revert-buffer)
+         ("C-x s"     . save-all-file-buffers)
+         ("C-x TAB"   . indent-rigidly)
+         ("M-%"       . query-replace-regexp)
+         ("M-;"       . comment-dwim)
+         ("M-o"       . smart-open-line))
 
   :hook
-  ((find-file-hook . (lambda () (setq buffer-save-without-query t)))))
+  ((find-file-hook . (lambda () (setq buffer-save-without-query t)))
+   (sh-mode-hook . (lambda () (add-hook 'before-save-hook #'whitespace-cleanup nil :local)))))
 
 (use-package embark)
 
@@ -464,12 +741,13 @@ This operates in-place on the rewritten region between BEG and END."
 
 (use-package consult
   :bind (;; Replace helm bindings
-         ("<f1> a" . consult-apropos)        ; was helm-apropos
+         ("<f1> a" . apropos)        ; was helm-apropos
          ("C-c h o" . consult-line)          ; was helm-occur
          ("C-x b" . consult-buffer)          ; was helm-buffers-list
          ("M-y" . consult-yank-pop)          ; was helm-show-kill-ring
          ;; Replace grep/find bindings
-         ("C-c r" . consult-ripgrep)         ; was rgrep
+         ("C-c r" . consult-ripgrep)         ; Project root
+         ("C-c R" . consult-ripgrep-current-dir)  ; Current directory
          ("C-c f" . consult-find)            ; was find-grep-dired
          ;; Additional useful commands
          ("M-g i" . consult-imenu)
@@ -478,10 +756,30 @@ This operates in-place on the rewritten region between BEG and END."
   :custom
   (consult-narrow-key "<")  ; Use < to narrow
   :config
+  ;; Helper function for ripgrep from current directory
+  (defun consult-ripgrep-current-dir ()
+    "Run consult-ripgrep starting from current directory."
+    (interactive)
+    (consult-ripgrep default-directory))
+
   ;; Use ripgrep if available, otherwise fallback to grep
   (when (executable-find "rg")
     (setq consult-ripgrep-args
-          "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip")))
+          "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip"))
+
+  ;; Enable automatic preview for ripgrep and other search commands
+  (consult-customize
+   consult-ripgrep consult-grep consult-git-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; Preview with 0.2s debounce to avoid flickering
+   :preview-key '(:debounce 0.2 any))
+
+  ;; Immediate preview for yank-ring (like Helm)
+  (consult-customize
+   consult-yank-pop consult-yank-from-kill-ring
+   :preview-key 'any))
 
 ;; Embark for actions on candidates
 (use-package embark
@@ -506,28 +804,6 @@ This operates in-place on the rewritten region between BEG and END."
   (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions)
   (push '("Slidev" (markdown-mode (language-id--file-name-regexp "slides\\.md"))) language-id--definitions))
 
-;; (use-package lsp-mode
-;;   :init
-;;   ;; (setq lsp-prefer-flymake nil) ;; Use lsp-ui and flycheck instead of flymake
-;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-;;   (setq lsp-keymap-prefix "C-c l")
-;;   (setq lsp-clients-clangd-args
-;;         '("--background-index"
-;;           "--suggest-missing-includes"
-;;           "--clang-tidy"
-;;           "--header-insertion=iwyu"))
-;;   :config
-;;   (setq lsp-headerline-breadcrumb-enable nil)
-;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-;;          (c++-mode . lsp)
-;;          ;; if you want which-key integration
-;;          (lsp-mode . lsp-enable-which-key-integration))
-;;   :commands lsp)
-
-;; (use-package lsp-ui
-;;   :commands lsp-ui-mode
-;;   :config
-;;   (setq lsp-ui-sideline-enable nil
 ;;         lsp-ui-doc-enable nil))
 
 (use-package magit
