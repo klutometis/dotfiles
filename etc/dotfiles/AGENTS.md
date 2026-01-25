@@ -12,14 +12,17 @@
 When NOTES.md exceeds ~500 lines, use LLM to extract themes into topic files. Archive before extraction.
 
 **Structure:**
-- `notes/topics/[TOPIC].md` - Living docs per system/feature (LLM-extracted themes)
-- `notes/archive/YYYY-MM-DD.md` - Snapshot before extraction
+- `notes/[TOPIC].md` - Living docs per system/feature (LLM-extracted themes)
+- `notes/YYYY-MM-DD.md` - Snapshot before extraction (date pattern indicates archive)
 
 **Post-compaction**: NOTES.md becomes a brief summary of recent decisions with pointers to topic files.
 
 ### Pruning TODO.md
 
 When TODO.md exceeds ~300-400 lines, archive then prune completed work.
+
+**Structure:**
+- `todo/YYYY-MM-DD.md` - Full snapshots (date pattern indicates archive)
 
 **Remove**: Completed sections, implementation details, resolved issues
 **Keep**: Only in-progress tasks and active work
@@ -30,16 +33,10 @@ When TODO.md exceeds ~300-400 lines, archive then prune completed work.
 
 When CHANGELOG.md exceeds ~1000 lines, move old entries to archive. Keep recent ~6 months visible.
 
+**Structure:**
+- `changelog/YYYY-MM-DD.md` - Old releases (date pattern indicates archive)
+
 **Post-compaction**: CHANGELOG.md retains recent releases for visibility. It's user-facing, not just internal notes.
-
-### Archive Structure
-
-```
-todo/archive/YYYY-MM-DD.md       # Full snapshots
-notes/archive/YYYY-MM-DD.md      # Snapshots before topic extraction
-notes/topics/[TOPIC].md          # LLM-extracted living documentation
-changelog/archive/YYYY-MM-DD.md  # Old releases (user-facing)
-```
 
 ## Package Management
 
