@@ -2,6 +2,94 @@
 
 ## 2026-01-24
 
+### Consolidated Emacs Configuration into Single File
+
+**Changes**:
+- Merged `~/etc/dotfiles/dot-emacs.d/init-settings.el` into `init.el`
+- All global settings, helper functions, and keybindings now in `(use-package emacs)` stanza
+- Removed obsolete `(load "~/.emacs.d/init-settings.el")` statement
+- Added missing function definitions: `copy-line` and `kill-line-backward`
+- Removed duplicate `C-c C-h` keybinding (kept only `C-c h` for help)
+- Removed unused `org-store-link` binding (not using org mode)
+- Fixed `consult-apropos` autoload error by changing to built-in `apropos`
+
+**Rationale**: Single-file configuration improves discoverability and eliminates the need to know about separate settings files. All global configuration is now in one logical place within the `emacs` package stanza.
+
+**Files affected**:
+- `~/etc/dotfiles/dot-emacs.d/init.el` - merged and cleaned up
+- `~/etc/dotfiles/dot-emacs.d/init-settings.el` - no longer loaded (kept as backup)
+
+
+### Modernized Auto-Completion Stack
+
+**Changes**:
+- Replaced `company-mode` with `corfu` (fast, capf-native completion UI)
+- Replaced commented-out `lsp-mode` with `eglot` (built-in LSP client)
+- Added `cape` for completion source stacking (LSP + files + spell + dabbrev)
+- Configured eglot for C++, Python, TypeScript, JavaScript, and Shell modes
+- Auto-completion now triggers after 2 characters with 0.1s delay
+
+**Rationale**: Corfu + eglot provides a modern, lightweight completion stack that integrates seamlessly with Vertico/Consult. Eglot is built into Emacs 29+ and requires minimal configuration. Cape allows stacking multiple completion sources (LSP, files, spell checking) in a single unified interface.
+
+**What you get**:
+- Popup completions with TAB/S-TAB navigation (vs hippie-expand's cycling)
+- LSP-aware completions for supported languages
+- File path completions
+- Spell-check suggestions integrated into completions
+- Dynamic abbreviations from open buffers
+
+**Language servers required**:
+- C/C++: `clangd`
+- Python: `python-lsp-server` or `pyright`
+- TypeScript: `typescript-language-server`
+- Bash: `bash-language-server`
+
+
+### Added Hermetic Language Server Installation
+
+**Changes**:
+- Updated `~/bin/configure-system.sh` to install language servers hermetically
+- Replaced `nvm` with `mise` (Rust-based, 3-40x faster, polyglot version manager)
+- Added `uv` for Python tool installation (10-100x faster than pip, proper isolation)
+- Automated installation of: clangd, python-lsp-server, typescript-language-server, bash-language-server
+- Updated `~/.zshenv` to initialize mise instead of nvm/pyenv
+
+**Rationale**: Hermetic installation prevents system contamination and sudo requirements. Modern tools (uv, mise) are significantly faster and provide better isolation than traditional package managers (pip, nvm, pyenv).
+
+**Language servers installed**:
+- C/C++: `clangd` (via apt, with clang-tidy and IWYU)
+- Python: `python-lsp-server` (via uv tool)
+- TypeScript: `typescript-language-server` (via mise + npm)
+- Bash: `bash-language-server` (via mise + npm)
+
+**Benefits**:
+- No system package conflicts
+- No sudo needed (except for clangd)
+- Faster installation and updates
+- Easy per-project version management (with mise)
+- Integrates automatically with Emacs eglot
+
+**Documentation**: See `~/var/doc/emacs.md` for Emacs usage and `~/var/build/emacs.md` for build instructions
+
+
+### Enhanced Consult Search with Preview
+
+**Changes**:
+- Added `C-c R` keybinding for `consult-ripgrep` from current directory (`C-c r` still searches from project root)
+- Enabled automatic preview for ripgrep/grep results (0.2s debounce to avoid flickering)
+- Enabled instant preview for yank-ring (`M-y`) - restores Helm-like behavior
+- Added `consult-customize` configuration for preview across all search commands
+
+**Rationale**: Addresses usability issues from Helm migration. Users needed `C-u C-c r` to search current directory (now just `C-c R`). Preview functionality replicates Helm's useful "see before you jump" behavior while maintaining Vertico's speed and clean interface.
+
+**Usage**:
+- `C-c R` - ripgrep from current directory
+- `C-c r` - ripgrep from project root
+- Navigate with `C-n`/`C-p` to see automatic preview
+- Type more terms to narrow results (space-separated)
+- Use `!word` to exclude matches containing "word"
+
+
 ### Replaced Helm with Vertico/Consult Completion Stack
 
 **Changes**:

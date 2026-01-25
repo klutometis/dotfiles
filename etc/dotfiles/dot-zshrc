@@ -11,8 +11,9 @@ DISABLE_AUTO_UPDATE=false
 UPDATE_ZSH_DAYS=0
 source $ZSH/oh-my-zsh.sh
 
-# Unalias npx (breaks tooling)
+# Unalias npx and npm (breaks tooling)
 unalias npx 2>/dev/null
+unalias npm 2>/dev/null
 
 # Prompt customization
 export PROMPT='λ %~/ %n@%M $(git_prompt_info)%{$reset_color%}'
@@ -57,3 +58,6 @@ stty susp undef
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Set for interactive shells
+export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/

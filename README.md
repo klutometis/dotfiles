@@ -23,8 +23,8 @@ This script handles the entire setup: git initialization, dotfile symlinks, syst
 - **`bin/configure-system.sh`** - Deploys system-level configs with proper permissions
 
 ### Documentation & Build Instructions  
-- **`var/build/`** - Detailed build instructions for applications (emacs, git, i3, etc.)
-- **`doc/`** - Notes, reference materials, and Anki flashcard data
+- **`var/build/`** - Build/compile instructions paired with automation (e.g., `emacs.md` for compiling Emacs from source)
+- **`var/doc/`** - Usage documentation, configuration guides, working notes (e.g., `emacs.md` for Emacs usage/keybindings)
 
 ### Security
 - **Git-crypt** - Encrypts sensitive files (unlocked during bootstrap)
