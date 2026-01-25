@@ -67,12 +67,6 @@
   (aw-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold))))
   (aw-minibuffer-leading-char-face ((t (:foreground "yellow" :background "black" :weight bold)))))
 
-(use-package agent-shell
-  :custom
-  (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest" "--permission-mode" "plan"))
-  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-cli@latest" "--experimental-acp"))
-  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
-  :bind (("C-c A" . agent-shell)))
 
 (use-package ansi-color
   :ensure nil
@@ -219,6 +213,15 @@
          ("C-x C-a b"   . activities-switch-buffer)
          ("C-x C-a g"   . activities-revert)
          ("C-x C-a l"   . activities-list)))
+
+(use-package agent-shell
+  :custom
+  (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest"))
+  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-acp@latest"))
+  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
+  (agent-shell-thought-process-expand-by-default t)
+  (agent-shell-tool-use-expand-by-default t)
+  :bind (("C-c A" . agent-shell)))
 
 (use-package dired
   :ensure nil  ; Built-in package
