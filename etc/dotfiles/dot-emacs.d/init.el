@@ -219,6 +219,7 @@
   (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest"))
   (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-acp@latest"))
   (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
+  (agent-shell-opencode-command '("npx" "-y" "opencode-ai@latest" "acp"))
   (agent-shell-thought-process-expand-by-default t)
   (agent-shell-tool-use-expand-by-default t)
   :bind (("C-c A" . agent-shell)))
