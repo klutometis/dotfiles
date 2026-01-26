@@ -95,6 +95,13 @@ if ! command -v ripgrep &> /dev/null; then
   sudo apt-get install -y ripgrep
 fi
 
+# Install x0vncserver if not present
+if ! command -v x0vncserver &> /dev/null; then
+  echo "Installing x0vncserver..."
+  sudo apt-get update
+  sudo apt-get install -y tigervnc-scraping-server
+fi
+
 # =============================================================================
 # Python Tools Installation (via uv)
 # =============================================================================

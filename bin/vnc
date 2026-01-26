@@ -1,0 +1,2 @@
+#!/bin/bash
+x0vncserver -display :0 -SecurityTypes VncAuth -PasswordFile ~/.vnc/passwd -AlwaysShared -fg -localhost=0
