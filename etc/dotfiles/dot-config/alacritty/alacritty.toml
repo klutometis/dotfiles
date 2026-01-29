@@ -28,3 +28,6 @@ white   = "#ffffff"
 
 [colors]
 draw_bold_text_with_bright_colors = true
+
+[terminal]
+osc52 = "CopyPaste"

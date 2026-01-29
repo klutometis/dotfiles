@@ -19,7 +19,7 @@ main() {
 
   # Set config file based on profile
   if [ "$profile" = "work" ]; then
-      export OPENCODE_CONFIG="${HOME}/.config/opencode/opencode-work.json"
+      export OPENCODE_CONFIG="${HOME}/.config/opencode/opencode-work.jsonc"
   fi
 
   # Execute opencode with remaining arguments
