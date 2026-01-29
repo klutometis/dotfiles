@@ -40,10 +40,10 @@
 
 ;; Install use-package support
 (elpaca elpaca-use-package
-        ;; Enable use-package :ensure support for Elpaca.
-        (elpaca-use-package-mode)
-        ;; Assume :ensure t for all use-package declarations (like straight-use-package-by-default)
-        (setq use-package-always-ensure t))
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode)
+  ;; Assume :ensure t for all use-package declarations (like straight-use-package-by-default)
+  (setq use-package-always-ensure t))
 
 ;; Block until elpaca-use-package is ready
 (elpaca-wait)
@@ -217,9 +217,9 @@
 (use-package agent-shell
   :custom
   (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest"))
-  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-acp@latest"))
+  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-cli@latest" "--experimental-acp"))
   (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
-  (agent-shell-opencode-command '("npx" "-y" "opencode-ai@latest" "acp"))
+  (agent-shell-opencode-command '("opencode" "acp"))
   (agent-shell-thought-process-expand-by-default t)
   (agent-shell-tool-use-expand-by-default t)
   :bind (("C-c A" . agent-shell)))

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# A wrapper for opencode-ai that allows for profiles and model selection.
+# Usage: opencode [flags] -- [opencode arguments]
+
+# ============================================
+#  Flags
+# ============================================
+. "${HOME}/lib/shflags/shflags"
+
+DEFINE_string 'profile' 'personal' 'The profile to use (e.g., personal, work)' 'p'
+DEFINE_string 'model' '' 'The model to use' 'm'
+DEFINE_string 'config' '' 'The path to the config file' 'c'
+
+# ============================================
+#  Main Logic
+# ============================================
+main() {
+  local profile="${FLAGS_profile}"
+  local model="${FLAGS_model}"
+  local config_file="${FLAGS_config}"
+  local other_args=("$@")
+
+  # Apply profile defaults
+  if [ "$profile" = "work" ]; then
+      # Set default config file for work profile if not overridden
+      if [ -z "$config_file" ]; then
+          config_file="${HOME}/.config/opencode/opencode-work.json"
+      fi
+      # Set default model for work profile if not overridden
+      if [ -z "$model" ]; then
+          model="google-vertex-anthropic/claude-sonnet-4-5@20250929"
+      fi
+  elif [ "$profile" = "personal" ]; then
+      # For personal profile, we use the default opencode config, so no OPENCODE_CONFIG is needed.
+      # If a config_file is explicitly passed with personal profile, it will be used.
+      : # no-op
+  fi
+
+  # Build the command
+  local cmd_args=()
+
+  if [ -n "$model" ]; then
+      cmd_args+=(--model "$model")
+  fi
+
+  if [ ${#other_args[@]} -gt 0 ]; then
+      cmd_args+=("${other_args[@]}")
+  fi
+
+  # Set environment for config file and execute
+  if [ -n "$config_file" ]; then
+      OPENCODE_CONFIG="$config_file" exec npx -y opencode-ai@latest "${cmd_args[@]}"
+  else
+      exec npx -y opencode-ai@latest "${cmd_args[@]}"
+  fi
+}
+
+# ============================================
+#  Script Entry Point
+# ============================================
+FLAGS "$@" || exit $?
+eval set -- "${FLAGS_ARGV}"
+
+main "$@"

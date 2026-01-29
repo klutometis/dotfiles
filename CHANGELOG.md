@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-01-28
+
+### Refactored `opencode` wrapper script
+
+**Changes**:
+- Replaced `opencode-personal` and `opencode-work` scripts with a single `opencode` script.
+- The new script uses `shflags` for command-line flag parsing.
+- The script is structured with a `main()` function for better readability and maintainability.
+- Added support for `--profile`, `--model`, and `--config` flags.
+- The `work` profile defaults to the work-specific config and model, which can be overridden by flags.
+- Updated `~/.emacs.d/init.el` to use the new `opencode` script.
+
+**Rationale**:
+A single script with flags is more flexible and scalable than multiple scripts. The use of `shflags` makes the script more robust and easier to maintain. The new structure with a `main()` function is a good practice for shell scripting.
+
+**Files affected**:
+- `~/bin/opencode` - new script
+- `~/bin/opencode-personal` - removed
+- `~/bin/opencode-work` - removed
+- `~/.emacs.d/init.el` - updated to use the new script.
+
 ## 2026-01-25
 
 ### Migrated from straight.el to Elpaca Package Manager
