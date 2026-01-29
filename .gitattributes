@@ -2,3 +2,4 @@ etc/dotfiles/dot-env-secrets filter=git-crypt diff=git-crypt
 etc/dotfiles/dot-env.mcp filter=git-crypt diff=git-crypt
 etc/mcp-corp.json filter=git-crypt diff=git-crypt
 etc/dotfiles/dot-config/opencode/opencode-work.jsonc filter=git-crypt diff=git-crypt
+bin/extract-gemini-mcp filter=git-crypt diff=git-crypt
