@@ -1,0 +1,39 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-sonnet-4-5",
+  // MCP servers migrated from ~/.mcp.json
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "http://localhost:3100/servers/context7/mcp",
+      "enabled": true
+    },
+    "firecrawl": {
+      "type": "remote",
+      "url": "http://localhost:3100/servers/firecrawl/mcp",
+      "enabled": true
+    },
+    "linkup": {
+      "type": "remote",
+      "url": "http://localhost:3100/servers/linkup/mcp",
+      "enabled": true
+    },
+    "openmemory": {
+      "type": "remote",
+      "url": "http://localhost:3100/servers/openmemory/mcp",
+      "enabled": true
+    },
+    "perplexity": {
+      "type": "remote",
+      "url": "http://localhost:3100/servers/perplexity/mcp",
+      "enabled": true
+    },
+    // Local stdio-based MCP server
+    "clipboard": {
+      "type": "local",
+      "command": ["clipboard-mcp"],
+      "enabled": true
+    }
+  }
+}
