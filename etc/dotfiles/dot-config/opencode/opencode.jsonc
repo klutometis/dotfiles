@@ -2,6 +2,10 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-sonnet-4-5",
   "small_model": "anthropic/claude-sonnet-4-5",
+  "keybinds": {
+    "app_exit": "<leader>q",
+    "input_clear": "escape"
+  },
   // MCP servers migrated from ~/.mcp.json
   "mcp": {
     "context7": {
