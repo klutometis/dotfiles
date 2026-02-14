@@ -26,3 +26,5 @@
 [status]
  relativePaths = false
 
+[credential]
+	helper = store
