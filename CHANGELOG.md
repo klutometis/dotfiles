@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-02-19
+
+### Switched eat terminal backend; C-g → ESC in eat for OpenCode
+
+**Changes**:
+- Switched `ai-code` terminal backend from `vterm` to `eat` (`ai-code-backends-infra-terminal-backend 'eat`)
+- Added `eat-send-escape` helper and bound `C-g` → ESC in both `eat-semi-char-mode-map` and `eat-char-mode-map`
+
+**Rationale**:
+`eat` handles mouse passthrough and ESC sequences more cleanly than `vterm`. In `eat`, `esc esc` → single ESC and `C-q esc` → ESC, so OpenCode's double-ESC interrupt requires `C-g C-g` (two keystrokes) rather than the four-ESC sequence needed without this binding. The `vterm` equivalent (`C-g` → `vterm-send-escape`) is preserved for fallback use.
+
+**Files affected**:
+- `~/etc/dotfiles/dot-emacs.d/init.el`
+
 ## 2026-01-28
 
 ### Refactored `opencode` wrapper script
