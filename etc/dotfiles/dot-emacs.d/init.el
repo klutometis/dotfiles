@@ -247,6 +247,8 @@
   :config
   ;; Opencode is the backend
   (ai-code-set-backend 'opencode)
+  ;; Use eat for mouse passthrough (try vterm if performance is an issue)
+  (setq ai-code-backends-infra-terminal-backend 'eat)
   ;; Enable @ file completion in comments and AI sessions
   (ai-code-prompt-filepath-completion-mode 1)
   ;; Register ai-code's bundled snippets with yasnippet
@@ -842,6 +844,18 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((emacs-lisp-mode . paredit-mode)
          (lisp-interaction-mode . paredit-mode)
          (scheme-mode . paredit-mode)))
+
+(use-package eat
+  :ensure t
+  :config
+  (defun eat-send-escape ()
+    "Send a literal ESC to the eat subprocess."
+    (interactive)
+    (eat-self-input 1 ?\e))
+  :bind (:map eat-semi-char-mode-map
+         ("C-g" . eat-send-escape)
+         :map eat-char-mode-map
+         ("C-g" . eat-send-escape)))
 
 ;; for vterm terminal backend:
 (use-package vterm
