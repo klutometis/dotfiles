@@ -214,15 +214,54 @@
          ("C-x C-a g"   . activities-revert)
          ("C-x C-a l"   . activities-list)))
 
-(use-package agent-shell
+(use-package yasnippet
+  :config
+  (yas-global-mode 1))
+
+(use-package yasnippet-snippets
+  :ensure t)
+
+(use-package gptel
+  :ensure t
   :custom
-  (agent-shell-anthropic-claude-command '("npx" "-y" "@zed-industries/claude-code-acp@latest"))
-  (agent-shell-google-gemini-command '("npx" "-y" "@google/gemini-cli@latest" "--experimental-acp"))
-  (agent-shell-openai-codex-command '("npx" "-y" "@zed-industries/codex-acp@latest"))
-  (agent-shell-opencode-command '("opencode" "acp"))
-  (agent-shell-thought-process-expand-by-default t)
-  (agent-shell-tool-use-expand-by-default t)
-  :bind (("C-c A" . agent-shell)))
+  (gptel-model 'claude-sonnet-4-6)
+  (gptel-backend
+   (gptel-make-anthropic "Claude"
+     :stream t
+     :key (lambda () (getenv "ANTHROPIC_API_KEY"))))
+  :bind (("C-c G" . gptel)
+         ("C-c M-g" . gptel-send)))
+
+(use-package ai-code
+  :ensure t
+  :custom
+  ;; Use gptel for AI-generated headlines in the prompt file
+  (ai-code-use-gptel-headline t)
+  (ai-code-notes-use-gptel-headline t)
+  (ai-code-task-use-gptel-filename t)
+  ;; Ask per-send: lets you choose TDD vs test-after-change vs off each time
+  (ai-code-auto-test-type 'ask-me)
+  ;; Desktop notifications when background sessions finish (Linux D-Bus)
+  (ai-code-notifications-enabled t)
+  (ai-code-notifications-show-on-response t)
+  :config
+  ;; Opencode is the backend
+  (ai-code-set-backend 'opencode)
+  ;; Enable @ file completion in comments and AI sessions
+  (ai-code-prompt-filepath-completion-mode 1)
+  ;; Register ai-code's bundled snippets with yasnippet
+  (with-eval-after-load 'yasnippet
+    (add-to-list 'yas-snippet-dirs
+                 (expand-file-name "snippets"
+                                   (file-name-directory (locate-library "ai-code"))))
+    (yas-reload-all))
+  ;; AI commands in Magit popups
+  (with-eval-after-load 'magit
+    (ai-code-magit-setup-transients))
+  ;; 1s auto-revert so AI edits appear immediately
+  (setq auto-revert-interval 1)
+  :bind
+  ("C-c A" . ai-code-menu))
 
 (use-package dired
   :ensure nil  ; Built-in package
@@ -753,8 +792,6 @@ point reaches the beginning or end of the buffer, stop there."
   (push '("Graphviz" (graphviz-dot-mode (language-id--file-name-extension ".dot"))) language-id--definitions)
   (push '("Slidev" (markdown-mode (language-id--file-name-regexp "slides\\.md"))) language-id--definitions))
 
-;;         lsp-ui-doc-enable nil))
-
 (use-package magit
   :bind ("C-c g" . magit-status)
   :init
@@ -807,7 +844,16 @@ point reaches the beginning or end of the buffer, stop there."
          (scheme-mode . paredit-mode)))
 
 ;; for vterm terminal backend:
-(use-package vterm :ensure t)
+(use-package vterm
+  :ensure t
+  :config
+  (defun vterm-send-escape ()
+    "Send a literal ESC to the vterm subprocess."
+    (interactive)
+    (vterm-send-key "<escape>"))
+  :bind (:map vterm-mode-map
+         ;; C-g sends literal ESC to vterm (e.g. to dismiss opencode UI)
+         ("C-g" . vterm-send-escape)))
 
 (use-package projectile
   :config
