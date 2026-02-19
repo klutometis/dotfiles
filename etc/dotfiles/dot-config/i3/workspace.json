@@ -34,7 +34,7 @@
     "percent": 0.5,
     "swallows": [
         {
-            "title": "^terminal$"
+            "title": "^terminal"
         }
     ],
     "type": "con"

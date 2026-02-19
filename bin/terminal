@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-exec alacritty --title 'terminal' -e tmux new -A -s work "$@"
+session="${1:-work}"
+exec alacritty --title "terminal ($session)" -e tmux new -A -s "$session" "${@:2}"
