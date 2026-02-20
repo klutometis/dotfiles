@@ -591,7 +591,8 @@ point reaches the beginning or end of the buffer, stop there."
 
   (defalias 'yes-or-no-p 'y-or-n-p)
 
-  :bind (("C-c ?"     . help-for-help)
+  :bind (("C-h"        . backward-delete-char)
+         ("C-c ?"     . help-command)
          ("M-z"       . zap-to-char)
          ("C-<M-z>"   . zap-up-to-char)
          ("C-c m"     . chmod-current-file)
@@ -608,7 +609,6 @@ point reaches the beginning or end of the buffer, stop there."
          ("C-c R"     . recompile)
          ("C-c U"     . rename-uniquely)
          ("C-c c"     . compile)
-         ("C-c h"     . help-command)
          ("C-c o"     . occur)
          ("C-c p"     . pwd)
          ("C-c u"     . kill-line-backward)
@@ -740,7 +740,8 @@ point reaches the beginning or end of the buffer, stop there."
          ;; Additional useful commands
          ("M-g i" . consult-imenu)
          ("M-g M-g" . consult-goto-line)
-         ("C-x C-r" . consult-recent-file))
+         ("C-x C-r" . revert-buffer)
+         ("C-c C-r" . consult-recent-file))
   :custom
   (consult-narrow-key "<")  ; Use < to narrow
   :config
@@ -783,10 +784,10 @@ point reaches the beginning or end of the buffer, stop there."
   (wgrep-auto-save-buffer t))
 
 (use-package helpful
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h k" . helpful-key)
-         ("C-h x" . helpful-command)))
+  :bind (("C-c ? f" . helpful-callable)
+         ("C-c ? v" . helpful-variable)
+         ("C-c ? k" . helpful-key)
+         ("C-c ? x" . helpful-command)))
 
 (use-package language-id
   :config
