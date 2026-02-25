@@ -20,12 +20,9 @@
       "args": ["mcp-search-linkup"],
       "transportType": "stdio"
     },
-    "openmemory": {
-      "command": "npx",
-      "args": ["-y", "openmemory"],
-      "env": {
-        "CLIENT_NAME": "openmemory"
-      },
+    "zep": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/klutometis/zep-mcp.git", "zep-mcp"],
       "transportType": "stdio"
     },
     "perplexity": {
