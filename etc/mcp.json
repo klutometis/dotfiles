@@ -20,9 +20,9 @@
       "command": "mcp-proxy",
       "args": ["--log-level", "ERROR", "http://localhost:3100/servers/linkup/sse"]
     },
-    "openmemory": {
+    "zep": {
       "command": "mcp-proxy",
-      "args": ["--log-level", "ERROR", "http://localhost:3100/servers/openmemory/sse"]
+      "args": ["--log-level", "ERROR", "http://localhost:3100/servers/zep/sse"]
     },
     "perplexity": {
       "command": "mcp-proxy",
