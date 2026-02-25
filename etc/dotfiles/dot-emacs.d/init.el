@@ -935,8 +935,6 @@ point reaches the beginning or end of the buffer, stop there."
   (treesit-auto-install 'prompt)
   (treesit-font-lock-level 6)
   :config
-  ;; Suppress annoying tree-sitter font-lock mismatch warnings
-  (setq warning-suppress-types '((treesit-font-lock-rules-mismatch)))
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist 'all))
 
