@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-02-25
+
+### Added `--remote` flag to `terminal`
+
+**Changes**:
+- Added `--remote HOST` flag to `~/bin/terminal` for SSH-backed tmux sessions
+- Window title reflects remote context: `terminal (SESSION @ HOST)`
+- Local sessions unchanged: `terminal (SESSION)`
+- SSH config (`~/.ssh/config`) used for host aliases, ports, keys, etc.
+
+**Rationale**:
+Eliminates tmux-within-tmux when working on remote machines. The remote tmux session feels local — no nested prefix (C-z C-z, etc.) since only one tmux is involved. The `@ HOST` in the title is the only indicator that you're remote.
+
+**Files affected**:
+- `~/bin/terminal`
+
 ## 2026-02-19
 
 ### Switched eat terminal backend; C-g → ESC in eat for OpenCode
