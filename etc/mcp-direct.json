@@ -19,18 +19,17 @@
       "args": ["mcp-server-git"]
     },
     "linkup": {
-      "command": "uvx",
-      "args": ["mcp-search-linkup"],
+      "command": "npx",
+      "args": ["-y", "linkup-mcp-server"],
       "env": {
         "LINKUP_API_KEY": "$LINKUP_API_KEY"
       }
     },
-    "openmemory": {
-      "command": "npx",
-      "args": ["-y", "openmemory"],
+    "zep": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/klutometis/zep-mcp.git", "zep-mcp"],
       "env": {
-        "OPENMEMORY_API_KEY": "$OPENMEMORY_API_KEY",
-        "CLIENT_NAME": "openmemory"
+        "ZEP_API_KEY": "$ZEP_API_KEY"
       }
     },
     "perplexity": {

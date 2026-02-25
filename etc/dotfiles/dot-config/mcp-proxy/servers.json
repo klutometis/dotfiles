@@ -16,8 +16,8 @@
       "transportType": "stdio"
     },
     "linkup": {
-      "command": "uvx",
-      "args": ["mcp-search-linkup"],
+      "command": "npx",
+      "args": ["-y", "linkup-mcp-server"],
       "transportType": "stdio"
     },
     "zep": {
