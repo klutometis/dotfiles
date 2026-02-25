@@ -1,3 +1,41 @@
 #!/usr/bin/env bash
-session="${1:-work}"
-exec alacritty --title "terminal ($session)" -e tmux new -A -s "$session" "${@:2}"
+#
+# terminal - open a named tmux session in a new Alacritty window
+#
+# Usage:
+#   terminal [SESSION]                   local tmux session (default: work)
+#   terminal --remote HOST [SESSION]     tmux session on HOST via ssh
+#
+# Examples:
+#   terminal                             → terminal (work)
+#   terminal dev                         → terminal (dev)
+#   terminal --remote box                → terminal (work @ box)
+#   terminal --remote box dev            → terminal (dev @ box)
+#
+# SSH config (~/.ssh/config) is used for host aliases, ports, keys, etc.
+
+remote=""
+args=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --remote)
+      remote="$2"
+      shift 2
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+session="${args[0]:-work}"
+
+if [[ -n "$remote" ]]; then
+  exec alacritty --title "terminal ($session @ $remote)" \
+    -e ssh -t "$remote" -- tmux new -A -s "$session" "${args[@]:1}"
+else
+  exec alacritty --title "terminal ($session)" \
+    -e tmux new -A -s "$session" "${args[@]:1}"
+fi
