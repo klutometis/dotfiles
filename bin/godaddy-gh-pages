@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+#
+# Point a GoDaddy domain at GitHub Pages.
+#
+# Usage:
+#   godaddy-gh-pages <domain> <github-username>
+#
+# Example:
+#   godaddy-gh-pages llang.ai klutometis
+#
+# Environment:
+#   GODADDY_API_KEY    - GoDaddy production API key
+#   GODADDY_API_SECRET - GoDaddy production API secret
+#
+# What it does:
+#   1. Shows current DNS records
+#   2. Replaces A records on @ with GitHub Pages IPs
+#   3. Sets www CNAME to <username>.github.io
+#   4. Verifies the result
+#   5. Tries to clean up GoDaddy parking junk (pay, _domainconnect)
+
+set -euo pipefail
+
+DOMAIN="${1:?Usage: godaddy-gh-pages <domain> <github-username>}"
+GITHUB_USER="${2:?Usage: godaddy-gh-pages <domain> <github-username>}"
+
+if [[ -z "${GODADDY_API_KEY:-}" || -z "${GODADDY_API_SECRET:-}" ]]; then
+  echo "Error: GODADDY_API_KEY and GODADDY_API_SECRET must be set." >&2
+  exit 1
+fi
+
+AUTH="Authorization: sso-key ${GODADDY_API_KEY}:${GODADDY_API_SECRET}"
+BASE="https://api.godaddy.com/v1/domains/${DOMAIN}/records"
+
+# GitHub Pages IPs (https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)
+GH_IPS=(
+  "185.199.108.153"
+  "185.199.109.153"
+  "185.199.110.153"
+  "185.199.111.153"
+)
+
+echo "=== Current records for ${DOMAIN} ==="
+curl -s -X GET "${BASE}" \
+  -H "${AUTH}" \
+  -H "Content-Type: application/json" | python3 -m json.tool
+echo
+
+echo "=== Setting A records (@ → GitHub Pages) ==="
+A_DATA=$(printf '[%s]' "$(IFS=,; echo "${GH_IPS[*]/#/\{\"data\":\"}" | sed 's/,/","ttl":600},{"data":"/g; s/$/"","ttl":600}/; s/^//')")
+# Build JSON properly
+A_JSON="["
+for i in "${!GH_IPS[@]}"; do
+  [[ $i -gt 0 ]] && A_JSON+=","
+  A_JSON+="{\"data\":\"${GH_IPS[$i]}\",\"ttl\":600}"
+done
+A_JSON+="]"
+
+curl -s -X PUT "${BASE}/A/@" \
+  -H "${AUTH}" \
+  -H "Content-Type: application/json" \
+  -d "${A_JSON}"
+echo "  done"
+
+echo "=== Setting CNAME (www → ${GITHUB_USER}.github.io) ==="
+curl -s -X PUT "${BASE}/CNAME/www" \
+  -H "${AUTH}" \
+  -H "Content-Type: application/json" \
+  -d "[{\"data\":\"${GITHUB_USER}.github.io\",\"ttl\":600}]"
+echo "  done"
+
+echo "=== Cleaning up GoDaddy parking records ==="
+for name in pay _domainconnect; do
+  echo -n "  Deleting CNAME/${name}... "
+  result=$(curl -s -X DELETE "${BASE}/CNAME/${name}" \
+    -H "${AUTH}" 2>&1)
+  if echo "${result}" | grep -q "CONFLICTING_STATUS"; then
+    echo "skipped (GoDaddy won't allow deletion)"
+  else
+    echo "done"
+  fi
+done
+
+echo
+echo "=== Final records ==="
+curl -s -X GET "${BASE}" \
+  -H "${AUTH}" \
+  -H "Content-Type: application/json" | python3 -m json.tool
+
+echo
+echo "=== Live resolution check ==="
+echo "A records:"
+dig +short "${DOMAIN}" A
+echo "www CNAME:"
+dig +short "www.${DOMAIN}" CNAME
+
+echo
+echo "Done. DNS may take up to 10 minutes to fully propagate (TTL=600)."
+echo "After propagation, enable HTTPS in GitHub repo settings:"
+echo "  gh api repos/${GITHUB_USER}/$(echo "${DOMAIN}" | cut -d. -f1)/pages -X PUT -F https_enforced=true"
