@@ -18,13 +18,6 @@
       "command": "uvx",
       "args": ["mcp-server-git"]
     },
-    "linkup": {
-      "command": "npx",
-      "args": ["-y", "linkup-mcp-server"],
-      "env": {
-        "LINKUP_API_KEY": "$LINKUP_API_KEY"
-      }
-    },
     "zep": {
       "command": "uvx",
       "args": ["--from", "git+https://github.com/klutometis/zep-mcp.git", "zep-mcp"],

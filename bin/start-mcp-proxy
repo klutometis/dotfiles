@@ -9,10 +9,15 @@ source "$HOME/.zshenv"
 # Load MCP-specific environment variables
 source "$HOME/.env.mcp"
 
+# Template the MCP configuration, substituting environment variables
+TEMP_MCP_FILE=$(mktemp /tmp/mcp-servers.XXXXXX.json)
+envsubst < ~/.config/mcp-proxy/servers.json.template > "$TEMP_MCP_FILE"
+trap "rm -f $TEMP_MCP_FILE" EXIT
+
 # Run mcp-proxy with same config as systemd service
 # Use full path to avoid calling ourselves
 exec mcp-proxy \
     --port 3100 \
     --host 127.0.0.1 \
     --pass-environment \
-    --named-server-config ~/.config/mcp-proxy/servers.json
+    --named-server-config "$TEMP_MCP_FILE"

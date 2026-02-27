@@ -16,10 +16,6 @@
       "command": "mcp-proxy",
       "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/firecrawl/sse"]
     },
-    "linkup": {
-      "command": "mcp-proxy",
-      "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/linkup/sse"]
-    },
     "zep": {
       "command": "mcp-proxy",
       "args": ["--log-level", "ERROR", "http://127.0.0.1:3100/servers/zep/sse"]
