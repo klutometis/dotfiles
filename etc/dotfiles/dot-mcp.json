@@ -8,10 +8,6 @@
       "type": "http",
       "url": "http://localhost:3100/servers/firecrawl/mcp"
     },
-    "linkup": {
-      "type": "http",
-      "url": "http://localhost:3100/servers/linkup/mcp"
-    },
     "zep": {
       "type": "http",
       "url": "http://localhost:3100/servers/zep/mcp"
@@ -23,6 +19,19 @@
     "clipboard": {
       "type": "stdio",
       "command": "clipboard-mcp"
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project-from-cwd"
+      ]
     }
   }
 }
