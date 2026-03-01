@@ -35,3 +35,6 @@ stumpwm-prompt.
 
 ### High Priority
 - [ ] Evaluate `projectile` vs built-in `project.el`
+- [x] Verify `ctrl+o` as OpenCode leader works in eat semi-char mode
+  - If it causes issues, fallback options: customize `eat-semi-char-non-bound-keys` to remove `[?\C-x]`, or try `ctrl+s`
+- [ ] Investigate `app_exit` keybind (`<leader>q`, `ctrl+shift+q`) not working
