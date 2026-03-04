@@ -244,11 +244,11 @@
   ;; Desktop notifications when background sessions finish (Linux D-Bus)
   (ai-code-notifications-enabled t)
   (ai-code-notifications-show-on-response t)
+  ;; Use eat for mouse passthrough (try vterm if performance is an issue)
+  (ai-code-backends-infra-terminal-backend 'eat)
   :config
   ;; Opencode is the backend
   (ai-code-set-backend 'opencode)
-  ;; Use eat for mouse passthrough (try vterm if performance is an issue)
-  (setq ai-code-backends-infra-terminal-backend 'eat)
   ;; Enable @ file completion in comments and AI sessions
   (ai-code-prompt-filepath-completion-mode 1)
   ;; Register ai-code's bundled snippets with yasnippet
@@ -260,8 +260,18 @@
   ;; AI commands in Magit popups
   (with-eval-after-load 'magit
     (ai-code-magit-setup-transients))
-  ;; 1s auto-revert so AI edits appear immediately
-  (setq auto-revert-interval 1)
+  ;; In CitC workspaces, project.el finds .hg at the workspace root
+  ;; (e.g. /google/src/cloud/user/ws/) and ai-code uses that as the
+  ;; working directory for opencode.  We want google3/ instead.
+  (defun my/ai-code-google3-working-dir (orig-fn)
+    "When inside a CitC workspace, use google3/ as the working directory."
+    (let ((dir (funcall orig-fn)))
+      (if (and (string-match-p "^/google/src/cloud/" dir)
+               (file-directory-p (expand-file-name "google3" dir)))
+          (expand-file-name "google3" dir)
+        dir)))
+  (advice-add 'ai-code-backends-infra--session-working-directory
+              :around #'my/ai-code-google3-working-dir)
   :bind
   ("C-c A" . ai-code-menu))
 
@@ -358,6 +368,8 @@
   (completion-ignore-case t)
   (ediff-window-setup-function 'ediff-setup-windows-plain)
   (indent-tabs-mode nil)
+  ;; Fast auto-revert so AI edits appear immediately
+  (auto-revert-interval 1)
 
   :config
   ;; Enable mouse support in terminal
