@@ -169,6 +169,34 @@ fi
 
 
 # =============================================================================
+# Tmux Plugin Manager (TPM)
+# =============================================================================
+
+echo "Setting up tmux plugins..."
+
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+  echo "Installing TPM (Tmux Plugin Manager)..."
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+else
+  echo "TPM already installed, updating..."
+  git -C "$TPM_DIR" pull -q
+fi
+
+# Install/update all plugins declared in .tmux.conf
+echo "Installing tmux plugins..."
+TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" "$TPM_DIR/bin/install_plugins"
+
+# tmux-fingers needs a pre-built binary (written in Crystal)
+FINGERS_DIR="$HOME/.tmux/plugins/tmux-fingers"
+if [ -d "$FINGERS_DIR" ] && [ ! -f "$FINGERS_DIR/bin/tmux-fingers" ]; then
+  echo "Downloading tmux-fingers binary..."
+  bash "$FINGERS_DIR/install-wizard.sh" download-binary || true
+fi
+
+echo "Tmux plugins installed"
+
+# =============================================================================
 # Language Server Installation (Hermetic, Isolated Environments)
 # =============================================================================
 
