@@ -73,8 +73,15 @@ Backup for when OSC 52 passthrough fails (e.g. nested sessions, SSH).
 | `C-z y` | Copy current command line to clipboard |
 | `C-z Y` | Copy current working directory to clipboard |
 
+Mouse selection copies to system clipboard automatically
+(`@yank_selection_mouse 'clipboard'` is configured).
+
 Works alongside OSC 52 -- they're independent clipboard paths.
 tmux-yank talks to X11 directly; OSC 52 goes through the terminal.
+
+Note: tmux 3.6+ requires `terminal-features` to declare clipboard
+support per terminal. We set `alacritty:clipboard` in .tmux.conf
+so both OSC 52 and tmux-yank work.
 
 ## tmux-copycat
 
