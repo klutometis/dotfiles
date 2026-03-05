@@ -25,3 +25,6 @@
 [submodule "prg/clipboard-mcp"]
 	path = prg/clipboard-mcp
 	url = git@github.com:klutometis/clipboard-mcp.git
+[submodule "etc/secrets"]
+	path = etc/secrets
+	url = git@github.com:klutometis/secrets.git
