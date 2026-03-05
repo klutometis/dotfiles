@@ -2,34 +2,15 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-opus-4-6",
   "small_model": "anthropic/claude-sonnet-4-6",
-  // MCP servers migrated from ~/.mcp.json
   "mcp": {
-    "context7": {
+    // Local FastMCP gateway: 9 renamed tools (search, scrape, save_memory, etc.)
+    // Runs on localhost:3100 via start-mcp-gateway (MCP_LOCAL=1)
+    "gateway": {
       "type": "remote",
-      "url": "http://localhost:3100/servers/context7/mcp",
+      "url": "http://localhost:3100/mcp",
       "enabled": true
     },
-    "firecrawl": {
-      "type": "remote",
-      "url": "http://localhost:3100/servers/firecrawl/mcp",
-      "enabled": true
-    },
-    "zep": {
-      "type": "remote",
-      "url": "http://localhost:3100/servers/zep/mcp",
-      "enabled": true
-    },
-    "perplexity": {
-      "type": "remote",
-      "url": "http://localhost:3100/servers/perplexity/mcp",
-      "enabled": true
-    },
-    // Local stdio-based MCP server
-    "clipboard": {
-      "type": "local",
-      "command": ["clipboard-mcp"],
-      "enabled": true
-    },
+    // Per-project code intelligence (LSP, symbols, memory)
     "serena": {
       "type": "local",
       "command": ["uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "claude-code", "--project-from-cwd"],

@@ -55,9 +55,9 @@ echo "$(date): Waiting for PAC servers..."
 wait-for-it 8000 || echo "$(date): WARNING: pac-work failed to start"
 wait-for-it 8001 || echo "$(date): WARNING: pac-personal failed to start"
 
-# Start MCP proxy
-echo "$(date): Starting MCP proxy..."
-start-mcp-proxy &
+# Start MCP gateway (local mode: no auth, localhost:3100)
+echo "$(date): Starting MCP gateway..."
+start-mcp-gateway &
 
 # Start applications
 echo "$(date): Starting applications"
