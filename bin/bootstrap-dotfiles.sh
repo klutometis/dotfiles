@@ -29,14 +29,10 @@ git branch --set-upstream-to=origin/main main
 echo "Initializing submodules..."
 git submodule update --init --recursive
 
-# 5. Unlock git-crypt
+# 5. Unlock secrets submodule with git-crypt
 if command -v git-crypt &> /dev/null; then
-    if ! git-crypt status &> /dev/null; then
-        echo "Please unlock git-crypt with: git-crypt unlock"
-        echo "You need the git-crypt key to access encrypted files"
-        read -p "Press enter when ready..."
-        git-crypt unlock
-    fi
+    echo "Unlocking secrets repo..."
+    (cd ~/etc/secrets && git-crypt unlock)
 else
     echo "Error: git-crypt not installed"
     echo "Install with: sudo apt install git-crypt"
@@ -47,6 +43,7 @@ fi
 echo "Creating dotfile symlinks with stow..."
 if command -v stow &> /dev/null; then
     stow -v --restow --adopt dotfiles
+    stow -v --restow --adopt secrets
 else
     echo "Error: stow not installed"
     echo "Install with: sudo apt install stow"
