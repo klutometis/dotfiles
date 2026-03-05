@@ -51,7 +51,7 @@ unset QT_IM_MODULE
 
 # Load environment files
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-[ -f ~/.env-secrets ] && source ~/.env-secrets
+[ -f ~/.env ] && source ~/.env
 [ -f "$HOME/.rokit/env" ] && . "$HOME/.rokit/env"
 
 # Tool initialization (available to all shells including non-interactive)

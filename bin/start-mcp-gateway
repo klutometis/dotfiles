@@ -6,8 +6,6 @@
 # Load environment (including nvm, rbenv, pyenv)
 source "$HOME/.zshenv"
 
-# Load MCP-specific environment variables (API keys, etc.)
-source "$HOME/.env.mcp"
-
 # Run gateway in local mode (no OAuth, localhost only, port 3100)
-exec uvx --reinstall --from "git+ssh://git@github.com/klutometis/mcp-gateway.git" gateway-local
+# .zshenv already sources ~/.env which has all API keys
+exec uvx --from "git+ssh://git@github.com/klutometis/mcp-gateway.git" gateway-local
