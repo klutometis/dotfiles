@@ -54,6 +54,9 @@ unset QT_IM_MODULE
 [ -f ~/.env ] && source ~/.env
 [ -f "$HOME/.rokit/env" ] && . "$HOME/.rokit/env"
 
+# BeyondCorp/mTLS certificate config breaks gcloud commands
+unset CLOUDSDK_CONTEXT_AWARE_CERTIFICATE_CONFIG_FILE_PATH
+
 # Tool initialization (available to all shells including non-interactive)
 # Initialize mise (replaces nvm, pyenv, etc.)
 command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
