@@ -3,6 +3,9 @@
 # ========================
 # Only loaded for interactive shells
 
+# kitty (installed to ~/.local/kitty.app)
+export PATH="$HOME/.local/kitty.app/bin:$PATH"
+
 # Oh-My-Zsh Configuration
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="lambda"
@@ -61,3 +64,27 @@ export NVM_DIR="$HOME/.nvm"
 
 # Set for interactive shells
 export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+
+# ── Terminal-specific integration ─────────────────────────────
+if [[ -n "$KITTY_PID" ]]; then
+  alias icat="kitten icat"
+  alias s="kitten ssh"
+elif [[ "$TERM_PROGRAM" == "WezTerm" ]]; then
+  alias icat="wezterm imgcat"
+fi
+
+# ── Emacs terminal launch (TERM fix for GPU terminals) ───────
+ek() {
+  TERM=xterm-256color emacs -nw "$@"
+}
+
+# ── Workaround for wezterm#1115 ──────────────────────────────
+# Tiling WMs (i3/sway) resize the window after the pty is created,
+# but SIGWINCH doesn't reach the child. Deferring exec until the
+# shell is interactive ensures the pty has its final size.
+if [[ -n "$WEZTERM_EXEC" ]]; then
+  local cmd="$WEZTERM_EXEC"
+  unset WEZTERM_EXEC
+  eval "$cmd"
+fi
+

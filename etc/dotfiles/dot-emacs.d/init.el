@@ -981,6 +981,16 @@ point reaches the beginning or end of the buffer, stop there."
   :config
   (winner-mode 1))
 
+;;; Inline images in terminal Emacs via Kitty graphics protocol.
+;;; Supported terminals: kitty, wezterm, ghostty.
+(use-package kitty-graphics
+  :ensure (:host github :repo "cashmeredev/kitty-graphics.el")
+  :if (and (not (display-graphic-p))
+           (or (getenv "KITTY_PID")
+               (member (getenv "TERM_PROGRAM") '("WezTerm" "kitty" "ghostty"))))
+  :config
+  (kitty-graphics-mode 1))
+
 ;;; Load a host-specific file, if one exists.
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (if (file-exists-p host-file)

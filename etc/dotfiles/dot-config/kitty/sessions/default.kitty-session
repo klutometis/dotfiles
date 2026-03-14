@@ -1,0 +1,3 @@
+layout tall
+cd ~
+launch --title "emacs" sh -c 'TERM=xterm-256color exec emacs -nw'
