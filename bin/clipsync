@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# Sync a local directory to a remote host using lsyncd over SSH.
+# Runs in the foreground; Ctrl+C to stop.
+#
+# Usage: clipsync <host> [local_path] [remote_path]
+#
+#   host         Remote host (as in ~/.ssh/config)
+#   local_path   Local directory to sync (default: /tmp/clip)
+#   remote_path  Remote directory (default: same as local_path)
+#
+# Examples:
+#   clipsync myhost                        # /tmp/clip -> myhost:/tmp/clip
+#   clipsync myhost .                      # $(pwd) -> myhost:$(pwd)
+#   clipsync myhost /tmp/clip /home/x/img  # different remote path
+
+set -euo pipefail
+
+if [ $# -lt 1 ]; then
+    echo "Usage: clipsync <host> [local_path] [remote_path]" >&2
+    exit 1
+fi
+
+host="$1"
+local_path="${2:-/tmp/clip}"
+remote_path="${3:-}"
+
+# Resolve relative/dot paths to absolute
+local_path=$(cd "$local_path" 2>/dev/null && pwd || { mkdir -p "$local_path" && cd "$local_path" && pwd; })
+
+# Default remote_path to local_path
+[ -z "$remote_path" ] && remote_path="$local_path"
+
+# Resolve remote_path if it's "."
+[ "$remote_path" = "." ] && remote_path="$local_path"
+
+# Ensure ControlMaster is active for this host
+socket_path=$(ssh -G "$host" 2>/dev/null | awk '/^controlpath / {print $2}')
+if [ -n "$socket_path" ] && [ -S "$socket_path" ]; then
+    echo "Using existing SSH connection to $host"
+else
+    echo "Opening SSH connection to $host (may require auth)..."
+    ssh -fNM "$host"
+    echo "SSH master connection established"
+fi
+
+# Ensure directories exist
+mkdir -p "$local_path"
+ssh "$host" "mkdir -p '$remote_path'"
+
+# Generate lsyncd config
+config=$(mktemp --suffix=.lua)
+trap "rm -f '$config'" EXIT
+
+cat > "$config" <<EOF
+settings {
+    nodaemon = true,
+    logfile = "/dev/stderr",
+    statusFile = "/tmp/clipsync-status-$$.txt",
+    insist = true,
+}
+
+sync {
+    default.rsyncssh,
+    source = "$local_path",
+    host = "$host",
+    targetdir = "$remote_path",
+    delay = 1,
+    rsync = {
+        archive = true,
+        links = true,
+    },
+    ssh = {
+        port = 22,
+    },
+}
+EOF
+
+echo "Syncing $local_path -> $host:$remote_path (Ctrl+C to stop)"
+exec lsyncd "$config"

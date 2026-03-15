@@ -18,12 +18,23 @@ eval set -- "${FLAGS_ARGV}"
 # Main Logic
 # ============================================
 
+tmpfile=$(mktemp --suffix=.png)
+
 if [ "${FLAGS_section}" = "${FLAGS_TRUE}" ]; then
     # Take a section (normal import behavior - interactive selection)
-    import png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+    import png:- | tee "$tmpfile" | xclip -selection clipboard -t image/png -i
     echo "Screenshot section captured and copied to clipboard"
 else
     # Take full screen (root window)
-    import -window root png:- | tee "$(mktemp --suffix=.png)" | xclip -selection clipboard -t image/png -i
+    import -window root png:- | tee "$tmpfile" | xclip -selection clipboard -t image/png -i
     echo "Screenshot captured and copied to clipboard"
 fi
+
+# ============================================
+# Save to /tmp/clip/ for lsyncd-based remote sync
+# ============================================
+
+mkdir -p /tmp/clip
+ts=$(date +%Y-%m-%dT%H-%M-%S)
+cp "$tmpfile" "/tmp/clip/${ts}.png"
+ln -sf "${ts}.png" /tmp/clip/latest.png
