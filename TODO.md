@@ -31,6 +31,12 @@ similar), which takes the search term from the selection (or clipboard).
 Also, rebind to `exec sr code-search`, etc.; which means we can't use the
 stumpwm-prompt.
 
+## Repo Hygiene
+
+- [ ] Delete and recreate `klutometis/dotfiles` on GitHub to purge dangling
+  objects (old commit SHAs still accessible by direct URL even after
+  force-push); recreate with same name, push clean history
+
 ## Emacs Configuration
 
 ### High Priority
