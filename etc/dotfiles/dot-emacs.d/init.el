@@ -246,6 +246,8 @@
   (ai-code-notifications-show-on-response t)
   ;; Use eat for mouse passthrough (try vterm if performance is an issue)
   (ai-code-backends-infra-terminal-backend 'eat)
+  ;; Use opencode-connected for HTTP side-car + relay tunnel
+  (ai-code-opencode-program "opencode-connected")
   :config
   ;; Opencode is the backend
   (ai-code-set-backend 'opencode)

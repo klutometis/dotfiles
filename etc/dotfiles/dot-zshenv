@@ -54,8 +54,10 @@ unset QT_IM_MODULE
 [ -f ~/.env ] && source ~/.env
 [ -f "$HOME/.rokit/env" ] && . "$HOME/.rokit/env"
 
-# BeyondCorp/mTLS certificate config breaks gcloud commands
+# BeyondCorp/mTLS config breaks gcloud SSH (crashes with cert errors)
 unset CLOUDSDK_CONTEXT_AWARE_CERTIFICATE_CONFIG_FILE_PATH
+unset CLOUDSDK_CONTEXT_AWARE_USE_CLIENT_CERTIFICATE
+unset CLOUDSDK_CONTEXT_AWARE_USE_ECP_HTTP_PROXY
 
 # Tool initialization (available to all shells including non-interactive)
 # Initialize mise (replaces nvm, pyenv, etc.)
