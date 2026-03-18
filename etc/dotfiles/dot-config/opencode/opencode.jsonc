@@ -3,17 +3,11 @@
   "model": "anthropic/claude-opus-4-6",
   "small_model": "anthropic/claude-sonnet-4-6",
   "mcp": {
-    // Local FastMCP gateway: 9 renamed tools (search, scrape, save_memory, etc.)
+    // FastMCP gateway: 19 tools (search, scrape, save_memory, calendar, gmail, opencode)
     // Runs on localhost:3100 via start-mcp-gateway (MCP_LOCAL=1)
-    "gateway": {
+    "mcp": {
       "type": "remote",
       "url": "http://localhost:3100/mcp",
-      "enabled": true
-    },
-    // Per-project code intelligence (LSP, symbols, memory)
-    "serena": {
-      "type": "local",
-      "command": ["uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "claude-code", "--project-from-cwd"],
       "enabled": true
     }
   }
