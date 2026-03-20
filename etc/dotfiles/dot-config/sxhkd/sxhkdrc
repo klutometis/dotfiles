@@ -87,3 +87,7 @@ super + p
 
 super + f
     sr memegen
+
+# Nuclear paste: type clipboard via xdotool (bypasses paste-blocking sites)
+super + v
+    ~/bin/nuclear-paste

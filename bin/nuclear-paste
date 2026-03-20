@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Type clipboard contents via xdotool for sites that block paste.
+# Uses a small delay between keystrokes to avoid dropped characters.
+
+set -euo pipefail
+
+text=$(xclip -o -selection clipboard)
+
+if [[ -z "$text" ]]; then
+    notify-send "nuclear-paste" "Clipboard is empty"
+    exit 1
+fi
+
+# Brief pause to let user focus the target window
+sleep 0.3
+
+xdotool type --clearmodifiers --delay 12 -- "$text"
