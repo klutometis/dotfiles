@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec google-chrome --profile-directory=personal-profile --window-name=chrome-personal --proxy-pac-url="http://localhost:18001/pac.js" --remote-debugging-port=9222 "$@"
+exec google-chrome --user-data-dir="$HOME/.config/chrome-personal" --window-name=chrome-personal --proxy-pac-url="http://localhost:18001/pac.js" --remote-debugging-port=9223 "$@"
