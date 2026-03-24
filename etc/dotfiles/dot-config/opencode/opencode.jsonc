@@ -9,6 +9,17 @@
       "type": "remote",
       "url": "http://localhost:3100/mcp",
       "enabled": true
+    },
+    // Chrome DevTools Protocol — personal Chrome on port 9223
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9223"
+      ],
+      "enabled": true
     }
   }
 }
