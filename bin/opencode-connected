@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Wrapper for opencode-connected.
+#
+# Three modes:
+# 1. Inside the opencode-mcp package dir: use local scripts + node_modules
+# 2. OPENCODE_MCP_DEV set: use that path (explicit dev mode from any dir)
+# 3. Normal: use npx from npm
+
+if [ -f "./package.json" ] && grep -q '@klutometis/opencode-mcp' ./package.json 2>/dev/null; then
+  export PATH="./node_modules/.bin:${PATH}"
+  exec bash "./scripts/opencode-connected" "$@"
+elif [ -n "${OPENCODE_MCP_DEV:-}" ]; then
+  export PATH="${OPENCODE_MCP_DEV}/node_modules/.bin:${PATH}"
+  exec bash "${OPENCODE_MCP_DEV}/scripts/opencode-connected" "$@"
+else
+  exec npx -y --package @klutometis/opencode-mcp opencode-connected "$@"
+fi
