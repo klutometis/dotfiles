@@ -831,6 +831,11 @@ point reaches the beginning or end of the buffer, stop there."
   (setq magit-process-yes-or-no-prompt-regexp
         " [\[(]\\([Yy]\\(?:es\\)?\\)[/|]\\([Nn]o?\\)[\])] ?[?:]? ?$"))
 
+(use-package jj-mode
+  :ensure (:host github :repo "bolivier/jj-mode.el")
+  :after (magit transient)
+  :bind ("C-c j" . jj-log))
+
 (use-package markdown-mode
   :hook ((markdown-mode-hook
           . (lambda ()
