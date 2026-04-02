@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# chrome-open — open URLs in the correct Chrome instance
+#
+# Usage:
+#   chrome-open [--work|--personal] [--new-tab] URL...
+#
+# Without --work/--personal, detects the focused Chrome window
+# via xdotool and routes accordingly. Falls back to personal.
+
+profile=""
+chrome_args=()
+urls=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --work)     profile=work ;;
+        --personal) profile=personal ;;
+        --new-tab)  chrome_args+=(--new-tab) ;;
+        *)          urls+=("$arg") ;;
+    esac
+done
+
+if [ -z "$profile" ]; then
+    focused=$(xdotool getactivewindow getwindowname 2>/dev/null)
+    case "$focused" in
+        *chrome-work*) profile=work ;;
+        *)             profile=personal ;;
+    esac
+fi
+
+exec google-chrome \
+    --user-data-dir="$HOME/.config/chrome-${profile}" \
+    "${chrome_args[@]}" \
+    "${urls[@]}"

@@ -11,6 +11,10 @@ EOF
   w3_global_usage
 }
 
+w3_config_hook () {
+    SURFRAW_graphical_browser="chrome-open --work --new-tab"
+}
+
 w3_config
 w3_parse_args "$@"
 

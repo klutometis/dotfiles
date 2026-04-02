@@ -31,6 +31,7 @@ export LESS='-i'
 export XCOMPOSEFILE=~/.Xcompose
 export MCP_TEMPLATE_FILE="$HOME/etc/mcp-template.json"
 export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+export BROWSER="$HOME/bin/chrome-open"
 
 # Input Method configuration
 # These were previously set to enable XIM (X Input Method) for complex text input:

@@ -1,0 +1,7 @@
+
+[Default Applications]
+text/html=chrome-focused.desktop
+x-scheme-handler/http=chrome-focused.desktop
+x-scheme-handler/https=chrome-focused.desktop
+x-scheme-handler/about=chrome-focused.desktop
+x-scheme-handler/unknown=chrome-focused.desktop
