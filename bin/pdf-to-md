@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# pdf-to-md: Convert a PDF to markdown using vision LLM APIs via curl.
+#
+# Usage: pdf-to-md [OPTIONS] INPUT.pdf
+#
+# Options:
+#   --output FILE       Write to FILE instead of stdout
+#   --provider NAME     gemini (default), claude, openai
+#   --model MODEL       Override the default model for the provider
+#   --parallel N        Process N pages concurrently (default: 1)
+#   --dpi DPI           Render resolution (default: 300)
+#   --prompt TEXT       Override the system prompt
+#   --help              Show this help
+#
+# Environment:
+#   GEMINI_API_KEY      Required for gemini provider
+#   ANTHROPIC_API_KEY   Required for claude provider
+#   OPENAI_API_KEY      Required for openai provider
+
+usage() {
+  sed -n '3,/^$/s/^# \?//p' "$0"
+  exit "${1:-0}"
+}
+
+# Defaults
+PROVIDER=gemini
+MODEL=""
+PARALLEL=1
+DPI=300
+OUTPUT=""
+PROMPT="Transcribe this page to clean markdown. Preserve structure, headings, emphasis, lists, tables, and block quotes. Omit headers, footers, and page numbers. Do not describe images — only transcribe visible text content."
+
+# Parse args
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --output)   OUTPUT="$2"; shift 2 ;;
+    --provider) PROVIDER="$2"; shift 2 ;;
+    --model)    MODEL="$2"; shift 2 ;;
+    --parallel) PARALLEL="$2"; shift 2 ;;
+    --dpi)      DPI="$2"; shift 2 ;;
+    --prompt)   PROMPT="$2"; shift 2 ;;
+    --help|-h)  usage 0 ;;
+    -*)         echo "Unknown option: $1" >&2; usage 1 ;;
+    *)          INPUT="$1"; shift ;;
+  esac
+done
+
+if [[ -z "${INPUT:-}" ]]; then
+  echo "Error: no input PDF specified" >&2
+  usage 1
+fi
+
+if [[ ! -f "$INPUT" ]]; then
+  echo "Error: file not found: $INPUT" >&2
+  exit 1
+fi
+
+for cmd in pdftoppm base64 curl jq; do
+  command -v "$cmd" >/dev/null || { echo "Error: $cmd not found" >&2; exit 1; }
+done
+
+# Set default models per provider
+case "$PROVIDER" in
+  gemini)
+    : "${GEMINI_API_KEY:?Set GEMINI_API_KEY}"
+    [[ -z "$MODEL" ]] && MODEL="gemini-2.5-flash"
+    ;;
+  claude)
+    : "${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY}"
+    [[ -z "$MODEL" ]] && MODEL="claude-sonnet-4-20250514"
+    ;;
+  openai)
+    : "${OPENAI_API_KEY:?Set OPENAI_API_KEY}"
+    [[ -z "$MODEL" ]] && MODEL="gpt-4o"
+    ;;
+  *)
+    echo "Error: unknown provider: $PROVIDER (use gemini, claude, openai)" >&2
+    exit 1
+    ;;
+esac
+
+# Create temp dir, clean up on exit
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+# Convert PDF to PNGs
+echo "Converting PDF to images at ${DPI} DPI..." >&2
+pdftoppm -png -r "$DPI" "$INPUT" "$TMPDIR/page"
+
+PAGES=("$TMPDIR"/page-*.png)
+NPAGES=${#PAGES[@]}
+echo "Processing $NPAGES pages with $PROVIDER ($MODEL), parallelism=$PARALLEL..." >&2
+
+# --- API call functions ---
+
+call_gemini() {
+  local b64_file="$1"
+  local payload_file="${b64_file}.json"
+  jq -nc \
+    --arg prompt "$PROMPT" \
+    --rawfile b64 "$b64_file" \
+    '{
+      "contents": [{
+        "parts": [
+          {"text": $prompt},
+          {"inline_data": {"mime_type": "image/png", "data": ($b64 | gsub("\\n"; ""))}}
+        ]
+      }],
+      "generationConfig": {"temperature": 0.1, "maxOutputTokens": 8192}
+    }' > "$payload_file"
+  curl -sf \
+    "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d @"$payload_file" \
+  | jq -r '.candidates[0].content.parts[0].text // empty'
+  rm -f "$payload_file"
+}
+
+call_claude() {
+  local b64_file="$1"
+  local payload_file="${b64_file}.json"
+  jq -nc \
+    --arg prompt "$PROMPT" \
+    --rawfile b64 "$b64_file" \
+    --arg model "$MODEL" \
+    '{
+      "model": $model,
+      "max_tokens": 8192,
+      "messages": [{
+        "role": "user",
+        "content": [
+          {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": ($b64 | gsub("\\n"; ""))}},
+          {"type": "text", "text": $prompt}
+        ]
+      }]
+    }' > "$payload_file"
+  curl -sf "https://api.anthropic.com/v1/messages" \
+    -H "Content-Type: application/json" \
+    -H "x-api-key: ${ANTHROPIC_API_KEY}" \
+    -H "anthropic-version: 2023-06-01" \
+    -d @"$payload_file" \
+  | jq -r '.content[0].text // empty'
+  rm -f "$payload_file"
+}
+
+call_openai() {
+  local b64_file="$1"
+  local payload_file="${b64_file}.json"
+  jq -nc \
+    --arg prompt "$PROMPT" \
+    --rawfile b64 "$b64_file" \
+    --arg model "$MODEL" \
+    '{
+      "model": $model,
+      "max_tokens": 8192,
+      "messages": [{
+        "role": "user",
+        "content": [
+          {"type": "image_url", "image_url": {"url": ("data:image/png;base64," + ($b64 | gsub("\\n"; "")))}},
+          {"type": "text", "text": $prompt}
+        ]
+      }]
+    }' > "$payload_file"
+  curl -sf "https://api.openai.com/v1/chat/completions" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+    -d @"$payload_file" \
+  | jq -r '.choices[0].message.content // empty'
+  rm -f "$payload_file"
+}
+
+# --- Worker function for a single page ---
+
+process_page() {
+  local page_file="$1"
+  local page_num="$2"
+  local out_file="$3"
+
+  local b64_file="${out_file}.b64"
+  base64 -w0 "$page_file" > "$b64_file"
+
+  local result
+  case "$PROVIDER" in
+    gemini) result=$(call_gemini "$b64_file") ;;
+    claude) result=$(call_claude "$b64_file") ;;
+    openai) result=$(call_openai "$b64_file") ;;
+  esac
+  rm -f "$b64_file"
+
+  echo "$result" > "$out_file"
+  echo "  Page $page_num/$NPAGES done" >&2
+}
+
+export -f process_page call_gemini call_claude call_openai
+export PROVIDER MODEL PROMPT NPAGES
+export GEMINI_API_KEY="${GEMINI_API_KEY:-}" ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}" OPENAI_API_KEY="${OPENAI_API_KEY:-}"
+export TMPDIR
+
+# --- Process pages ---
+
+if [[ "$PARALLEL" -le 1 ]]; then
+  for i in "${!PAGES[@]}"; do
+    page_num=$((i + 1))
+    process_page "${PAGES[$i]}" "$page_num" "$TMPDIR/out-$(printf '%04d' "$page_num")"
+  done
+else
+  # Use background jobs with a semaphore
+  job_count=0
+  for i in "${!PAGES[@]}"; do
+    page_num=$((i + 1))
+    process_page "${PAGES[$i]}" "$page_num" "$TMPDIR/out-$(printf '%04d' "$page_num")" &
+    job_count=$((job_count + 1))
+    if [[ "$job_count" -ge "$PARALLEL" ]]; then
+      wait -n 2>/dev/null || wait
+      job_count=$((job_count - 1))
+    fi
+  done
+  wait
+fi
+
+# --- Assemble output ---
+
+echo "Assembling markdown..." >&2
+{
+  for f in "$TMPDIR"/out-*; do
+    cat "$f"
+    echo ""
+    echo "---"
+    echo ""
+  done
+} | if [[ -n "$OUTPUT" ]]; then
+  cat > "$OUTPUT"
+  echo "Written to $OUTPUT" >&2
+else
+  cat
+fi
