@@ -95,6 +95,13 @@ if ! command -v ripgrep &> /dev/null; then
   sudo apt-get install -y ripgrep
 fi
 
+# Install yq via mise if not present
+if ! command -v yq &> /dev/null; then
+  echo "Installing yq via mise..."
+  mise install yq
+  mise use -g yq
+fi
+
 # Install x0vncserver if not present
 if ! command -v x0vncserver &> /dev/null; then
   echo "Installing x0vncserver..."
