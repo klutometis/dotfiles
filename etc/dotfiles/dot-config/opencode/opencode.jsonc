@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-opus-4-6",
+  "model": "anthropic/claude-opus-4-7",
   "small_model": "anthropic/claude-sonnet-4-6",
   "mcp": {
     // FastMCP gateway: 19 tools (search, scrape, save_memory, calendar, gmail, opencode)
