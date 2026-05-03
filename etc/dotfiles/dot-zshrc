@@ -90,6 +90,77 @@ if [[ -n "$WEZTERM_EXEC" ]]; then
 fi
 
 
+# ── Modern CLI Toolchain ─────────────────────────────────────────────────────
+# Rust-based replacements for classic Unix tools.
+# Installed via cargo / go (see ~/bin/configure-system.sh).
+
+# Cargo + Go binaries in PATH
+export PATH="$HOME/.cargo/bin:$HOME/go/bin:$PATH"
+
+# ── Compatibility shims ───────────────────────────────────────────────────────
+# Ubuntu/Debian apt uses different binary names due to package conflicts.
+# These aliases mean scripts expecting the apt names still work after we
+# install the canonical versions via cargo.
+command -v bat   &>/dev/null && alias batcat='bat'        # apt: batcat   → cargo: bat
+command -v fd    &>/dev/null && alias fdfind='fd'         # apt: fdfind   → cargo: fd
+command -v delta &>/dev/null && alias git-delta='delta'   # apt: git-delta → cargo: delta
+
+# ── Transparent replacements ──────────────────────────────────────────────────
+# Old command fires, new tool runs. Habit forms passively.
+if command -v bat &>/dev/null; then
+  alias cat='bat --paging=never'
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi
+command -v rg   &>/dev/null && alias grep='rg'
+# NOTE: deliberately NOT aliasing 'find' to 'fd' — fd is not a drop-in for
+# POSIX find, and the alias breaks scripts that legitimately use
+# `find -type f -name ...` (e.g. sdkman-init.sh). Use `fd` directly.
+command -v dust &>/dev/null && alias du='dust'
+if command -v eza &>/dev/null; then
+  alias ls='eza'
+  alias ll='eza -la --git'
+  alias lt='eza --tree --level=2'
+  alias la='eza -a'
+fi
+
+# ── fzf — fuzzy finder ───────────────────────────────────────────────────────
+# Ctrl+R: fuzzy history search (replaces reverse-i-search)
+# Ctrl+T: fuzzy file picker inserted at cursor
+# Alt+C:  fuzzy cd into subdirectory
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh)
+
+  # Use fd for file listing (respects .gitignore, includes hidden files)
+  if command -v fd &>/dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+  elif command -v rg &>/dev/null; then
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  fi
+
+  # bat previews for Ctrl+T file picker (syntax-highlighted, line-numbered)
+  if command -v bat &>/dev/null; then
+    export FZF_CTRL_T_OPTS="\
+      --preview 'bat --color=always --style=numbers --line-range=:200 {}' \
+      --preview-window=right:50%:wrap"
+  fi
+fi
+
+# ── zoxide — smarter cd ───────────────────────────────────────────────────────
+# 'z <partial>'  jumps to highest-frecency matching dir
+# 'zi <partial>' interactive fuzzy picker (requires fzf)
+# Grows organically; the more you navigate, the smarter it gets.
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
+
+# ── navi — interactive cheatsheet widget ─────────────────────────────────────
+# Ctrl+G at any prompt: fuzzy-search command cheatsheets.
+# First run downloads community cheatsheets automatically.
+command -v navi &>/dev/null && eval "$(navi widget zsh)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

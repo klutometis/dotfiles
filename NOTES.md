@@ -2,6 +2,19 @@
 
 - **i3 window rules via wrapper script**: Investigate using wrapper scripts with i3-msg for project-specific window rules instead of config files. Would allow launching apps with dynamic configuration (float, sticky, position, size) without polluting dotfiles. Example: `launch-discord-overlay` script that spawns process and configures via `i3-msg "[pid=$PID] floating enable"`. More scriptable and portable than config includes.
 
+## 2026-05-02 - Modern CLI Toolchain Setup
+
+Replaced classic Unix tools with Rust-based alternatives. All installed via
+cargo (and Go for fzf) — no apt, no PPAs.
+
+See `~/notes/modern-cli-toolchain.md` for the full table, Ubuntu/Debian naming
+gotchas (batcat→bat, fdfind→fd, git-delta→delta), shell integrations
+(fzf Ctrl+R/T/Alt+C, navi Ctrl+G, zoxide `z`), and upgrade instructions.
+
+**Files changed:** `~/bin/configure-system.sh`, `~/.zshrc`
+
+---
+
 ## 2026-01-24 - Emacs Configuration Consolidation
 
 ### Decision: Merge init-settings.el into init.el

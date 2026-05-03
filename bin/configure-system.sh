@@ -67,12 +67,9 @@ if ! command -v alacritty &> /dev/null; then
   sudo apt-get install -y alacritty
 fi
 
-# Install fzf if not present
-if ! command -v fzf &> /dev/null; then
-  echo "Installing fzf..."
-  sudo apt-get update
-  sudo apt-get install -y fzf
-fi
+# fzf installed via Go in the Modern CLI Toolchain section below.
+# (apt version is stale/Debian-renamed; we use 'go install' instead)
+
 
 # Install inotify-tools if not present
 if ! command -v inotifywait &> /dev/null; then
@@ -173,6 +170,101 @@ if ! command -v bluetuith &> /dev/null; then
   echo "Installing bluetuith..."
   go install github.com/darkhz/bluetuith@latest
 fi
+
+# Install fzf via go (canonical; apt version is stale/Debian-renamed)
+# Latest: 0.72.0 (Apr 2026). Binary lands in ~/go/bin/fzf.
+echo "Installing fzf..."
+go install github.com/junegunn/fzf@latest
+
+
+# =============================================================================
+# Modern CLI Toolchain
+# Rust-based replacements for classic Unix tools.
+# All installed via cargo; canonical per each tool's GitHub README.
+#
+# Naming gotchas on Ubuntu/Debian (apt uses different names due to conflicts):
+#   bat      → apt: batcat        cargo: bat        (crate: bat)
+#   fd       → apt: fdfind        cargo: fd         (crate: fd-find)
+#   delta    → apt: git-delta     cargo: delta      (crate: git-delta)
+#
+# .zshrc provides compatibility shims so both names always work.
+# =============================================================================
+
+echo "Setting up modern CLI toolchain..."
+
+# Ensure Rust/cargo is available
+if ! command -v cargo &>/dev/null; then
+  echo "Installing Rust toolchain..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  # shellcheck source=/dev/null
+  source "$HOME/.cargo/env"
+else
+  echo "Rust already installed ($(cargo --version))"
+  [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+fi
+
+# bat — cat(1) with syntax highlighting + git markers
+# https://github.com/sharkdp/bat  |  cargo install --locked bat
+echo "Installing bat..."
+cargo install --locked bat
+
+# ripgrep — grep replacement (.gitignore-aware, parallel)
+# https://github.com/BurntSushi/ripgrep  |  cargo install ripgrep
+echo "Installing ripgrep..."
+cargo install ripgrep
+
+# fd — find replacement (simple syntax, colored, .gitignore-aware)
+# https://github.com/sharkdp/fd  |  cargo install fd-find
+echo "Installing fd..."
+cargo install fd-find
+
+# eza — ls replacement (colors, git status, tree mode)
+# https://github.com/eza-community/eza  |  cargo install eza
+echo "Installing eza..."
+cargo install eza
+
+# delta — git diff/pager with syntax highlighting + side-by-side
+# https://github.com/dandavison/delta  |  cargo install git-delta
+echo "Installing delta..."
+cargo install git-delta
+
+# dust — du replacement with visual tree
+# https://github.com/bootandy/dust  |  cargo install du-dust
+echo "Installing dust..."
+cargo install du-dust
+
+# tealdeer — fast Rust tldr client; binary is 'tldr'
+# https://github.com/tealdeer-rs/tealdeer  |  cargo install tealdeer
+echo "Installing tealdeer (tldr)..."
+cargo install tealdeer
+
+# navi — interactive cheatsheet widget (Ctrl+G at any prompt)
+# https://github.com/denisidoro/navi  |  cargo install navi
+echo "Installing navi..."
+cargo install navi
+
+# zoxide — smarter cd with frecency (use 'z' after shell init)
+# https://github.com/ajeetdsouza/zoxide  |  cargo install zoxide --locked
+echo "Installing zoxide..."
+cargo install zoxide --locked
+
+# Configure delta as the global git pager
+echo "Configuring delta as git pager..."
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global delta.side-by-side true
+git config --global delta.line-numbers true
+git config --global merge.conflictStyle diff3
+git config --global diff.colorMoved default
+
+# Fetch initial tealdeer page cache (first run would be slow otherwise)
+echo "Fetching tealdeer page cache..."
+tldr --update || echo "Warning: tealdeer cache fetch failed (needs network)"
+
+echo "Modern CLI toolchain installed:"
+echo "  bat (cat), rg (grep), fd (find), eza (ls), delta (git diff),"
+echo "  dust (du), tldr, navi, zoxide (z)"
 
 
 # =============================================================================
