@@ -387,6 +387,26 @@ else
   echo "bash-language-server already installed"
 fi
 
+# -----------------------------------------------------------------------------
+# Pi Coding Agent (via mise Node's npm)
+# Minimal terminal coding harness; extensible via TS extensions/skills/themes.
+# Install: https://github.com/badlogic/pi-mono
+# -----------------------------------------------------------------------------
+if ! command -v pi &> /dev/null; then
+  echo "Installing pi-coding-agent..."
+  mise x -- npm install -g @mariozechner/pi-coding-agent
+else
+  echo "pi-coding-agent already installed"
+fi
+
+# Pi packages (extensions). 'pi install' adds them to ~/.pi/settings.json
+# and is idempotent — safe to re-run.
+if command -v pi &> /dev/null; then
+  echo "Installing pi packages (pi-btw, pi-mcp-adapter)..."
+  pi install npm:pi-btw || echo "  pi-btw install skipped/failed"
+  pi install npm:pi-mcp-adapter || echo "  pi-mcp-adapter install skipped/failed"
+fi
+
 echo ""
 echo "Language server installation complete!"
 echo "Installed servers:"
