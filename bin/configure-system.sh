@@ -81,6 +81,19 @@ fi
 # CLI tools (always installed; useful headless and graphical)
 # -----------------------------------------------------------------------------
 
+# zsh: the canonical shell our dotfiles target (.zshrc puts ~/.cargo/bin,
+# ~/.local/bin, mise shims, etc. on PATH). Install + chsh on first run so
+# `ssh user@host` lands in a working environment.
+if ! command -v zsh &> /dev/null; then
+  echo "Installing zsh..."
+  sudo apt-get update
+  sudo apt-get install -y zsh
+fi
+if [ "$(getent passwd "$USER" | cut -d: -f7)" != "$(command -v zsh)" ]; then
+  echo "Setting login shell to zsh for $USER..."
+  sudo chsh -s "$(command -v zsh)" "$USER"
+fi
+
 # surfraw: terminal-based web search wrapper (CLI; works without X)
 if ! command -v surfraw &> /dev/null; then
   echo "Installing surfraw..."
