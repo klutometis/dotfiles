@@ -649,13 +649,18 @@ fi  # end Font configuration (HEADLESS guard)
 # GTK Configuration
 # =============================================================================
 
-# GTK key theme configuration
-echo "Configuring GTK key theme..."
-if command -v gsettings &> /dev/null; then
-  gsettings set org.gnome.desktop.interface gtk-key-theme "Emacs"
-  echo "GTK3 Emacs key theme set via gsettings"
-else
-  echo "Warning: gsettings not found - GTK3 Emacs key theme may not work in some applications"
+# GTK key theme configuration. Desktop-only: gsettings needs a running
+# DBus session bus; on a headless server it's installed (pulled in as a
+# dep of other packages) but `gsettings set` returns non-zero.
+if [ "$HEADLESS" = 0 ] && command -v gsettings &> /dev/null; then
+  echo "Configuring GTK key theme..."
+  if gsettings set org.gnome.desktop.interface gtk-key-theme "Emacs" 2>/dev/null; then
+    echo "GTK3 Emacs key theme set via gsettings"
+  else
+    echo "Warning: gsettings set failed (no DBus session?); skipping GTK theme"
+  fi
+elif [ "$HEADLESS" = 1 ]; then
+  echo "Skipping GTK key theme (headless)."
 fi
 
 # =============================================================================
