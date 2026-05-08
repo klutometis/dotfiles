@@ -309,9 +309,20 @@ else
   git -C "$TPM_DIR" pull -q
 fi
 
-# Install/update all plugins declared in .tmux.conf
+# Install/update all plugins declared in .tmux.conf.
+# TPM's install_plugins reads TMUX_PLUGIN_MANAGER_PATH from `tmux
+# show-environment -g`, not the surrounding shell env. Sessions that
+# were started before ~/.tmux.conf was symlinked won't have the
+# `run '~/.tmux/plugins/tpm/tpm'` side-effect applied, so we must
+# either source the conf into a running server or set the var
+# explicitly. Do both for robustness:
+if tmux list-sessions >/dev/null 2>&1; then
+  tmux source-file "$HOME/.tmux.conf" 2>/dev/null || true
+  tmux set-environment -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.tmux/plugins/" 2>/dev/null || true
+fi
 echo "Installing tmux plugins..."
-TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" "$TPM_DIR/bin/install_plugins"
+TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" "$TPM_DIR/bin/install_plugins" || \
+  echo "  WARNING: tmux plugin install failed; rerun configure-system.sh from inside a tmux session."
 
 # tmux-fingers needs a pre-built binary (written in Crystal)
 FINGERS_DIR="$HOME/.tmux/plugins/tmux-fingers"
