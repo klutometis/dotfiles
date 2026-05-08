@@ -35,11 +35,18 @@ fi
 # 2. Configure git to not show untracked files
 git config status.showUntrackedFiles no
 
-# 3. Pull the dotfiles
+# 3. Pull the dotfiles. Use reset --hard so re-runs pick up new commits
+# (git checkout -f main on its own doesn't fast-forward an existing local
+# main branch to origin/main).
 echo "Fetching dotfiles..."
 git fetch origin main
-git checkout -f main  # Force checkout to overwrite any existing files
-git branch --set-upstream-to=origin/main main
+if git rev-parse --verify main >/dev/null 2>&1; then
+    git checkout main
+    git reset --hard origin/main
+else
+    git checkout -f -b main origin/main
+fi
+git branch --set-upstream-to=origin/main main >/dev/null 2>&1 || true
 
 # 4. Initialize submodules
 echo "Initializing submodules..."
