@@ -74,10 +74,15 @@ if ! command -v stow &> /dev/null; then
     exit 1
 fi
 
+# Pass the equivalent of ~/.stowrc explicitly so bootstrap doesn't depend
+# on the file already existing on a fresh machine (chicken-egg: stowrc
+# itself ships in dot-stowrc and only appears after this stow runs).
+STOW_OPTS=(--dir="$HOME/etc" --dotfiles --target="$HOME" -v --restow --adopt)
+
 echo "Creating dotfile symlinks with stow..."
-stow -v --restow --adopt dotfiles
+stow "${STOW_OPTS[@]}" dotfiles
 if [ "$SECRETS_LOCKED" = 0 ]; then
-    stow -v --restow --adopt secrets
+    stow "${STOW_OPTS[@]}" secrets
 else
     echo "Skipping 'stow secrets' (still encrypted)"
 fi
