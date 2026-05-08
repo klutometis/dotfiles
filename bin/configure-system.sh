@@ -1,7 +1,23 @@
 #!/bin/bash
-# Deploy system configuration files
+# Deploy system configuration files.
+#
+# Honors $HEADLESS (0 or 1). When 1, skips desktop-only sections:
+#   - X11/Wayland packages (sxhkd, i3, picom, rofi, alacritty, x0vncserver)
+#   - DNS reconfiguration (dnsmasq + NetworkManager + dhclient + resolvconf)
+#   - Bitmap font configuration
+# All other sections (CLI tools, language servers, modern Rust toolchain,
+# tmux plugins, pi) run on both headless servers and graphical workstations.
 
 set -e
+
+is_headless() {
+    [ ! -x /usr/bin/Xorg ] && [ -z "${DISPLAY:-}" ]
+}
+HEADLESS="${HEADLESS:-$(is_headless && echo 1 || echo 0)}"
+
+if [ "$HEADLESS" = 1 ]; then
+    echo "Headless mode: skipping desktop-only sections (X11, DNS, fonts)."
+fi
 
 echo "Deploying system configuration files..."
 
@@ -11,60 +27,65 @@ echo "Deploying system configuration files..."
 
 echo "Checking and installing system packages..."
 
-# Install sxhkd if not present
-if ! command -v sxhkd &> /dev/null; then
-  echo "Installing sxhkd..."
-  sudo apt-get update
-  sudo apt-get install -y sxhkd
+# -----------------------------------------------------------------------------
+# Desktop-only packages (X11/Wayland window manager + tools)
+# -----------------------------------------------------------------------------
+if [ "$HEADLESS" = 0 ]; then
+  # sxhkd: X11 hotkey daemon
+  if ! command -v sxhkd &> /dev/null; then
+    echo "Installing sxhkd..."
+    sudo apt-get update
+    sudo apt-get install -y sxhkd
+  fi
+
+  # rofi: launcher
+  if ! command -v rofi &> /dev/null; then
+    echo "Installing rofi..."
+    sudo apt-get update
+    sudo apt-get install -y rofi
+  fi
+
+  # picom: compositor
+  if ! command -v picom &> /dev/null; then
+    echo "Installing picom..."
+    sudo apt-get update
+    sudo apt-get install -y picom
+  fi
+
+  # i3 window manager + lock + status bar
+  if ! command -v i3 &> /dev/null; then
+    echo "Installing i3 window manager..."
+    sudo apt-get update
+    sudo apt-get install -y i3
+  fi
+  if ! command -v i3lock &> /dev/null; then
+    echo "Installing i3lock..."
+    sudo apt-get update
+    sudo apt-get install -y i3lock
+  fi
+  if ! command -v i3status &> /dev/null; then
+    echo "Installing i3status..."
+    sudo apt-get update
+    sudo apt-get install -y i3status
+  fi
+
+  # alacritty: GPU terminal
+  if ! command -v alacritty &> /dev/null; then
+    echo "Installing alacritty terminal..."
+    sudo apt-get update
+    sudo apt-get install -y alacritty
+  fi
 fi
 
-# Install surfraw if not present
+# -----------------------------------------------------------------------------
+# CLI tools (always installed; useful headless and graphical)
+# -----------------------------------------------------------------------------
+
+# surfraw: terminal-based web search wrapper (CLI; works without X)
 if ! command -v surfraw &> /dev/null; then
   echo "Installing surfraw..."
   sudo apt-get update
   sudo apt-get install -y surfraw
-fi
-
-# Install rofi if not present
-if ! command -v rofi &> /dev/null; then
-  echo "Installing rofi..."
-  sudo apt-get update
-  sudo apt-get install -y rofi
-fi
-
-# Install picom if not present
-if ! command -v picom &> /dev/null; then
-  echo "Installing picom..."
-  sudo apt-get update
-  sudo apt-get install -y picom
-fi
-
-# Install i3 if not present
-if ! command -v i3 &> /dev/null; then
-  echo "Installing i3 window manager..."
-  sudo apt-get update
-  sudo apt-get install -y i3
-fi
-
-# Install i3lock if not present
-if ! command -v i3lock &> /dev/null; then
-  echo "Installing i3lock..."
-  sudo apt-get update
-  sudo apt-get install -y i3lock
-fi
-
-# Install i3status if not present
-if ! command -v i3status &> /dev/null; then
-  echo "Installing i3status..."
-  sudo apt-get update
-  sudo apt-get install -y i3status
-fi
-
-# Install alacritty if not present
-if ! command -v alacritty &> /dev/null; then
-  echo "Installing alacritty terminal..."
-  sudo apt-get update
-  sudo apt-get install -y alacritty
 fi
 
 # fzf installed via Go in the Modern CLI Toolchain section below.
@@ -99,8 +120,8 @@ if ! command -v yq &> /dev/null; then
   mise use -g yq
 fi
 
-# Install x0vncserver if not present
-if ! command -v x0vncserver &> /dev/null; then
+# x0vncserver: scrape an existing X session over VNC. Desktop-only.
+if [ "$HEADLESS" = 0 ] && ! command -v x0vncserver &> /dev/null; then
   echo "Installing x0vncserver..."
   sudo apt-get update
   sudo apt-get install -y tigervnc-scraping-server
@@ -478,7 +499,18 @@ echo "Directory symlinks configured"
 
 # =============================================================================
 # DNS Configuration (Simple & Clean)
+# Desktop-only: assumes NetworkManager + dnsmasq + dhclient + resolvconf.
+# Servers (Hetzner, GCE, etc.) typically use systemd-networkd or similar
+# and do not have NetworkManager — running this section there reconfigures
+# files that don't apply and triggers `systemctl restart NetworkManager`
+# which fails under set -e.
 # =============================================================================
+
+if [ "$HEADLESS" = 1 ]; then
+  echo "Skipping DNS reconfiguration (headless)."
+elif ! command -v NetworkManager &> /dev/null && ! systemctl list-unit-files NetworkManager.service &>/dev/null; then
+  echo "Skipping DNS reconfiguration (NetworkManager not present)."
+else
 
 echo "Configuring DNS..."
 
@@ -543,7 +575,10 @@ echo "  ✓ Applications query: 127.0.0.1 (dnsmasq)"
 echo "  ✓ dnsmasq forwards to: 8.8.8.8, 8.8.4.4 (Google DNS)"
 echo "  ✓ Search domains: corp.google.com prod.google.com prodz.google.com google.com"
 
-# Font configuration for bitmapped fonts
+fi  # end DNS Configuration (HEADLESS guard)
+
+# Font configuration for bitmapped fonts (desktop-only)
+if [ "$HEADLESS" = 0 ]; then
 echo "Configuring fonts for bitmapped font support..."
 
 # Remove conflicting font configs if they exist
@@ -583,6 +618,8 @@ fi
 echo "Rebuilding font cache..."
 sudo fc-cache -f -v > /dev/null 2>&1
 echo "Font cache rebuilt"
+
+fi  # end Font configuration (HEADLESS guard)
 
 # =============================================================================
 # GTK Configuration
