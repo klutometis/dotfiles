@@ -113,11 +113,17 @@ if ! command -v ripgrep &> /dev/null; then
   sudo apt-get install -y ripgrep
 fi
 
-# Install yq via mise if not present
+# Install yq via mise. Guarded on mise being present, since mise itself
+# is installed later in this script (Language Servers section); on first
+# run, this block is a no-op and the post-mise fixup below picks it up.
 if ! command -v yq &> /dev/null; then
-  echo "Installing yq via mise..."
-  mise install yq
-  mise use -g yq
+  if command -v mise &> /dev/null; then
+    echo "Installing yq via mise..."
+    mise install yq
+    mise use -g yq
+  else
+    echo "Skipping yq for now (mise not installed yet — will retry after mise setup)"
+  fi
 fi
 
 # x0vncserver: scrape an existing X session over VNC. Desktop-only.
@@ -406,6 +412,13 @@ if ! command -v bash-language-server &> /dev/null; then
   mise x -- npm install -g bash-language-server
 else
   echo "bash-language-server already installed"
+fi
+
+# Retry yq install now that mise is available (no-op if already installed)
+if ! command -v yq &> /dev/null && command -v mise &> /dev/null; then
+  echo "Installing yq via mise (post-mise-setup)..."
+  mise install yq
+  mise use -g yq
 fi
 
 # -----------------------------------------------------------------------------
