@@ -68,23 +68,80 @@ else
     SECRETS_LOCKED=1
 fi
 
-# 6. Run stow to create symlinks
-if ! command -v stow &> /dev/null; then
-    echo "Error: stow not installed (sudo apt install stow)"
-    exit 1
-fi
+# 6. Create symlinks. We use a tiny in-script `stow_lite` instead of GNU
+# stow because stow 2.4.1's `--dotfiles` mode has a tree-unfolding bug
+# that makes it impossible to merge two packages with overlapping
+# subdirectories (e.g., dotfiles and secrets both providing dot-config/).
+# The error looks like: `stow_contents() called with non-directory path:
+# etc/dotfiles/.config`. Filed upstream; until fixed, this is the
+# workaround that produces the same end state as stow would.
+#
+# stow_lite walks each package under ~/etc/$pkg, translates `dot-X` to
+# `.X`, and creates per-entry symlinks in $HOME. When packages overlap
+# at a directory level, it descends and creates per-file symlinks (no
+# folding). Idempotent.
 
-# Pass the equivalent of ~/.stowrc explicitly so bootstrap doesn't depend
-# on the file already existing on a fresh machine (chicken-egg: stowrc
-# itself ships in dot-stowrc and only appears after this stow runs).
-STOW_OPTS=(--dir="$HOME/etc" --dotfiles --target="$HOME" -v --restow --adopt)
+stow_lite() {
+    local pkg=$1
+    local src="$HOME/etc/$pkg"
+    [ -d "$src" ] || { echo "  no $src; skipping"; return; }
 
-echo "Creating dotfile symlinks with stow..."
-stow "${STOW_OPTS[@]}" dotfiles
+    local count=0
+    shopt -s nullglob dotglob
+    _stow_lite_walk "$src" "$HOME" count
+    shopt -u nullglob dotglob
+    echo "  $pkg: $count link(s) created/updated"
+}
+
+_stow_lite_walk() {
+    local src=$1 dst=$2 count_var=$3
+    local entry name target real_src
+    for entry in "$src"/*; do
+        name=$(basename "$entry")
+        # `.` and `..` are filtered by glob; just skip the .git tree
+        case "$name" in .git|.gitmodules|.gitattributes|.gitignore) continue ;; esac
+        # Translate dot-X (only at start of name) to .X
+        target="$dst/${name/#dot-/.}"
+        real_src=$(readlink -f "$entry")
+
+        if [ -L "$target" ]; then
+            if [ "$(readlink -f "$target")" = "$real_src" ]; then
+                continue  # already correct
+            fi
+            if [ -d "$entry" ]; then
+                # Need to merge: unfold target symlink into a real dir,
+                # then descend so our entries get added alongside the
+                # original package's contents.
+                local prev_target=$(readlink -f "$target")
+                rm "$target"; mkdir "$target"
+                local sub subname
+                for sub in "$prev_target"/*; do
+                    subname=$(basename "$sub")
+                    [ ! -e "$target/$subname" ] && ln -s "$sub" "$target/$subname" \
+                        && eval "$count_var=\$((${!count_var}+1))"
+                done
+                _stow_lite_walk "$entry" "$target" "$count_var"
+                continue
+            fi
+            # Plain file or non-mergeable conflict: this package wins
+            rm "$target"
+        elif [ -d "$target" ] && [ -d "$entry" ]; then
+            _stow_lite_walk "$entry" "$target" "$count_var"
+            continue
+        elif [ -e "$target" ]; then
+            echo "  skip $target (exists, not symlink)"
+            continue
+        fi
+        ln -s "$real_src" "$target" && eval "$count_var=\$((${!count_var}+1))"
+    done
+}
+
+echo "Creating dotfile symlinks (stow_lite)..."
+stow_lite dotfiles
 if [ "$SECRETS_LOCKED" = 0 ]; then
-    stow "${STOW_OPTS[@]}" secrets
+    stow_lite secrets
 else
-    echo "Skipping 'stow secrets' (still encrypted)"
+    echo "Skipping secrets (still encrypted)"
 fi
 
 # 7. Run system configuration
