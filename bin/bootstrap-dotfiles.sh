@@ -105,8 +105,19 @@ _stow_lite_walk() {
     local entry name target real_src
     for entry in "$src"/*; do
         name=$(basename "$entry")
-        # `.` and `..` are filtered by glob; just skip the .git tree
-        case "$name" in .git|.gitmodules|.gitattributes|.gitignore) continue ;; esac
+        # Always skip git plumbing and stow's own metadata. If a previous
+        # buggy run linked any of these into $HOME, remove the stale link
+        # rather than leaving it (git pull complains about
+        # `.gitattributes` being a symlink loop into a submodule, etc.).
+        case "$name" in
+            .git|.gitmodules|.gitattributes|.gitignore|.git-crypt|.stow-local-ignore)
+                local stale="$dst/$name"
+                if [ -L "$stale" ] && [[ "$(readlink -f "$stale")" == "$HOME/etc/"* ]]; then
+                    rm "$stale" && echo "  unlink stale $stale"
+                fi
+                continue
+                ;;
+        esac
         # Translate dot-X (only at start of name) to .X
         target="$dst/${name/#dot-/.}"
         real_src=$(readlink -f "$entry")
