@@ -1,33 +1,33 @@
 #!/usr/bin/env bash
 #
-# vm - open/attach a named tmux session on vm.danenberg.ai
+# vm - open/attach a tmux session on the host named by $VM_HOST
 #
 # Usage:
-#   vm                  attach to scratch (default)
+#   vm                  attach to default session (scratch)
 #   vm SESSION          attach to/create SESSION
 #
-# Locally (on lappie) this opens a new Alacritty window via ~/bin/terminal,
-# SSHing to vm.danenberg.ai. When already on the VM, it just does
-# `tmux new -A -s SESSION` in the current shell.
+# Set VM_HOST in any sourced env file (e.g., ~/.env). The script
+# refuses to run without it.
 #
-# Pre-created persistent sessions on the VM (created at boot by
-# tmux-sessions.service): multiplexer, spark, opencode, scratch, monitor.
-# Any other name will be created on first use.
-#
-# The LLM at llm.danenberg.ai drives these sessions via tmux-mcp-rs,
-# which is not an attached client — so attaching here doesn't steal
-# anything; you can watch and type alongside.
+# Locally this opens a new terminal via ~/bin/terminal --remote.
+# When already on $VM_HOST, it just runs `tmux new -A -s SESSION`
+# in the current shell.
 
 set -euo pipefail
 
-session="${1:-scratch}"
-host="vm.danenberg.ai"
+if [ -z "${VM_HOST:-}" ]; then
+  echo "vm: VM_HOST is not set." >&2
+  echo "    Set it in ~/.env or another sourced env file, e.g.:" >&2
+  echo "      VM_HOST=vm.example.com" >&2
+  exit 1
+fi
 
-# Are we already on the VM? Don't double-ssh.
-if [[ "$(hostname -f 2>/dev/null || hostname)" == *"$host"* ]] \
-    || [[ "$(hostname -s 2>/dev/null)" == "vm-tmux-mcp" ]]; then
+session="${1:-scratch}"
+
+# Are we already on $VM_HOST? Skip the ssh hop.
+host_fqdn=$(hostname -f 2>/dev/null || hostname)
+if [[ "$host_fqdn" == "$VM_HOST" ]] || [[ "$host_fqdn" == *".$VM_HOST" ]]; then
   exec tmux new -A -s "$session"
 fi
 
-# On lappie. Delegate to ~/bin/terminal for consistent windowing.
-exec "$HOME/bin/terminal" --remote "$host" "$session"
+exec "$HOME/bin/terminal" --remote "$VM_HOST" "$session"
