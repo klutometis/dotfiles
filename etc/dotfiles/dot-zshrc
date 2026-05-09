@@ -112,6 +112,7 @@ if command -v bat &>/dev/null; then
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
 command -v rg   &>/dev/null && alias grep='rg'
+command -v zathura &>/dev/null && alias evince='zathura'    # muscle memory
 # NOTE: deliberately NOT aliasing 'find' to 'fd' — fd is not a drop-in for
 # POSIX find, and the alias breaks scripts that legitimately use
 # `find -type f -name ...` (e.g. sdkman-init.sh). Use `fd` directly.

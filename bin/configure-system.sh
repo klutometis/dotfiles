@@ -94,6 +94,12 @@ if [ "$(getent passwd "$USER" | cut -d: -f7)" != "$(command -v zsh)" ]; then
   sudo chsh -s "$(command -v zsh)" "$USER"
 fi
 
+# oh-my-zsh: .zshrc sources it; install if absent.
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "Installing oh-my-zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+fi
+
 # surfraw: terminal-based web search wrapper (CLI; works without X)
 if ! command -v surfraw &> /dev/null; then
   echo "Installing surfraw..."
