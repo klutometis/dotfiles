@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# vm - open/attach a named tmux session on vm.danenberg.ai
+#
+# Usage:
+#   vm                  attach to scratch (default)
+#   vm SESSION          attach to/create SESSION
+#
+# Locally (on lappie) this opens a new Alacritty window via ~/bin/terminal,
+# SSHing to vm.danenberg.ai. When already on the VM, it just does
+# `tmux new -A -s SESSION` in the current shell.
+#
+# Pre-created persistent sessions on the VM (created at boot by
+# tmux-sessions.service): multiplexer, spark, opencode, scratch, monitor.
+# Any other name will be created on first use.
+#
+# The LLM at llm.danenberg.ai drives these sessions via tmux-mcp-rs,
+# which is not an attached client — so attaching here doesn't steal
+# anything; you can watch and type alongside.
+
+set -euo pipefail
+
+session="${1:-scratch}"
+host="vm.danenberg.ai"
+
+# Are we already on the VM? Don't double-ssh.
+if [[ "$(hostname -f 2>/dev/null || hostname)" == *"$host"* ]] \
+    || [[ "$(hostname -s 2>/dev/null)" == "vm-tmux-mcp" ]]; then
+  exec tmux new -A -s "$session"
+fi
+
+# On lappie. Delegate to ~/bin/terminal for consistent windowing.
+exec "$HOME/bin/terminal" --remote "$host" "$session"
