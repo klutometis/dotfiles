@@ -1,0 +1,11 @@
+{
+  "lastChangelogVersion": "0.72.1",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-4-6",
+  "packages": [
+    "npm:pi-mcp-adapter",
+    "npm:pi-btw"
+  ],
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": false
+}
