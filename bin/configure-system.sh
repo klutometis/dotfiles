@@ -380,12 +380,8 @@ fi
 # Python Language Server - python-lsp-server (via uv tool)
 # Isolated installation, won't interfere with system Python
 # -----------------------------------------------------------------------------
-if ! command -v pylsp &> /dev/null; then
-  echo "Installing python-lsp-server via uv..."
-  uv tool install python-lsp-server
-else
-  echo "python-lsp-server already installed"
-fi
+echo "Installing python-lsp-server via uv..."
+uv tool install --force python-lsp-server
 
 # -----------------------------------------------------------------------------
 # Node.js Version Manager - mise (Rust-based, multi-language, hermetic)
