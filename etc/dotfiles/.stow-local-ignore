@@ -1,21 +1,21 @@
 # Patterns for paths that stow should NOT link into $HOME.
-# Each pattern is a Perl regex anchored at the package root.
-# See: man stow, "INVOKING STOW" section.
+# Each pattern is a Perl regex tested against paths relative to the
+# package root (no leading slash). See: info stow ".stow-local-ignore".
 
 # Runtime content that landed in dot-local/ via the legacy
 # `~/.local -> dot-local` symlink (mise shims, uv tool installs,
-# Perl modules from stow's own ./configure --prefix=$HOME/.local).
+# Perl modules from a botched stow ./configure --prefix=$HOME/.local).
 # Only dot-local/share/applications/ is tracked in git; the rest is
 # host-local runtime state and should remain real files in ~/.local.
-^/dot-local/bin
-^/dot-local/state
-^/dot-local/share/mise
-^/dot-local/share/uv
-^/dot-local/share/perl
-^/dot-local/share/info
-^/dot-local/share/man
-^/dot-local/share/doc
-^/dot-local/share/delta
-^/dot-local/share/fastmcp
-^/dot-local/share/tmux
-^/dot-local/share/zoxide
+^dot-local/bin
+^dot-local/state
+^dot-local/share/mise
+^dot-local/share/uv
+^dot-local/share/perl
+^dot-local/share/info
+^dot-local/share/man
+^dot-local/share/doc
+^dot-local/share/delta
+^dot-local/share/fastmcp
+^dot-local/share/tmux
+^dot-local/share/zoxide
