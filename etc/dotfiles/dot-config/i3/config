@@ -178,3 +178,6 @@ mode "resize" {
 bar {
         status_command i3status
 }
+
+# pen tracker overlay window (PWA)
+for_window [title="pen$"] floating enable, sticky enable, border none, resize set 480 720

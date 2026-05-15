@@ -31,3 +31,22 @@ draw_bold_text_with_bright_colors = true
 
 [terminal]
 osc52 = "CopyPaste"
+
+# Forward modified Enter keys as CSI-u sequences so pi (inside tmux) can
+# distinguish Shift+Enter / Ctrl+Enter / Alt+Enter from plain Enter.
+# Alacritty doesn't speak the Kitty keyboard protocol natively, so we map
+# these manually.
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001b[13;2u"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Control"
+chars = "\u001b[13;5u"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Alt"
+chars = "\u001b[13;3u"
