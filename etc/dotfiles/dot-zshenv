@@ -55,10 +55,10 @@ unset QT_IM_MODULE
 [ -f ~/.env ] && source ~/.env
 [ -f "$HOME/.rokit/env" ] && . "$HOME/.rokit/env"
 
-# BeyondCorp/mTLS config breaks gcloud SSH (crashes with cert errors)
-unset CLOUDSDK_CONTEXT_AWARE_CERTIFICATE_CONFIG_FILE_PATH
-unset CLOUDSDK_CONTEXT_AWARE_USE_CLIENT_CERTIFICATE
-unset CLOUDSDK_CONTEXT_AWARE_USE_ECP_HTTP_PROXY
+# Host-specific overrides (unchecked-in; per-machine facts like the active
+# corp project). Sourced after ~/.env so it can reference base values like
+# $GOOGLE_CLOUD_PROJECT_CORP.
+[ -f "$HOME/.$(hostname -s).sh" ] && source "$HOME/.$(hostname -s).sh"
 
 # Tool initialization (available to all shells including non-interactive)
 # Initialize mise (replaces nvm, pyenv, etc.)

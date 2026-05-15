@@ -50,10 +50,8 @@ alias sas='sudo apt-cache search'
 unsetopt CASE_GLOB
 setopt NO_NOMATCH
 
-# Host-Specific Configuration
-if [ -f ~/.$(hostname -s).sh ]; then
-  source ~/.$(hostname -s).sh
-fi
+# Host-Specific Configuration: now sourced from ~/.zshenv (for non-interactive
+# shells too). Keeping this comment as a breadcrumb.
 
 # Miscellaneous
 stty susp undef
