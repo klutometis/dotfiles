@@ -75,96 +75,23 @@ else
     SECRETS_LOCKED=1
 fi
 
-# 6. Ensure GNU Stow >= 2.4.0 (Ubuntu/Debian LTS ship 2.3.1 which has a
-# known --dotfiles bug with overlapping subdirectories). Best-effort:
-# falls through to whatever stow exists if the source build fails (e.g.,
-# no sudo). stow_lite below is the actual symlink mechanism for now and
-# tolerates any stow version.
-if [ -x "$HOME/bin/install-stow" ]; then
-    "$HOME/bin/install-stow" || echo "  (proceeding with existing stow)"
-fi
+# 6. Ensure GNU Stow >= 2.4.0 (Ubuntu/Debian LTS ship 2.3.1, which has
+# a known --dotfiles bug with overlapping subdirectories). install-stow
+# builds + sudo-installs to /usr/local if needed; idempotent.
+"$HOME/bin/install-stow"
 
-# Create symlinks. We use a tiny in-script `stow_lite` rather than
-# GNU stow because pre-2.4.0 stow has the bug noted above, and even
-# 2.4.0+ can choke on the mixed real-file/symlink state that real
-# machines accumulate over time. stow_lite preserves existing files
-# (won't clobber) and idempotently creates the symlinks we need.
+# Settings come from ~/.stowrc (--dir=etc --dotfiles --target=~/), so we
+# just name the packages. --restow makes re-runs idempotent. --adopt is
+# important: when a real file pre-exists at the target (fresh bootstrap
+# where ~/.config/foo was created before stow ran), --adopt moves it
+# into the repo and replaces with a symlink, rather than refusing.
 #
-# stow_lite walks each package under ~/etc/$pkg, translates `dot-X` to
-# `.X`, and creates per-entry symlinks in $HOME. When packages overlap
-# at a directory level, it descends and creates per-file symlinks (no
-# folding). Idempotent.
-
-stow_lite() {
-    local pkg=$1
-    local src="$HOME/etc/$pkg"
-    [ -d "$src" ] || { echo "  no $src; skipping"; return; }
-
-    local count=0
-    shopt -s nullglob dotglob
-    _stow_lite_walk "$src" "$HOME" count
-    shopt -u nullglob dotglob
-    echo "  $pkg: $count link(s) created/updated"
-}
-
-_stow_lite_walk() {
-    local src=$1 dst=$2 count_var=$3
-    local entry name target real_src
-    for entry in "$src"/*; do
-        name=$(basename "$entry")
-        # Always skip git plumbing and stow's own metadata. If a previous
-        # buggy run linked any of these into $HOME, remove the stale link
-        # rather than leaving it (git pull complains about
-        # `.gitattributes` being a symlink loop into a submodule, etc.).
-        case "$name" in
-            .git|.gitmodules|.gitattributes|.gitignore|.git-crypt|.stow-local-ignore)
-                local stale="$dst/$name"
-                if [ -L "$stale" ] && [[ "$(readlink -f "$stale")" == "$HOME/etc/"* ]]; then
-                    rm "$stale" && echo "  unlink stale $stale"
-                fi
-                continue
-                ;;
-        esac
-        # Translate dot-X (only at start of name) to .X
-        target="$dst/${name/#dot-/.}"
-        real_src=$(readlink -f "$entry")
-
-        if [ -L "$target" ]; then
-            if [ "$(readlink -f "$target")" = "$real_src" ]; then
-                continue  # already correct
-            fi
-            if [ -d "$entry" ]; then
-                # Need to merge: unfold target symlink into a real dir,
-                # then descend so our entries get added alongside the
-                # original package's contents.
-                local prev_target=$(readlink -f "$target")
-                rm "$target"; mkdir "$target"
-                local sub subname
-                for sub in "$prev_target"/*; do
-                    subname=$(basename "$sub")
-                    [ ! -e "$target/$subname" ] && ln -s "$sub" "$target/$subname" \
-                        && eval "$count_var=\$((${!count_var}+1))"
-                done
-                _stow_lite_walk "$entry" "$target" "$count_var"
-                continue
-            fi
-            # Plain file or non-mergeable conflict: this package wins
-            rm "$target"
-        elif [ -d "$target" ] && [ -d "$entry" ]; then
-            _stow_lite_walk "$entry" "$target" "$count_var"
-            continue
-        elif [ -e "$target" ]; then
-            echo "  skip $target (exists, not symlink)"
-            continue
-        fi
-        ln -s "$real_src" "$target" && eval "$count_var=\$((${!count_var}+1))"
-    done
-}
-
-echo "Creating dotfile symlinks (stow_lite)..."
-stow_lite dotfiles
+# Caveat: --adopt promotes live content into the repo. If the repo has
+# uncommitted changes you care about, diff before running.
+echo "Creating dotfile symlinks (stow)..."
+stow -v --restow --adopt dotfiles
 if [ "$SECRETS_LOCKED" = 0 ]; then
-    stow_lite secrets
+    stow -v --restow --adopt secrets
 else
     echo "Skipping secrets (still encrypted)"
 fi
