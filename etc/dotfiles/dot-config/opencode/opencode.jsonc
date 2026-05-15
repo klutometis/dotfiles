@@ -20,6 +20,17 @@
         "--browser-url=http://127.0.0.1:9223"
       ],
       "enabled": true
+    },
+    // Chrome DevTools Protocol — work Chrome on port 9222
+    "chrome-devtools-work": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9222"
+      ],
+      "enabled": true
     }
   },
   "snapshot": false
