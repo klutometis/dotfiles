@@ -164,15 +164,9 @@ if ! command -v uv &> /dev/null; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 
-# Install/update aider-ce from git
-# NOTE: Temporarily pinned to v0.87.13 due to issues with HEAD
-# TODO: Remove version pin once HEAD is fixed and working again
-echo "Installing aider-ce (Community Edition)..."
-uv tool install --force git+https://github.com/dwash96/aider-ce.git@v0.87.13
-
 # Install mcp-proxy via uv
 echo "Installing mcp-proxy..."
-uv tool install git+https://github.com/sparfenyuk/mcp-proxy
+uv tool install --force git+https://github.com/sparfenyuk/mcp-proxy
 
 # =============================================================================
 # Go Installation & Tools
