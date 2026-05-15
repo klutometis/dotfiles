@@ -75,13 +75,20 @@ else
     SECRETS_LOCKED=1
 fi
 
-# 6. Create symlinks. We use a tiny in-script `stow_lite` instead of GNU
-# stow because stow 2.4.1's `--dotfiles` mode has a tree-unfolding bug
-# that makes it impossible to merge two packages with overlapping
-# subdirectories (e.g., dotfiles and secrets both providing dot-config/).
-# The error looks like: `stow_contents() called with non-directory path:
-# etc/dotfiles/.config`. Filed upstream; until fixed, this is the
-# workaround that produces the same end state as stow would.
+# 6. Ensure GNU Stow >= 2.4.0 (Ubuntu/Debian LTS ship 2.3.1 which has a
+# known --dotfiles bug with overlapping subdirectories). Best-effort:
+# falls through to whatever stow exists if the source build fails (e.g.,
+# no sudo). stow_lite below is the actual symlink mechanism for now and
+# tolerates any stow version.
+if [ -x "$HOME/bin/install-stow" ]; then
+    "$HOME/bin/install-stow" || echo "  (proceeding with existing stow)"
+fi
+
+# Create symlinks. We use a tiny in-script `stow_lite` rather than
+# GNU stow because pre-2.4.0 stow has the bug noted above, and even
+# 2.4.0+ can choke on the mixed real-file/symlink state that real
+# machines accumulate over time. stow_lite preserves existing files
+# (won't clobber) and idempotently creates the symlinks we need.
 #
 # stow_lite walks each package under ~/etc/$pkg, translates `dot-X` to
 # `.X`, and creates per-entry symlinks in $HOME. When packages overlap

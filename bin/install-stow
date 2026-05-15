@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Install GNU Stow >= 2.4.0 to /usr/local if not already present.
+#
+# Ubuntu/Debian LTS ship stow 2.3.1 (last released 2017), which has a
+# known --dotfiles tree-unfolding bug that hits when packages share
+# subdirectories (e.g., dotfiles + secrets both providing .config/).
+# Stow 2.4.0 (2024) fixes it. There's no Debian backport; build from
+# source per upstream INSTALL.md:
+#
+#   https://cgit.git.savannah.gnu.org/cgit/stow.git/plain/INSTALL.md
+#
+# Idempotent: skips if a stow >= MIN_VERSION is already on PATH.
+
+set -euo pipefail
+
+MIN_MAJOR=2
+MIN_MINOR=4
+STOW_URL="https://ftp.gnu.org/gnu/stow/stow-latest.tar.bz2"
+
+current_version() {
+    command -v stow >/dev/null 2>&1 || return
+    stow --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?$'
+}
+
+version_ge() {
+    local cur="$1"
+    local cur_major cur_minor
+    IFS=. read -r cur_major cur_minor _ <<<"$cur"
+    [ "$cur_major" -gt "$MIN_MAJOR" ] && return 0
+    [ "$cur_major" -eq "$MIN_MAJOR" ] && [ "$cur_minor" -ge "$MIN_MINOR" ]
+}
+
+cur=$(current_version || true)
+if [ -n "$cur" ] && version_ge "$cur"; then
+    echo "stow $cur already installed; skipping"
+    exit 0
+fi
+
+echo "Installing GNU Stow >= ${MIN_MAJOR}.${MIN_MINOR} (current: ${cur:-none})..."
+
+# Build deps. Stow is a Perl script; we need make + a C-toolchain-free configure.
+need_pkgs=()
+command -v make >/dev/null 2>&1 || need_pkgs+=(make)
+command -v perl >/dev/null 2>&1 || need_pkgs+=(perl)
+if [ "${#need_pkgs[@]}" -gt 0 ]; then
+    echo "Installing build deps: ${need_pkgs[*]}"
+    sudo apt-get update -qq && sudo apt-get install -y "${need_pkgs[@]}"
+fi
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+cd "$tmpdir"
+curl -fsSL "$STOW_URL" | tar xj
+cd stow-*
+./configure >/dev/null
+make >/dev/null 2>&1
+sudo make install >/dev/null 2>&1
+
+hash -r
+echo "Installed: $(stow --version | head -1) at $(which stow)"
