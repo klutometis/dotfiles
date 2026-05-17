@@ -1,0 +1,16 @@
+[Unit]
+Description=MCP gateway (local mode, port 3100)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/bin/start-mcp-gateway
+Restart=on-failure
+RestartSec=5s
+# Gateway script sources ~/.zshenv, which loads ~/.env (API keys, OAuth paths).
+# Run under zsh so $HOME/.zshenv processing in the wrapper works the same as
+# an interactive shell.
+
+[Install]
+WantedBy=default.target
