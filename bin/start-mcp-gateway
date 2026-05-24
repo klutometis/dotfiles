@@ -1,11 +1,12 @@
 #!/usr/bin/env zsh
-# Wrapper to run MCP gateway in local mode via uvx
-# Installs latest from git on every launch (only runs once per X session)
-# Started automatically from ~/.xinitrc
+# Wrapper to run MCP gateway in local mode from the laptop's checkout.
+# Started automatically from ~/.config/systemd/user/mcp-gateway.service.
 
-# Load environment (including nvm, rbenv, pyenv)
+# .zshenv loads ~/.env (API keys, OAuth paths)
 source "$HOME/.zshenv"
 
-# Run gateway in local mode (no OAuth, localhost only, port 3100)
-# .zshenv already sources ~/.env which has all API keys
-exec uvx --from "git+ssh://git@github.com/klutometis/mcp-gateway.git" gateway-local
+REPO="$HOME/prg/mcp-gateway"
+export MCP_SERVERS_FILE="$REPO/deploy/local/servers.json"
+
+cd "$REPO" || exit 1
+exec uv run gateway-local
