@@ -23,5 +23,5 @@ export GOOGLE_CLOUD_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
 exec pi \
     --provider vertex-anthropic \
     --model "claude-opus-4-7@default" \
-    --thinking medium \
+    --thinking xhigh \
     "$@"

@@ -7,6 +7,6 @@
     "npm:pi-btw",
     "npm:pi-provider-vertex-anthropic"
   ],
-  "defaultThinkingLevel": "off",
-  "hideThinkingBlock": false
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": true
 }
