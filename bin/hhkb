@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# Thin wrapper around hhkb-studio-tools that auto-discovers the PFU HHKB Studio
+# hidraw device and provides convenience subcommands.
+#
+# Usage:
+#   hhkb info
+#   hhkb dump [DIR]                 # dump all 4 profiles + info to DIR (default ~/var/hhkb)
+#   hhkb load PROFILE [--index N]   # write ~/etc/hhkb/PROFILE.toml to slot N (default current)
+#   hhkb toggle                     # flip the active slot between base <-> vision-pro
+#   hhkb current                    # which named profile (if any) matches the active slot
+#   hhkb diff PROFILE_A PROFILE_B   # diff two profiles under ~/etc/hhkb/
+#   hhkb show PROFILE               # human-readable layer dump of ~/etc/hhkb/PROFILE.toml
+#   hhkb device                     # print the hidraw device path
+#
+# Shortcuts: 'hhkb base' / 'hhkb vision-pro' are aliases for
+#            'hhkb load base' / 'hhkb load vision-pro' on the active slot.
+#
+# Requires read/write on the hidraw node. Run once after replug:
+#   sudo setfacl -m u:$USER:rw /dev/hidrawN
+set -euo pipefail
+
+ETC=${HHKB_ETC:-$HOME/etc/hhkb}
+VAR=${HHKB_VAR:-$HOME/var/hhkb}
+TOOL=${HHKB_TOOL:-$HOME/bin/hhkb-studio-tools}
+
+find_device() {
+    # PFU vendor 04fe, HHKB-Studio model 0016. Multiple hidraw nodes are
+    # exposed (one per HID interface); only one accepts the config protocol.
+    local d
+    for d in /dev/hidraw*; do
+        [ -e "$d" ] || continue
+        local info
+        info=$(udevadm info --query=property --name="$d" 2>/dev/null || true)
+        [[ "$info" == *"ID_VENDOR_ID=04fe"*    ]] || continue
+        [[ "$info" == *"ID_MODEL=HHKB-Studio"* ]] || continue
+        # probe by asking for product name; first one to respond wins
+        if timeout 2 "$TOOL" info --device "$d" >/dev/null 2>&1; then
+            echo "$d"
+            return 0
+        fi
+    done
+    echo "hhkb: no responsive HHKB Studio hidraw device found" >&2
+    echo "hint: sudo setfacl -m u:$USER:rw /dev/hidrawN  (after replug)" >&2
+    return 1
+}
+
+cmd=${1:-info}; shift || true
+case "$cmd" in
+    device) find_device ;;
+
+    info)
+        DEV=$(find_device)
+        "$TOOL" info --device "$DEV" "$@"
+        ;;
+
+    dump)
+        outdir=${1:-$VAR}; shift || true
+        mkdir -p "$outdir"
+        DEV=$(find_device)
+        "$TOOL" info --device "$DEV" > "$outdir/info.txt"
+        cat "$outdir/info.txt"
+        for i in 0 1 2 3; do
+            "$TOOL" read-profile --device "$DEV" --index "$i" \
+                --output "$outdir/profile${i}.toml"
+            "$TOOL" read-profile --device "$DEV" --index "$i" --raw \
+                --output "$outdir/profile${i}.bin"
+        done
+        echo "dumped to $outdir"
+        ;;
+
+    load|write)
+        [ $# -ge 1 ] || { echo "usage: hhkb load PROFILE [--index N]" >&2; exit 2; }
+        name=$1; shift
+        src="$ETC/${name}.toml"
+        [ -f "$src" ] || { echo "hhkb: $src not found" >&2; exit 1; }
+        DEV=$(find_device)
+        echo "writing $src -> $DEV $*"
+        "$TOOL" write-profile --device "$DEV" -i "$src" "$@"
+        ;;
+
+    current)
+        DEV=$(find_device)
+        cur=$("$TOOL" read-profile --device "$DEV" --raw | sha256sum | cut -d' ' -f1)
+        match="(unknown)"
+        for bin in "$VAR"/*.bin; do
+            [ -f "$bin" ] || continue
+            name=$(basename "$bin" .bin)
+            case "$name" in profile?) continue ;; esac
+            h=$(sha256sum "$bin" | cut -d' ' -f1)
+            [ "$h" = "$cur" ] && match="$name" && break
+        done
+        printf 'active slot matches: %s  (sha=%s\u2026)\n' "$match" "${cur:0:12}"
+        ;;
+
+    toggle)
+        DEV=$(find_device)
+        cur=$("$TOOL" read-profile --device "$DEV" --raw | sha256sum | cut -d' ' -f1)
+        base_h=$(sha256sum "$HOME/var/hhkb/base.bin" 2>/dev/null | cut -d' ' -f1)
+        vp_h=$(sha256sum "$HOME/var/hhkb/vision-pro.bin" 2>/dev/null | cut -d' ' -f1)
+        if [ "$cur" = "$base_h" ]; then
+            echo "active=base -> flashing vision-pro"
+            "$TOOL" write-profile --device "$DEV" -i "$ETC/vision-pro.toml"
+        elif [ "$cur" = "$vp_h" ]; then
+            echo "active=vision-pro -> flashing base"
+            "$TOOL" write-profile --device "$DEV" -i "$ETC/base.toml"
+        else
+            echo "hhkb: active slot matches neither base nor vision-pro (sha=$cur)" >&2
+            echo "      run 'hhkb load base' or 'hhkb load vision-pro' explicitly." >&2
+            exit 1
+        fi
+        ;;
+
+    base|vision-pro)
+        # bare shortcut: 'hhkb base' == 'hhkb load base'
+        DEV=$(find_device)
+        "$TOOL" write-profile --device "$DEV" -i "$ETC/${cmd}.toml" "$@"
+        ;;
+
+    show)
+        [ $# -ge 1 ] || { echo "usage: hhkb show PROFILE" >&2; exit 2; }
+        "$TOOL" show-profile -i "$ETC/${1}.toml"
+        ;;
+
+    diff)
+        [ $# -ge 2 ] || { echo "usage: hhkb diff PROFILE_A PROFILE_B" >&2; exit 2; }
+        diff -u "$ETC/${1}.toml" "$ETC/${2}.toml"
+        ;;
+
+    -h|--help|help)
+        sed -n '1,/^set -euo/p' "$0" | sed -n 's/^# \{0,1\}//p'
+        ;;
+
+    *) echo "hhkb: unknown command '$cmd' (try 'hhkb help')" >&2; exit 2 ;;
+esac

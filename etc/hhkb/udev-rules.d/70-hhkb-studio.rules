@@ -1,0 +1,9 @@
+# PFU HHKB Studio (04fe:0016) — grant the local user rw on the hidraw config
+# interface so hhkb-studio-tools can talk to it without sudo.
+#
+# Install:
+#   sudo cp 70-hhkb-studio.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload && sudo udevadm trigger
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", \
+    ATTRS{idVendor}=="04fe", ATTRS{idProduct}=="0016", \
+    TAG+="uaccess", GROUP="plugdev", MODE="0660"
