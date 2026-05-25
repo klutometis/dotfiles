@@ -454,11 +454,13 @@ else
 fi
 
 # Pi packages (extensions). 'pi install' adds them to ~/.pi/settings.json
-# and is idempotent — safe to re-run.
+# and is idempotent — safe to re-run. Pin the Vertex Anthropic fork until
+# upstream supports Claude Opus 4.7 adaptive thinking on Vertex.
 if command -v pi &> /dev/null; then
-  echo "Installing pi packages (pi-btw, pi-mcp-adapter)..."
+  echo "Installing pi packages (pi-btw, pi-mcp-adapter, vertex-anthropic fork)..."
   pi install npm:pi-btw || echo "  pi-btw install skipped/failed"
   pi install npm:pi-mcp-adapter || echo "  pi-mcp-adapter install skipped/failed"
+  pi install npm:@klutometis/pi-provider-vertex-anthropic@0.1.4 || echo "  vertex-anthropic fork install skipped/failed"
 fi
 
 echo ""

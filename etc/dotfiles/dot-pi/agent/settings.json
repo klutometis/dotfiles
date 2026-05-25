@@ -5,7 +5,7 @@
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-btw",
-    "npm:pi-provider-vertex-anthropic"
+    "npm:@klutometis/pi-provider-vertex-anthropic@0.1.4"
   ],
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true
