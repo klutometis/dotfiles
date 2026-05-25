@@ -1,0 +1,26 @@
+#!/bin/bash
+# Portable launcher for the wss-bridge-tmux.service systemd user unit.
+#
+# Sources ~/.env (encrypted secrets, includes WSS_SHIM_TOKEN_TMUX and the
+# MCP_HOST_ROLES alist that maps hostname → semantic role). The URL the
+# model sees in tool schemas uses the semantic role, so each machine
+# dials its own /devices/tmux-<role> endpoint with the same token.
+#
+# See ~/prg/mcp-gateway/plans/multi-instance-backends.md.
+#
+# To onboard a new machine: add its hostname to MCP_HOST_ROLES in
+# ~/etc/secrets/dot-env, push, then symlink this launcher + the systemd
+# unit into ~/bin and ~/.config/systemd/user/, enable the service.
+
+set -e
+
+[ -f "$HOME/.env" ] && . "$HOME/.env"
+
+: "${MCP_HOST_ROLE:?MCP_HOST_ROLE not set; add this host ($(hostname -s)) to MCP_HOST_ROLES in ~/etc/secrets/dot-env}"
+: "${WSS_SHIM_TOKEN_TMUX:?WSS_SHIM_TOKEN_TMUX not set in ~/.env}"
+
+exec "$HOME/.local/bin/uv" --project "$HOME/prg/wss-bridge" run wss-bridge \
+    --wss-url "wss://mcp.danenberg.ai/devices/tmux-${MCP_HOST_ROLE}" \
+    --token "$WSS_SHIM_TOKEN_TMUX" \
+    --log-level INFO \
+    --cmd "$HOME/.cargo/bin/tmux-mcp-rs"
