@@ -19,6 +19,7 @@ set -euo pipefail
 
 export VERTEX_LOCATION="${VERTEX_LOCATION:-global}"
 export GOOGLE_CLOUD_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
+export CLOUDSDK_CORE_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
 
 exec pi \
     --provider vertex-anthropic \
