@@ -1,0 +1,12 @@
+[Unit]
+Description=wss-bridge to mcp-demo.danenberg.ai (tmux-mcp-rs on laptop)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/bin/wss-bridge-tmux-launcher
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

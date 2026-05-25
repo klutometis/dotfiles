@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Survey stow packages: classify each git-tracked file as
+# symlink/copy/diff/missing/extra.
+# Usage: stow-survey.sh <package-dir>
+# Stow config (from dot-stowrc): --dir=etc --target=~/ --dotfiles
+# So files under <package-dir>/dot-foo/bar become ~/.foo/bar.
+
+set -u
+PKG_DIR="${1:?usage: stow-survey.sh <package-dir>}"
+PKG_DIR="$(realpath "$PKG_DIR")"
+TARGET="$HOME"
+
+translate() {
+    # Replace any path component "dot-foo" with ".foo"
+    awk -v p="$1" 'BEGIN{
+        n=split(p,a,"/")
+        for(i=1;i<=n;i++){
+            if(substr(a[i],1,4)=="dot-") a[i]="."substr(a[i],5)
+            printf "%s%s", (i==1?"":"/"), a[i]
+        }
+        print ""
+    }'
+}
+
+SYMLINK_OK=()
+SYMLINK_WRONG=()
+COPY_SAME=()
+COPY_DIFF=()
+MISSING=()
+WEIRD=()
+
+while IFS= read -r rel; do
+    src="$PKG_DIR/$rel"
+    [[ -f "$src" ]] || continue   # skip if e.g. submodule
+    tgt_rel="$(translate "$rel")"
+    tgt="$TARGET/$tgt_rel"
+
+    if [[ -L "$tgt" ]]; then
+        link="$(readlink -f "$tgt" 2>/dev/null || true)"
+        if [[ "$link" == "$src" ]]; then
+            SYMLINK_OK+=("$rel")
+        else
+            SYMLINK_WRONG+=("$rel  ->  $link")
+        fi
+    elif [[ -f "$tgt" ]]; then
+        if cmp -s "$src" "$tgt"; then
+            COPY_SAME+=("$rel")
+        else
+            COPY_DIFF+=("$rel")
+        fi
+    elif [[ -d "$tgt" ]]; then
+        WEIRD+=("$rel  (target is a directory)")
+    else
+        MISSING+=("$rel")
+    fi
+done < <(cd "$PKG_DIR" && git ls-files)
+
+print_section() {
+    local title="$1"; shift
+    local -a arr=("$@")
+    echo "=== $title (${#arr[@]}) ==="
+    if ((${#arr[@]})); then printf '  %s\n' "${arr[@]}"; fi
+    echo
+}
+
+echo "###############################################"
+echo "# Survey of: $PKG_DIR"
+echo "# Target:    $TARGET"
+echo "###############################################"
+echo
+echo "Summary:"
+echo "  symlink OK       : ${#SYMLINK_OK[@]}"
+echo "  symlink WRONG    : ${#SYMLINK_WRONG[@]}"
+echo "  copy identical   : ${#COPY_SAME[@]}"
+echo "  copy DIFFERENT   : ${#COPY_DIFF[@]}"
+echo "  missing in target: ${#MISSING[@]}"
+echo "  weird            : ${#WEIRD[@]}"
+echo
+
+print_section "COPIES THAT DIFFER (review before restow!)" "${COPY_DIFF[@]}"
+print_section "COPIES IDENTICAL (safe to restow)"          "${COPY_SAME[@]}"
+print_section "SYMLINK BUT WRONG TARGET"                   "${SYMLINK_WRONG[@]}"
+print_section "MISSING IN TARGET"                          "${MISSING[@]}"
+print_section "WEIRD"                                      "${WEIRD[@]}"
