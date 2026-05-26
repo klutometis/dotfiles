@@ -1,0 +1,40 @@
+#!/bin/bash
+# Portable launcher for the wss-bridge-chrome.service systemd user unit.
+#
+# Targets the *personal* Chrome on this host (port 9223). The work
+# profile (port 9222) is intentionally NOT exposed through the public
+# gateway — pi running on a corp-managed device accesses it directly
+# via ~/etc/dotfiles/dot-pi/agent/mcp.json's chrome-devtools-work
+# entry, so corp browsing data never transits personal infra.
+#
+# Sources ~/.env (encrypted secrets, includes WSS_SHIM_TOKEN_CHROME
+# and the MCP_HOST_ROLES alist that maps hostname → semantic role).
+# Each machine dials its own /devices/chrome-<role> endpoint with the
+# same token. See ~/prg/mcp-gateway/plans/multi-instance-backends.md.
+#
+# To onboard a new machine:
+#   1. Add the hostname to MCP_HOST_ROLES in ~/etc/secrets/dot-env, push.
+#   2. Ensure chrome-personal is running on :9223 there
+#      (~/bin/chrome-personal launcher script).
+#   3. Ensure chrome-devtools-mcp is reachable on PATH
+#      (this script bakes the mise/bun PATH that has it on glinux).
+#   4. systemctl --user daemon-reload
+#   5. systemctl --user enable --now wss-bridge-chrome.service
+
+set -e
+
+[ -f "$HOME/.env" ] && . "$HOME/.env"
+
+: "${MCP_HOST_ROLE:?MCP_HOST_ROLE not set; add this host ($(hostname -s)) to MCP_HOST_ROLES in ~/etc/secrets/dot-env}"
+: "${WSS_SHIM_TOKEN_CHROME:?WSS_SHIM_TOKEN_CHROME not set in ~/.env}"
+
+# chrome-devtools-mcp is a node binary installed via bun; needs node
+# in PATH. Inherited PATH from systemd doesn't include these.
+export PATH="$HOME/.local/share/mise/installs/node/24.13.0/bin:$HOME/.bun/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+exec "$HOME/.local/bin/uv" --project "$HOME/prg/wss-bridge" run wss-bridge \
+    --wss-url "wss://mcp.danenberg.ai/devices/chrome-${MCP_HOST_ROLE}" \
+    --token "$WSS_SHIM_TOKEN_CHROME" \
+    --log-level INFO \
+    --cmd "$HOME/.bun/bin/chrome-devtools-mcp" \
+         --browser-url=http://127.0.0.1:9223
