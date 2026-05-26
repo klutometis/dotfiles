@@ -476,6 +476,59 @@ echo "  export PATH=\"\$HOME/.cargo/bin:\$HOME/.local/bin:\$HOME/.local/share/mi
 echo ""
 
 
+# =============================================================================
+# MCP helper binaries
+# =============================================================================
+#
+# Binaries that ~/prg/wss-bridge wraps via its systemd user units
+# (wss-bridge-tmux.service, wss-bridge-chrome.service). These let a
+# personal MCP gateway at mcp.danenberg.ai reach this host's tmux /
+# Chrome via outbound WSS. Idempotent installs; safe to re-run.
+#
+# Architecture context (single source of truth):
+#   - ~/prg/mcp-gateway/plans/multi-instance-backends.md
+#   - ~/prg/wss-bridge/README.md (helper-deps section)
+#
+# Why here (not as wss-bridge package deps): wss-bridge is a generic
+# JSON-RPC pump that wraps whatever you give it via --cmd. It would be
+# wrong for wss-bridge to depend on chrome-devtools-mcp or tmux-mcp-rs;
+# the dep belongs at the deployment / machine level. configure-system.sh
+# is where this machine's deployment role is asserted.
+
+# bun — JS runtime + package manager. chrome-devtools-mcp installs via
+# bun (faster + isolated from node global). bun lives at ~/.bun/bin/.
+if ! command -v bun &> /dev/null; then
+  echo "Installing bun (JS runtime; chrome-devtools-mcp dep)..."
+  curl -fsSL https://bun.sh/install | bash
+  # bun's installer drops bin in ~/.bun/bin/; make it visible to the
+  # rest of this script.
+  export PATH="$HOME/.bun/bin:$PATH"
+else
+  echo "bun already installed ($(bun --version))"
+fi
+
+# chrome-devtools-mcp — wraps a running Chrome via DevTools Protocol
+# for MCP. The wss-bridge-chrome.service points at this binary.
+if command -v bun &> /dev/null; then
+  echo "Installing chrome-devtools-mcp (via bun)..."
+  bun install -g chrome-devtools-mcp || echo "  chrome-devtools-mcp install failed (non-fatal)"
+fi
+
+# tmux-mcp-rs — wraps tmux for MCP. The wss-bridge-tmux.service points
+# at this binary. Installed via cargo (uses the Rust toolchain set up
+# earlier in this script).
+if command -v cargo &> /dev/null; then
+  echo "Installing tmux-mcp-rs (via cargo)..."
+  cargo install tmux-mcp-rs || echo "  tmux-mcp-rs install failed (non-fatal)"
+fi
+
+echo ""
+echo "MCP helper binaries installed:"
+echo "  - bun:                  $(which bun 2>/dev/null || echo 'not found')"
+echo "  - chrome-devtools-mcp:  $(test -x "$HOME/.bun/bin/chrome-devtools-mcp" && echo "$HOME/.bun/bin/chrome-devtools-mcp" || echo 'not found')"
+echo "  - tmux-mcp-rs:          $(test -x "$HOME/.cargo/bin/tmux-mcp-rs" && echo "$HOME/.cargo/bin/tmux-mcp-rs" || echo 'not found')"
+echo ""
+
 
 # =============================================================================
 # Directory Symlinks Configuration
