@@ -444,23 +444,31 @@ fi
 # -----------------------------------------------------------------------------
 # Pi Coding Agent (via mise Node's npm)
 # Minimal terminal coding harness; extensible via TS extensions/skills/themes.
-# Install: https://github.com/badlogic/pi-mono
+# Upstream: https://github.com/badlogic/pi-mono
+#
+# The package was renamed from @mariozechner/pi-coding-agent to
+# @earendil-works/pi-coding-agent in mid-2026. We always install the new
+# scope at @latest and clean up the old scope if it's still hanging around.
+# Same idempotent treatment for the extensions: always pull latest, never
+# pin (the vertex-anthropic fork was pinned at 0.1.4 while waiting for
+# Opus 4.7 adaptive-thinking support; that landed in 0.1.5, no pin needed).
 # -----------------------------------------------------------------------------
-if ! command -v pi &> /dev/null; then
-  echo "Installing pi-coding-agent..."
-  mise x -- npm install -g @mariozechner/pi-coding-agent
-else
-  echo "pi-coding-agent already installed"
+if mise x -- npm ls -g --depth=0 2>/dev/null | grep -q '@mariozechner/pi-coding-agent'; then
+  echo "Removing deprecated @mariozechner/pi-coding-agent (renamed to @earendil-works)..."
+  mise x -- npm uninstall -g @mariozechner/pi-coding-agent
 fi
 
-# Pi packages (extensions). 'pi install' adds them to ~/.pi/settings.json
-# and is idempotent — safe to re-run. Pin the Vertex Anthropic fork until
-# upstream supports Claude Opus 4.7 adaptive thinking on Vertex.
+echo "Installing/updating pi-coding-agent (@earendil-works) to latest..."
+mise x -- npm install -g @earendil-works/pi-coding-agent@latest
+
+# Pi packages (extensions). 'pi install' adds them to ~/.pi/agent/settings.json
+# and is idempotent — safe to re-run. No version pins: pi resolves @latest
+# from npm on each launch when the entry is unpinned.
 if command -v pi &> /dev/null; then
   echo "Installing pi packages (pi-btw, pi-mcp-adapter, vertex-anthropic fork)..."
   pi install npm:pi-btw || echo "  pi-btw install skipped/failed"
   pi install npm:pi-mcp-adapter || echo "  pi-mcp-adapter install skipped/failed"
-  pi install npm:@klutometis/pi-provider-vertex-anthropic@0.1.4 || echo "  vertex-anthropic fork install skipped/failed"
+  pi install npm:@klutometis/pi-provider-vertex-anthropic || echo "  vertex-anthropic fork install skipped/failed"
 fi
 
 echo ""
