@@ -1,0 +1,28 @@
+{
+  "_comment": "Merge custom models into built-in providers. pi-coding-agent's bundled pi-ai model list lags Anthropic releases; this adds Claude Opus 4.8 (May 2026) to the native anthropic provider so /model and defaultModel work without waiting for an upstream bump. See ~/.local/share/mise/installs/node/*/lib/node_modules/@earendil-works/pi-coding-agent/docs/models.md (Overriding Built-in Providers / merge semantics).",
+  "providers": {
+    "anthropic": {
+      "models": [
+        {
+          "id": "claude-opus-4-8",
+          "name": "Claude Opus 4.8",
+          "api": "anthropic-messages",
+          "provider": "anthropic",
+          "baseUrl": "https://api.anthropic.com",
+          "compat": { "forceAdaptiveThinking": true },
+          "reasoning": true,
+          "thinkingLevelMap": { "xhigh": "xhigh" },
+          "input": ["text", "image"],
+          "cost": {
+            "input": 5,
+            "output": 25,
+            "cacheRead": 0.5,
+            "cacheWrite": 6.25
+          },
+          "contextWindow": 1000000,
+          "maxTokens": 128000
+        }
+      ]
+    }
+  }
+}
