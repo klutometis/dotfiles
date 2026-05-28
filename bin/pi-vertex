@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # pi-vertex: pi with Claude over the corp Vertex AI project.
 #
-# - Forces vertex-anthropic provider + claude-opus-4-7@default so we don't
-#   rely on the global pi settings (which defaults to direct Anthropic API
+# - Forces vertex-anthropic provider + claude-opus-4-8@default so we don't
+#   rely on the global pi settings (which may default to direct Anthropic API
 #   for use on the personal VM).
-# - Thinking: requires the pinned scoped Vertex provider fork (adaptive thinking
+# - Thinking: requires the scoped Vertex provider fork (adaptive thinking
 #   for claude-(opus|sonnet|haiku)-4-6+). Without the fork, anything other
-#   than `--thinking off` 400s on 4-7 models. Package:
-#   npm:@klutometis/pi-provider-vertex-anthropic@0.1.4.
+#   than `--thinking off` 400s on 4-6+ models. Package:
+#   npm:@klutometis/pi-provider-vertex-anthropic (>= 0.1.5 for Opus 4.8).
 # - Sets VERTEX_LOCATION=global (extension default may be us-east5, which
 #   doesn't carry 4-7).
 # - GOOGLE_CLOUD_PROJECT_CORP comes from private dot-env. Fail loudly if
@@ -23,6 +23,6 @@ export CLOUDSDK_CORE_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
 
 exec pi \
     --provider vertex-anthropic \
-    --model "claude-opus-4-7@default" \
+    --model "claude-opus-4-8@default" \
     --thinking xhigh \
     "$@"
