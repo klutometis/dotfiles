@@ -1,12 +1,1 @@
-#!/usr/bin/env zsh
-# Wrapper to run MCP gateway in local mode from the laptop's checkout.
-# Started automatically from ~/.config/systemd/user/mcp-gateway.service.
-
-# .zshenv loads ~/.env (API keys, OAuth paths)
-source "$HOME/.zshenv"
-
-REPO="$HOME/prg/mcp-gateway"
-export MCP_SERVERS_FILE="$REPO/deploy/local/servers.json"
-
-cd "$REPO" || exit 1
-exec uv run gateway-local
+../etc/dotfiles/bin/start-mcp-gateway

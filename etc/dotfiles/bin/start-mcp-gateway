@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+# Wrapper to run MCP gateway in local mode from the laptop's checkout.
+# Started automatically from ~/.config/systemd/user/mcp-gateway.service.
+
+# .zshenv loads ~/.env (API keys, OAuth paths)
+source "$HOME/.zshenv"
+
+# Corp-device divergent stack: work+personal Gmail/Calendar/Chrome, tmux, zep,
+# firecrawl. env-corp (git-crypt, corp-only) supplies *_PERSONAL/*_WORK token
+# paths. See ~/prg/mcp-gateway/plans/laptop-corp-local-stack.md.
+if [ -f "$HOME/etc/secrets-corp/env-corp" ]; then
+    source "$HOME/etc/secrets-corp/env-corp"
+fi
+
+REPO="$HOME/prg/mcp-gateway"
+# Rollback: swap back to the personal-cloud mirror if needed.
+# export MCP_SERVERS_FILE="$REPO/deploy/local/servers.json"
+export MCP_SERVERS_FILE="$REPO/deploy/laptop/servers.json"
+
+cd "$REPO" || exit 1
+exec uv run gateway-local
