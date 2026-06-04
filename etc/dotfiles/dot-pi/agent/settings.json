@@ -1,12 +1,12 @@
 {
   "lastChangelogVersion": "0.76.0",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-8",
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-5.5",
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-btw",
     "npm:@klutometis/pi-provider-vertex-anthropic"
   ],
   "defaultThinkingLevel": "high",
-  "hideThinkingBlock": true
+  "hideThinkingBlock": false
 }

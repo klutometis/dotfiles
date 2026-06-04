@@ -3,24 +3,6 @@
     "mcp": {
       "url": "http://localhost:3100/mcp",
       "directTools": true
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--browser-url=http://127.0.0.1:9223"
-      ],
-      "directTools": true
-    },
-    "chrome-devtools-work": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--browser-url=http://127.0.0.1:9222"
-      ],
-      "directTools": true
     }
   }
 }
