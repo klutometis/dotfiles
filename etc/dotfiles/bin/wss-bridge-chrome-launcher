@@ -30,7 +30,7 @@ set -e
 
 # chrome-devtools-mcp is a node binary installed via bun; needs node
 # in PATH. Inherited PATH from systemd doesn't include these.
-export PATH="$HOME/.local/share/mise/installs/node/24.13.0/bin:$HOME/.bun/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+export PATH="$HOME/.local/share/mise/installs/node/lts/bin:$HOME/.bun/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
 exec "$HOME/.local/bin/uv" --project "$HOME/prg/wss-bridge" run wss-bridge \
     --wss-url "wss://mcp.danenberg.ai/devices/chrome-${MCP_HOST_ROLE}" \
