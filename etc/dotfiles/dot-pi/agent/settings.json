@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.76.0",
-  "defaultProvider": "openai",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "vertex-anthropic",
+  "defaultModel": "claude-opus-4-8@default",
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-btw",
