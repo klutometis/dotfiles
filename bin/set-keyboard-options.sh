@@ -69,6 +69,19 @@ EOF
   esac
 }
 
+# Set the CORE keymap to dvorak FIRST, before any per-device tweaks.
+#
+# Why this matters: per-device `setxkbmap -device` calls below only change the
+# individual XInput devices, NOT the core/default keymap. Hotkey daemons that
+# resolve keysyms->keycodes against the core map (notably sxhkd, but also i3's
+# initial grabs) will mis-grab if the core map is left at the GDM default
+# (us/qwerty). On a dvorak system that makes e.g. sxhkd's `super + d` grab the
+# keycode that is physically `e`, shadowing i3's `super + e` and silently
+# breaking a whole class of shortcuts. Forcing the core to dvorak here keeps
+# every grabber consistent, and the resulting MappingNotify makes sxhkd's
+# `-m -1` re-grab against the correct keycodes.
+setxkbmap -layout us -variant dvorak -option "" -option "caps:ctrl_modifier,compose:ralt,terminate:ctrl_alt_bksp"
+
 # Apply settings for HHKB
 set_keyboard_layout "Topre Corporation HHKB Professional" "us" "dvorak" "compose:rwin"
 
@@ -107,4 +120,17 @@ echo "Keyboard layouts applied successfully"
 if [ -e ~/.Xmodmap ]; then
   echo "Applying xmodmap..."
   xmodmap ~/.Xmodmap
+fi
+
+# Re-grab hotkeys after the layout is finalized.
+#
+# sxhkd resolves its keysyms to keycodes at grab time. If it grabbed while the
+# core map was still qwerty (or against a transient state during a hotplug
+# re-apply), its grabs land on the wrong physical keys and shadow i3 bindings.
+# A clean restart guarantees its grabs match the layout we just applied.
+if pgrep -x sxhkd >/dev/null 2>&1; then
+  echo "Restarting sxhkd to re-grab hotkeys against current layout..."
+  pkill -x sxhkd
+  sleep 0.3
+  setsid sxhkd -m -1 </dev/null >/dev/null 2>&1 &
 fi
