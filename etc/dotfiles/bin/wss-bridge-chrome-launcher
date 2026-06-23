@@ -16,8 +16,8 @@
 #   1. Add the hostname to MCP_HOST_ROLES in ~/etc/secrets/dot-env, push.
 #   2. Ensure chrome-personal is running on :9223 there
 #      (~/bin/chrome-personal launcher script).
-#   3. Ensure chrome-devtools-mcp is reachable on PATH
-#      (this script bakes the mise/bun PATH that has it on glinux).
+#   3. Ensure ~/bin/chrome-cdp-mcp (our raw-CDP MCP binary) is built.
+#      (Go static binary; no node/bun needed.)
 #   4. systemctl --user daemon-reload
 #   5. systemctl --user enable --now wss-bridge-chrome.service
 
@@ -28,13 +28,15 @@ set -e
 : "${MCP_HOST_ROLE:?MCP_HOST_ROLE not set; add this host ($(hostname -s)) to MCP_HOST_ROLES in ~/etc/secrets/dot-env}"
 : "${WSS_SHIM_TOKEN_CHROME:?WSS_SHIM_TOKEN_CHROME not set in ~/.env}"
 
-# chrome-devtools-mcp is a node binary installed via bun; needs node
-# in PATH. Inherited PATH from systemd doesn't include these.
-export PATH="$HOME/.local/share/mise/installs/node/lts/bin:$HOME/.bun/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+# uv is in ~/.local/bin; chrome-cdp-mcp is a static Go binary in ~/bin.
+export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
+# Bridges the cloud relay to our raw-CDP MCP server in stdio mode. Unlike the
+# old chrome-devtools-mcp, this engine never manages browser lifecycle (can't
+# close tabs / quit Chrome) and doesn't leak V8 heap.
 exec "$HOME/.local/bin/uv" --project "$HOME/prg/wss-bridge" run wss-bridge \
     --wss-url "wss://mcp.danenberg.ai/devices/chrome-${MCP_HOST_ROLE}" \
     --token "$WSS_SHIM_TOKEN_CHROME" \
     --log-level INFO \
-    --cmd "$HOME/.bun/bin/chrome-devtools-mcp" \
-         --browser-url=http://127.0.0.1:9223
+    --cmd "$HOME/bin/chrome-cdp-mcp" \
+         --stdio --browser-url=http://127.0.0.1:9223
