@@ -22,6 +22,7 @@ export GOOGLE_CLOUD_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
 export CLOUDSDK_CORE_PROJECT="$GOOGLE_CLOUD_PROJECT_CORP"
 
 exec pi \
+    --mcp-config "${PI_MCP_CONFIG:-$HOME/.config/mcp/mcp.json}" \
     --provider vertex-anthropic \
     --model "claude-opus-4-8@default" \
     --thinking xhigh \

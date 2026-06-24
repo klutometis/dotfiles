@@ -1,7 +1,8 @@
 {
   "mcpServers": {
     "mcp": {
-      "url": "http://localhost:3100/mcp"
+      "url": "http://localhost:3100/mcp",
+      "directTools": true
     }
   }
 }
