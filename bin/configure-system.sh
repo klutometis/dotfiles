@@ -784,6 +784,45 @@ if pgrep -x sxhkd > /dev/null; then
   echo "  ✓ sxhkd reloaded"
 fi
 
+# =============================================================================
+# ~/prg table-stakes repos
+# Clone-if-missing (and fast-forward pull when clean) the repos the configured
+# system depends on. Declarative manifest: ~/etc/prg-repos.txt. NOT submodules
+# (see ~/notes/prg-repos.md). Never touches a dirty tree; never clobbers WIP.
+# =============================================================================
+PRG_MANIFEST="$HOME/etc/prg-repos.txt"
+if [ -r "$PRG_MANIFEST" ]; then
+  echo "Syncing ~/prg table-stakes repos (manifest: $PRG_MANIFEST)..."
+  mkdir -p "$HOME/prg"
+  while read -r dir remote role _rest; do
+    case "$dir" in ''|\#*) continue ;; esac          # skip blanks/comments
+    [ -n "$remote" ] || continue
+    case "$role" in
+      core) ;;
+      desktop) [ "$HEADLESS" = 0 ] || { echo "  - $dir (desktop; skipped, headless)"; continue; } ;;
+      *) echo "  - $dir (role=$role; not for this host, skipped)"; continue ;;
+    esac
+    target="$HOME/prg/$dir"
+    if [ -d "$target/.git" ]; then
+      if [ -z "$(git -C "$target" status --porcelain)" ]; then
+        git -C "$target" pull --ff-only --quiet 2>/dev/null \
+          && echo "  ✓ $dir (up to date)" \
+          || echo "  - $dir (pull skipped: diverged or offline)"
+      else
+        echo "  - $dir (dirty working tree; left untouched)"
+      fi
+    else
+      if git clone --quiet "$remote" "$target"; then
+        echo "  ✓ $dir (cloned)"
+      else
+        echo "  ✗ $dir (clone FAILED: $remote)"
+      fi
+    fi
+  done < "$PRG_MANIFEST"
+else
+  echo "Note: no ~/prg manifest at $PRG_MANIFEST; skipping repo sync"
+fi
+
 echo ""
 echo "System configuration deployment complete!"
 echo ""

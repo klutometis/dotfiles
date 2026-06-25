@@ -1,0 +1,29 @@
+# Table-stakes ~/prg repos — cloned/synced by configure-system.sh.
+#
+# These are the repos the *configured system* spawns or depends on at
+# runtime (gateway stdio servers, systemd user units, launchers). The long
+# tail of experiments in ~/prg is deliberately NOT listed — presence here
+# means "required for this machine to work as configured."
+#
+# Why a manifest and not git submodules: these are actively-developed repos
+# that should float on main, not be pinned to a superproject SHA. See
+# ~/notes/prg-repos.md for the full rationale.
+#
+# Format (whitespace-separated):  <dir>  <remote>  <role>
+#   role = core    -> every machine
+#          desktop -> only when HEADLESS=0 (needs X/browser/clipboard)
+#          mac     -> macOS only; skipped by this Linux script (the Mac's
+#                     own bootstrap handles it). Listed for documentation.
+# Blank lines and #-comments are ignored.
+
+mcp-gateway      git@github.com:klutometis/mcp-gateway.git      core
+wss-bridge       git@github.com:klutometis/wss-bridge.git       core
+voice-mcp        git@github.com:klutometis/voice-mcp.git        core
+
+chrome-cdp-mcp   git@github.com:klutometis/chrome-cdp-mcp.git   desktop
+clipboard-mcp    git@github.com:klutometis/clipboard-mcp.git    desktop
+q                git@github.com:klutometis/q.git                desktop
+
+# Device/role-specific — retag if your topology differs.
+android-mcp      git@github.com:klutometis/android-mcp.git      desktop
+imessage-mcp     git@github.com:klutometis/imessage-mcp.git     mac
