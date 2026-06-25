@@ -1,5 +1,5 @@
 [Unit]
-Description=wss-bridge to mcp-demo.danenberg.ai (chrome-devtools-mcp on laptop, Chrome :9223)
+Description=wss-bridge to mcp.danenberg.ai (chrome-cdp-mcp --stdio on laptop, Chrome :9223)
 After=network-online.target
 Wants=network-online.target
 
