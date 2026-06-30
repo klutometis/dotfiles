@@ -60,6 +60,11 @@ unset QT_IM_MODULE
 # $GOOGLE_CLOUD_PROJECT_CORP.
 [ -f "$HOME/.$(hostname -s).sh" ] && source "$HOME/.$(hostname -s).sh"
 
+# ~/.env is hermetic: it runs `set -a` and deliberately leaves auto-export ON
+# (so vars appended to its end always export, from any entrypoint). Turn it
+# back off here for interactive hygiene. Host overrides above inherit it too.
+set +a
+
 # Tool initialization (available to all shells including non-interactive)
 # Initialize mise (replaces nvm, pyenv, etc.)
 command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
