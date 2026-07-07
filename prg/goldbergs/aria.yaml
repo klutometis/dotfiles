@@ -1,0 +1,25 @@
+# The Aria — maximally underspecified. State the task, not the notes; see what
+# each model reaches for. (Edit the model IDs to whatever's current/valid.)
+
+brief: >
+  Compose an Aria — the opening theme of a set of keyboard variations, in the
+  spirit of Bach's Goldberg Variations: something that sings, and whose bass could
+  serve as a ground for later variations. Everything else — key, character, the
+  turns of the melody — is yours. Surprise me.
+
+constraints: >
+  Output ONLY valid ABC notation: a single tune beginning with a proper header
+  (X:, T:, M:, L:, K:), right hand and a clear bass. Keep it playable on a
+  keyboard and roughly a page long. No commentary, no code fences.
+
+# Strong tier for composition (few calls; quality matters). Alternatives:
+#   claude-sonnet-5 · gemini-3.5-flash (cheaper/faster iteration).
+composers:
+  - {name: claude, provider: anthropic, model: claude-opus-4-8}
+  - {name: gemini, provider: gemini,    model: gemini-3.1-pro-preview}
+  - {name: gpt,    provider: openai,    model: gpt-5.5}
+
+# The judge must LISTEN — use a top multimodal.
+judge:
+  provider: gemini
+  model: gemini-3.1-pro-preview
