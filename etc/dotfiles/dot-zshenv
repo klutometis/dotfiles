@@ -66,8 +66,10 @@ unset QT_IM_MODULE
 set +a
 
 # Tool initialization (available to all shells including non-interactive)
-# Initialize mise (replaces nvm, pyenv, etc.)
-command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
+# mise deactivated 2026-07-26. node -> nvm (see dot-zshrc), yq -> ~/.local/bin.
+# Still installed (go, ruby, yq) but no longer on PATH; re-enable this line if
+# something turns out to need it, or reinstall the tool directly.
+# command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
 
 # Keep rbenv if still needed
 command -v rbenv >/dev/null 2>&1 && eval "$(rbenv init -)"
