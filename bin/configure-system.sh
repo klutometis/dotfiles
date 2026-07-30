@@ -442,37 +442,17 @@ if ! command -v yq &> /dev/null && command -v mise &> /dev/null; then
 fi
 
 # -----------------------------------------------------------------------------
-# Pi Coding Agent (via mise Node's npm)
-# Minimal terminal coding harness; extensible via TS extensions/skills/themes.
-# Upstream: https://github.com/badlogic/pi-mono
+# Pi Coding Agent - REMOVED 2026-07-30
 #
-# The package was renamed from @mariozechner/pi-coding-agent to
-# @earendil-works/pi-coding-agent in mid-2026. We always install the new
-# scope at @latest and clean up the old scope if it's still hanging around.
+# Uninstalled per work policy. Do not reinstall.
 #
-# Extensions are pi-managed (installed under ~/.pi/agent/npm/, not global).
-# 'pi install' is idempotent and writes the entry into ~/.pi/agent/settings.json;
-# 'pi update --extensions' pulls @latest for every unpinned entry already in
-# settings. So we 'pi install' once to bootstrap a fresh machine, then run
-# 'pi update --extensions' to refresh on every re-run.
+# This block used to `npm install -g @earendil-works/pi-coding-agent@latest`
+# and then `pi install` three extensions (pi-btw, pi-mcp-adapter,
+# @klutometis/pi-provider-vertex-anthropic). The agent, those extensions and
+# the ~/.pi/agent/npm extension tree have all been removed.
+#
+# Existing transcripts under ~/.pi/agent/sessions were deliberately KEPT.
 # -----------------------------------------------------------------------------
-if mise x -- npm ls -g --depth=0 2>/dev/null | grep -q '@mariozechner/pi-coding-agent'; then
-  echo "Removing deprecated @mariozechner/pi-coding-agent (renamed to @earendil-works)..."
-  mise x -- npm uninstall -g @mariozechner/pi-coding-agent
-fi
-
-echo "Installing/updating pi-coding-agent (@earendil-works) to latest..."
-mise x -- npm install -g @earendil-works/pi-coding-agent@latest
-
-if command -v pi &> /dev/null; then
-  echo "Bootstrapping pi packages in settings.json (idempotent)..."
-  pi install npm:pi-btw || echo "  pi-btw install skipped/failed"
-  pi install npm:pi-mcp-adapter || echo "  pi-mcp-adapter install skipped/failed"
-  pi install npm:@klutometis/pi-provider-vertex-anthropic || echo "  vertex-anthropic fork install skipped/failed"
-
-  echo "Refreshing pi extensions to latest..."
-  pi update --extensions || echo "  pi update --extensions skipped/failed"
-fi
 
 echo ""
 echo "Language server installation complete!"
