@@ -13,22 +13,35 @@ wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
 end)
 
 -- ── Font ────────────────────────────────────────────────────
--- Fixed6x13 converted from PCF bitmap to TTF via bitmap2ttf.
--- MONOCHROME disables anti-aliasing: pure black/white like the original.
--- NO_HINTING prevents FreeType from distorting the traced outlines.
-config.font = wezterm.font('Fixed6x13.ttf')
-config.font_size = 9.5
-config.freetype_load_flags = 'NO_HINTING|MONOCHROME'
+-- Fixed6x13 Sharp: the 6x13 PCFs reconverted by ~/bin/bitmap2ttf-sharp with
+-- upem 1300 (exactly 100 font units per pixel), gasp=GRIDFIT, integer-ppem
+-- forced, and glyphs emitted as exact rectangles instead of traced outlines.
+--
+-- The old Fixed6x13.ttf needed MONOCHROME|NO_HINTING to look tolerable: it
+-- had upem 999 (not divisible by 13, so no edge could land on a pixel) and a
+-- gasp table demanding DOGRAY. MONOCHROME papered over that by discarding the
+-- greys after the fact, which also threw away any chance of correct stem
+-- placement — hence NO_HINTING to stop FreeType making it worse.
+--
+-- None of that is needed now. DEFAULT load flags render this correctly,
+-- because the outlines are already on the pixel grid.
+--
+-- 9.75pt at 96 DPI = exactly 13px, the font's native size.
+config.font = wezterm.font('Fixed6x13 Sharp')
+config.font_size = 9.75
+config.freetype_load_flags = 'DEFAULT'
 config.freetype_load_target = 'Normal'
 
 -- Disable font shaping/ligatures (bitmap font, no ligatures)
 config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 
--- Brightness boost for text (alacritty feels brighter; tweak to taste)
+-- Brightness boost was compensating for antialiased stems reading as grey.
+-- A grid-fitted font puts full-intensity pixels down, so 1.0 is correct now;
+-- anything higher blows out the colours.
 config.foreground_text_hsb = {
   hue = 1.0,
   saturation = 1.0,
-  brightness = 1.5,
+  brightness = 1.0,
 }
 
 -- ── Colors (from ~/.config/alacritty/alacritty.toml) ────────

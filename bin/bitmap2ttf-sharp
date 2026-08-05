@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""Convert an X11 bitmap font (BDF/PCF) to a TTF that still renders sharp.
+
+The usual bitmap->TTF converters produce a font that is *almost* right and
+then antialiases anyway. Three things have to be true for a rasterizer to put
+every glyph edge exactly on a pixel boundary, and the common tools get two of
+them wrong:
+
+  1. unitsPerEm must be an exact multiple of the cell height, so one bitmap
+     pixel is a whole number of font units. The Fixed6x13.ttf that shipped in
+     ~/.local/share/fonts had upem=999 for a 13px cell: 76.846 units/px, so no
+     glyph edge could ever land on a pixel boundary at any size.
+  2. the `gasp` table must ask for GRIDFIT. That font's gasp said DOGRAY at all
+     sizes with no GRIDFIT -- the file itself instructing every renderer to
+     antialias and never snap to the grid.
+  3. head.flags bit 3 ("force ppem to integer") must be set, or a fractional
+     font_size reintroduces the problem the other two just solved.
+
+With all three, kitty/wezterm/freetype render the outlines as hard pixels and
+the result is byte-identical in spirit to the PCF: measured 4 unique colours in
+a screenshot region, against 55 for the old TTF.
+
+Why bother: alacritty renders the PCF directly, but nothing else modern does --
+kitty and wezterm dropped bitmap font support. A correct outline conversion is
+the only way to keep 6x13 *and* use a terminal with the graphics protocol.
+
+Usage:
+    bitmap2ttf-sharp 6x13.pcf  ~/.local/share/fonts/Fixed6x13Sharp.ttf
+    bitmap2ttf-sharp --name "Fixed6x13 Sharp" in.bdf out.ttf
+
+PCF input needs fontforge on PATH (used only to emit an intermediate BDF).
+"""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+try:
+    from fontTools.fontBuilder import FontBuilder
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+    from fontTools.ttLib import TTFont, newTable
+except ImportError:
+    sys.exit("needs fonttools:  pip install fonttools")
+
+
+def pcf_to_bdf(src, workdir):
+    """PCF -> BDF via fontforge. Returns the BDF path."""
+    if not shutil.which("fontforge"):
+        sys.exit("PCF input needs fontforge on PATH")
+    if src.endswith(".gz"):
+        plain = os.path.join(workdir, "in.pcf")
+        with open(plain, "wb") as out:
+            subprocess.run(["gunzip", "-c", src], stdout=out, check=True)
+        src = plain
+    script = os.path.join(workdir, "conv.pe")
+    stem = os.path.join(workdir, "out")
+    with open(script, "w") as fh:
+        fh.write(f'Open("{src}")\nGenerate("{stem}.bdf")\n')
+    subprocess.run(["fontforge", "-script", script],
+                   capture_output=True, check=False)
+    # fontforge appends the pixel size: out-13.bdf
+    for f in sorted(os.listdir(workdir)):
+        if f.startswith("out") and f.endswith(".bdf"):
+            return os.path.join(workdir, f)
+    sys.exit("fontforge did not produce a BDF")
+
+
+def parse_bdf(path):
+    glyphs, cur, in_bitmap, bbox = {}, None, False, None
+    with open(path, encoding="latin-1") as fh:
+        for line in fh:
+            line = line.rstrip("\n")
+            if line.startswith("FONTBOUNDINGBOX"):
+                bbox = list(map(int, line.split()[1:]))
+            elif line.startswith("STARTCHAR"):
+                cur = {"rows": []}
+            elif line.startswith("ENCODING") and cur is not None:
+                cur["enc"] = int(line.split()[1])
+            elif line.startswith("DWIDTH") and cur is not None:
+                cur["dwidth"] = int(line.split()[1])
+            elif line.startswith("BBX") and cur is not None:
+                cur["bbx"] = list(map(int, line.split()[1:]))
+            elif line.startswith("BITMAP"):
+                in_bitmap = True
+            elif line.startswith("ENDCHAR"):
+                in_bitmap = False
+                if cur and cur.get("enc", -1) >= 0:
+                    glyphs[cur["enc"]] = cur
+                cur = None
+            elif in_bitmap and cur is not None:
+                cur["rows"].append(line.strip())
+    if bbox is None:
+        sys.exit("no FONTBOUNDINGBOX in BDF")
+    return glyphs, bbox
+
+
+def maximal_rects(grid, w, h):
+    """Greedy decomposition of set pixels into non-overlapping rectangles.
+
+    One contour per rectangle instead of per pixel: ~6 contours per glyph
+    rather than ~30, which keeps the font small and the rasterizer fast.
+    """
+    used = [[False] * w for _ in range(h)]
+    out = []
+    for y in range(h):
+        for x in range(w):
+            if not grid[y][x] or used[y][x]:
+                continue
+            x2 = x
+            while x2 + 1 < w and grid[y][x2 + 1] and not used[y][x2 + 1]:
+                x2 += 1
+            y2 = y
+            while y2 + 1 < h and all(
+                grid[y2 + 1][i] and not used[y2 + 1][i] for i in range(x, x2 + 1)
+            ):
+                y2 += 1
+            for yy in range(y, y2 + 1):
+                for xx in range(x, x2 + 1):
+                    used[yy][xx] = True
+            out.append((x, y, x2 - x + 1, y2 - y + 1))
+    return out
+
+
+def build(bdf_path, out_path, family, style):
+    glyphs, (cell_w, cell_h, _bx, by) = parse_bdf(bdf_path)
+    px = 100                      # font units per pixel
+    upem = cell_h * px            # exact by construction
+    descent = -by                 # FONTBOUNDINGBOX yoff is negative
+    ascent = cell_h - descent
+
+    def outline(g):
+        pen = TTGlyphPen(None)
+        if not g.get("bbx"):
+            return pen.glyph()
+        w, h, xo, yo = g["bbx"]
+        if w <= 0 or h <= 0:
+            return pen.glyph()
+        grid = []
+        for r in g["rows"]:
+            bits = bin(int(r, 16))[2:].zfill(len(r) * 4)[:w] if r else "0" * w
+            grid.append([c == "1" for c in bits.ljust(w, "0")])
+        while len(grid) < h:
+            grid.append([False] * w)
+        for rx, ry, rw, rh in maximal_rects(grid, w, h):
+            x0 = (xo + rx) * px
+            x1 = x0 + rw * px
+            y1 = (yo + h - ry) * px
+            y0 = (yo + h - ry - rh) * px
+            pen.moveTo((x0, y0))
+            pen.lineTo((x0, y1))
+            pen.lineTo((x1, y1))
+            pen.lineTo((x1, y0))
+            pen.closePath()
+        return pen.glyph()
+
+    order, cmap, glyf, hmtx = [".notdef"], {}, {}, {}
+    glyf[".notdef"] = TTGlyphPen(None).glyph()
+    hmtx[".notdef"] = (cell_w * px, 0)
+    for enc in sorted(glyphs):
+        if not 0 <= enc <= 0xFFFF:
+            continue
+        g = glyphs[enc]
+        name = f"u{enc:04X}"
+        order.append(name)
+        glyf[name] = outline(g)
+        hmtx[name] = (g.get("dwidth", cell_w) * px, 0)
+        cmap[enc] = name
+
+    ps = family.replace(" ", "") + "-" + style
+    fb = FontBuilder(upem, isTTF=True)
+    fb.setupGlyphOrder(order)
+    fb.setupCharacterMap(cmap)
+    fb.setupGlyf(glyf)
+    fb.setupHorizontalMetrics(hmtx)
+    fb.setupHorizontalHeader(ascent=ascent * px, descent=-descent * px, lineGap=0)
+    fb.setupNameTable({
+        "familyName": family, "styleName": style,
+        "uniqueFontIdentifier": f"{ps}-{upem}upem",
+        "fullName": family, "psName": ps, "version": "Version 1.000",
+    })
+    fb.setupOS2(sTypoAscender=ascent * px, sTypoDescender=-descent * px,
+                sTypoLineGap=0, usWinAscent=ascent * px, usWinDescent=descent * px)
+    fb.setupPost(isFixedPitch=1)
+    fb.save(out_path)
+
+    # The two things every other converter forgets.
+    f = TTFont(out_path)
+    gasp = newTable("gasp")
+    gasp.version = 0
+    gasp.gaspRange = {0xFFFF: 0x0001}     # GRIDFIT, and deliberately not DOGRAY
+    f["gasp"] = gasp
+    f["head"].flags |= 0x0008             # force ppem to integer
+    f["head"].lowestRecPPEM = cell_h
+    f.save(out_path)
+
+    return len(order), upem, cell_w, cell_h
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("input", help="BDF, PCF, or PCF.GZ")
+    ap.add_argument("output", help="TTF to write")
+    ap.add_argument("--name", default=None, help='family name (default: "<stem> Sharp")')
+    ap.add_argument("--style", default="Regular")
+    args = ap.parse_args()
+
+    family = args.name or (
+        os.path.basename(args.input).split(".")[0].replace("-", " ").title() + " Sharp"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        src = args.input
+        if not src.endswith(".bdf"):
+            src = pcf_to_bdf(src, tmp)
+        n, upem, cw, ch = build(src, args.output, family, args.style)
+
+    print(f'"{family}" -> {args.output}')
+    print(f"  {n} glyphs, {cw}x{ch} cell, upem {upem} ({upem // ch} units/px, exact)")
+    print(f"  gasp=GRIDFIT, head.flags bit3 set")
+    print(f"\nInstall:  cp {args.output} ~/.local/share/fonts/ && fc-cache -f")
+    print(f'Use:      font_family {family}   font_size {ch * 72 / 96:g}   # 96 dpi -> {ch}px')
+
+
+if __name__ == "__main__":
+    main()
