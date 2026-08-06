@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#
+# vm-work - like `vm`, but on the corp box ($SSH_WORK_HOST) instead of $VM_HOST
+#
+# Usage:
+#   vm-work                 attach to default session (scratch)
+#   vm-work SESSION         attach to/create SESSION
+#
+# `vm` is parameterized by $VM_HOST (the personal cloud VM, vm.danenberg.ai).
+# This is the corp sibling, named for symmetry with chrome-personal/chrome-work.
+# It reads $SSH_WORK_HOST, which already lives in ~/.env, rather than hardcoding
+# the hostname — one source of truth, and it follows the host if it ever moves.
+#
+# Everything else is `vm`: it delegates, so the two can never drift. That is the
+# one asymmetry with chrome-personal/chrome-work, which are independent siblings
+# that each spell out their own flags — those differ in five ways, this differs
+# in one.
+#
+# Note: on $SSH_WORK_HOST itself, `vm` takes its "already there" branch and
+# just runs tmux locally, because `hostname -f` matches $SSH_WORK_HOST exactly.
+
+set -euo pipefail
+
+if [ -z "${SSH_WORK_HOST:-}" ]; then
+  echo "vm-work: SSH_WORK_HOST is not set." >&2
+  echo "    Set it in ~/.env or another sourced env file, e.g.:" >&2
+  echo "      SSH_WORK_HOST=box.corp.example.com" >&2
+  exit 1
+fi
+
+exec env VM_HOST="$SSH_WORK_HOST" "$HOME/bin/vm" "$@"

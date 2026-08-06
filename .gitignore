@@ -1,2 +1,58 @@
+# This repository is rooted at $HOME, not at ~/etc/dotfiles. Every cache,
+# browser profile, SDK and node_modules under the home directory is therefore a
+# candidate for `git add -A`: 1,501,557 untracked files before this file existed,
+# including agent transcripts that embed live API keys. Until the root moves
+# (see "Repo Hygiene" in etc/secrets/TODO.md), the posture here is
+# deny-by-default — ignore everything at the top level, then re-admit only the
+# paths that actually hold tracked content.
+#
+# Consequence: a genuinely new top-level path needs `git add -f`, or a new
+# negation below. That friction is the point.
+
+/*
+
+!/.gitignore
+!/.gitmodules
+!/.stowrc
+!/.xsession
+!/CHANGELOG.md
+!/NOTES.md
+!/README.md
+!/TODO.md
+!/bin/
+!/etc/
+!/lib/
+!/notes/
+!/plans/
+!/prg/
+!/var/
+
+# Pre-existing rules.
 .aider*
 .serena/
+
+# ~/.pi is a stow-folded symlink to etc/dotfiles/dot-pi, so everything the
+# agent writes at runtime lands inside git: session transcripts with full `env`
+# dumps (ANTHROPIC_API_KEY, ROBLOSECURITY, GitHub PATs, Postgres DSNs),
+# auth.json, and OAuth tokens under mcp-oauth/. Same deny-by-default trick, so
+# anything new the agent drops here is ignored until it is explicitly admitted.
+/etc/dotfiles/dot-pi/agent/*
+!/etc/dotfiles/dot-pi/agent/keybindings.json
+!/etc/dotfiles/dot-pi/agent/mcp.json
+!/etc/dotfiles/dot-pi/agent/models.json
+!/etc/dotfiles/dot-pi/agent/settings.json
+
+# Installed artifacts and package-manager caches inside admitted trees. Nothing
+# under these is tracked (var/racket: 0 tracked / 24,222 files; var/web: 0 / 701).
+# The emacs entries are package managers, byte-cache and fetched state — the 7
+# tracked .el files sit directly in dot-emacs.d/, not in these subdirectories.
+/var/racket/
+/var/web/
+/etc/dotfiles/dot-emacs.d/straight/
+/etc/dotfiles/dot-emacs.d/elpaca/
+/etc/dotfiles/dot-emacs.d/elpa/
+/etc/dotfiles/dot-emacs.d/eln-cache/
+/etc/dotfiles/dot-emacs.d/backups/
+/etc/dotfiles/dot-emacs.d/auto-save-list/
+/etc/dotfiles/dot-emacs.d/tree-sitter/
+/etc/dotfiles/dot-emacs.d/url/
